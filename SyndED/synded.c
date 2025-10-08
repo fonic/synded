@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
 		printf("  LastXpos: %u, LastYpos: %u, HugGotoZ: %u\n", person->LastXpos, person->LastYpos, person->HugGotoZ);
 		printf("  ChildWeapon: %u, Equipment: %u\n", person->ChildWeapon, person->Equipment);
 		printf("  ParentRank: %u, RankPosition: %u\n", person->ParentRank, person->RankPosition);
+		printf("  Count: %u\n", person->Count);
 		printf("  WeaponHolding: %u, WeaponInUse: %u\n", person->WeaponHolding, person->WeaponInUse);
 		printf("  Level1Base: %u, Level1Balance: %u, Level1True: %u, Level1Fixed: %u\n", person->Level1Base, person->Level1Balance, person->Level1True, person->Level1Fixed);
 		printf("  Level2Base: %u, Level2Balance: %u, Level2True: %u, Level2Fixed: %u\n", person->Level2Base, person->Level2Balance, person->Level2True, person->Level2Fixed);
