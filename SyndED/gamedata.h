@@ -3,7 +3,7 @@
 
 
 typedef struct  {                      // Map struct (128*128 tile map of references to People, Vehicles, Objects, etc.)
-	uint16_t  ObjRef[128*128];
+	uint16_t  ObjOfs[128*128];
 } MapWho;                              // 32768 bytes
 
 
@@ -199,9 +199,9 @@ typedef struct {                       // Command struct (item of Commands array
 } Command;
 
 
-typedef struct {                       // World struct (item of Worlds array) | 12 bytes (could also be 14 bytes, but NOT more)
-	uint8_t   WindXSpeed;              // From RGAME.C (unverified); very unsure about sizing of members!
-	uint8_t   WindYSpeed;
+typedef struct {                       // World struct (item of Worlds array) | 14 bytes
+	uint16_t  WindXSpeed;              // From RGAME.C (unverified); very unsure about sizing of members!
+	uint16_t  WindYSpeed;
 	uint16_t  Population;
 	uint8_t   Temperature;
 	uint8_t   WindSpeed;
@@ -214,7 +214,7 @@ typedef struct {                       // World struct (item of Worlds array) | 
 
 
 typedef struct {                        // MapInfo struct (single item, no array) | 14 bytes
-	uint16_t  MapNumber;                // From RGAME.C (unverified); sizes verified by FreeSynd leveldata.h
+	uint16_t  MapNumber;                // From RGAME.C (unverified)
 	uint16_t  LoBoundaryx;
 	uint16_t  LoBoundaryy;
 	uint16_t  HiBoundaryx;
@@ -235,7 +235,8 @@ typedef struct {                       // Objective struct (item of Objectives a
 } Objective;
 
 
-typedef struct {                       // CPObjective struct (item of CPObjectives array) | 12 bytes (could also be 14 bytes, but NOT more)
+#pragma pack(1)
+typedef struct {                       // CPObjective struct (item of CPObjectives array) | 15 bytes
 	uint16_t  Child;                   // From RGAME.C (unverified); sizes from Mefistotelis .xml
 	uint16_t  Parent;
 	uint8_t   UseCount;
@@ -243,19 +244,18 @@ typedef struct {                       // CPObjective struct (item of CPObjectiv
 	uint8_t   Flags;
 	uint8_t   ActionType;
 	uint8_t   Action;
-	//uint16_t  X;                     // Is this referencing POSITIONS ...
-	//uint16_t  Y;
-	//uint16_t  Z;
-	uint8_t   X;                       // ... or TILES, similar to struct Command?
-	uint8_t   Y;
-	uint8_t   Z;
+	uint16_t  X;
+	uint16_t  Y;
+	uint16_t  Z;
 } CPObjective;
 
 
 typedef struct {                                     // Game data struct (covers entirety of content of GAMExx.DAT file)
-	/*      0 */  uint8_t      Unknown_1[6];         // What is this? (two bytes might be header according to RGAME.C)
+	/*      0 */  uint16_t     Seed;
+	/*      2 */  uint16_t     PersonCount;          // Not sure
+	/*      4 */  uint16_t     Timer;
 	/*      6 */  MapWho       MapWho;
-	/*  32774 */  uint8_t      Offset_ref[2];        // What is this? -> check FreeSynd sources
+	/*  32774 */  uint16_t     Unknown_1;            // What is this? -> check FreeSynd sources -> seems to be unused/unknown
 	/*  32776 */  Person       People[256];
 	/*  56328 */  Vehicle      Vehicles[64];
 	/*  59016 */  Object       Objects[400];
@@ -263,11 +263,11 @@ typedef struct {                                     // Game data struct (covers
 	/*  89448 */  Effect       Effects[256];
 	/*  97128 */  Command      Commands[2048];
 	/* 113512 */  World        Worlds[32];           // Was unknown before, guessing this is: World[32] * 12 bytes = 384 bytes
-	/* 113896 */  uint8_t      Unknown_2[64];        // Likely either MapInfos or Worlds (if sized 14 bytes per item)
-	/* 113960 */  MapInfo      MapInfos;             // Might start EARLIER (to include additional members used in RGAME.C: SSMapX, SSMapY, SSMoveActive, SSScreenMode, SSVersion, SSSeed, SSPersonCount, SSTimer)
+	/* 113960 */  MapInfo      MapInfos;
 	/* 113974 */  Objective    Objectives[8];        // Array size is 8 according to RGAME.C, but 6 according to FreeSynd leveldata.h
-	/* 114086 */  CPObjective  CPObjectives[128];    // Could be: CPObjective[128] * 12 bytes = 1536 bytes (?) Max. would be 1924 bytes
-	/* 115622 */  uint8_t      Unknown_3[388];       // What is this?
+	/* 114086 */  uint16_t     Unknown_2;            // What is this?
+	/* 114088 */  uint16_t     Unknown_3;            // What is this?
+	/* 114090 */  CPObjective  CPObjectives[128];    // Could be: CPObjective[128] * 15 bytes = 1920 bytes
 } GameData;
 
 
