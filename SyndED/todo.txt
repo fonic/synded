@@ -1,0 +1,57 @@
+
+--------------------------------------------------------------------------------
+- IN PROGRESS                                                                  -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- OPEN                                                                         -
+--------------------------------------------------------------------------------
+
+- Fill structs MapInfo, Objective, CPObjective
+
+- Change command line:
+  $ synded INFILE OUTFILE
+
+- Read entire input file into structure GameData
+
+- Write entire output file from structure GameData
+
+- Create 'print.c' to store functions for printing arrays
+  -or-
+  Create one .c file per structure and group struture + printing function
+  (might be easier to manage and navigate)
+
+- Implement basic user menu:
+  1 - Print People
+  2 - Print Vehicles
+  3 - Print Objects
+  4 - Print ...
+  ...
+
+  Choice >
+
+
+--------------------------------------------------------------------------------
+- DONE                                                                         -
+--------------------------------------------------------------------------------
+
+- Restructure GitHub repo
+
+- Move structs to separate header file 'gamedata.h'
+
+- Create base structure
+
+
+--------------------------------------------------------------------------------
+- CANCELED                                                                     -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- Date: 10/07/25 - 10/08/25                                                    -
+--------------------------------------------------------------------------------
