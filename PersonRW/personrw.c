@@ -114,10 +114,13 @@ int main(int argc, char *argv[]) {
 
 	// Print fields of each Person in People array
 	printf("\n");
+	size_t defined_people = 0;
 	for (size_t i = 0; i < PA_LENGTH; ++i) {
 		struct Person* person = &people[i];
-		if ((person->Model == 0) && (person->Unique == 0))
+		if ((person->Model == 0) && (person->Unique == 0)) {
+			defined_people = i;
 			break; // End of defined People reached
+		}
 		printf("Person %zu:\n", i+1);
 		printf("  Child: %u, Parent: %u\n", person->Child, person->Parent);
 		printf("  Xpos: %u, Ypos: %u, Zpos: %u\n", person->Xpos, person->Ypos, person->Zpos);
@@ -150,8 +153,15 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	// Example modification: change health of first Person
-	//people[0].Life = 99;
+	// Example modification: add more people!
+	struct Person person;
+	person = people[defined_people-1];
+	person.Xpos += 100; person.Ypos += 100;
+	people[defined_people] = person;
+	person.Xpos += 100; person.Ypos += 100;
+	people[defined_people+1] = person;
+	person.Xpos += 100; person.Ypos += 100;
+	people[defined_people+2] = person;
 
 
 	// Seek to offset of People array in file
