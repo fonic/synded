@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Create People array (256 Person structs)
-	struct Person people[PA_LENGTH];
+	Person people[PA_LENGTH];
 
 	// Open file specified on command line
 	char *file_name = argv[1];
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
 	// Read data from file into array
 	printf("Reading from file '%s'...\n", file_name);
-	size_t read_count = fread(people, sizeof(struct Person), PA_LENGTH, file);
+	size_t read_count = fread(people, sizeof(Person), PA_LENGTH, file);
 	if (read_count != PA_LENGTH) {
 		fprintf(stderr, "Error reading from file '%s': %s\n", file_name, strerror(errno));
 		fclose(file);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 	size_t defined_people = 0;
 	for (size_t i = 0; i < PA_LENGTH; ++i) {
-		struct Person* person = &people[i];
+		Person* person = &people[i];
 		if ((person->Model == 0) && (person->Unique == 0)) {
 			defined_people = i;
 			break; // End of defined People reached
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 		printf("  Child: %u, Parent: %u\n", person->Child, person->Parent);
 		printf("  Xpos: %u, Ypos: %u, Zpos: %u\n", person->Xpos, person->Ypos, person->Zpos);
 		printf("  Status: %u, Affect: %u\n", person->Status, person->Affect);
-		printf("  Unknown1: %u, Unknown2: %u\n", person->Unknown1, person->Unknown2);
+		printf("  Unknown: %u, %u\n", person->Unknown[0], person->Unknown[1]);
 		printf("  BaseFrame: %u, Frame: %u, OldFrame: %u\n", person->BaseFrame, person->Frame, person->OldFrame);
 		printf("  Life: %u\n", person->Life);
 		printf("  WhoShotMe: %u\n", person->WhoShotMe);
@@ -88,8 +88,23 @@ int main(int argc, char *argv[]) {
 	}
 
 
+	// Print struct sizes
+	printf("MapWho:      %zu\n", sizeof(MapWho));
+	printf("Person:      %zu\n", sizeof(Person));
+	printf("Vehicle:     %zu\n", sizeof(Vehicle));
+	printf("Object:      %zu\n", sizeof(Object));
+	printf("Weapon:      %zu\n", sizeof(Weapon));
+	printf("Effect:      %zu\n", sizeof(Effect));
+	printf("Command:     %zu\n", sizeof(Command));
+	printf("World:       %zu\n", sizeof(World));
+	printf("MapInfo:     %zu\n", sizeof(MapInfo));
+	printf("Objective:   %zu\n", sizeof(Objective));
+	printf("CPObjective: %zu\n", sizeof(CPObjective));
+	printf("GameData:    %zu\n", sizeof(GameData));
+
+
 	// Example modification: add more people!
-	struct Person person;
+	/*Person person;
 	person = people[defined_people-1];
 	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 2;
 	people[defined_people] = person;
@@ -100,11 +115,11 @@ int main(int argc, char *argv[]) {
 	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 1;
 	people[defined_people+3] = person;
 	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 1;
-	people[defined_people+4] = person;
+	people[defined_people+4] = person;*/
 
 
 	// Seek to offset of People array in file
-	printf("Seeking in file '%s'...\n", file_name);
+	/*printf("Seeking in file '%s'...\n", file_name);
 	if (fseek(file, PA_OFFSET, SEEK_SET) != 0 ) {
 		fprintf(stderr, "Failed to seek in file '%s': %s\n", file_name, strerror(errno));
 		return 1;
@@ -112,7 +127,7 @@ int main(int argc, char *argv[]) {
 
 	// Write modified array to file
 	printf("Writing to file '%s'...\n", file_name);
-	size_t write_count = fwrite(people, sizeof(struct Person), PA_LENGTH, file);
+	size_t write_count = fwrite(people, sizeof(Person), PA_LENGTH, file);
 	if (write_count != PA_LENGTH) {
 		fprintf(stderr, "Error writing to file '%s': %s\n", file_name, strerror(errno));
 		fclose(file);
@@ -121,6 +136,6 @@ int main(int argc, char *argv[]) {
 
 	// Close file and we're done
 	fclose(file);
-	printf("Successfully updated file '%s'.\n", file_name);
+	printf("Successfully updated file '%s'.\n", file_name);*/
 	return 0;
 }

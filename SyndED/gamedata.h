@@ -2,39 +2,12 @@
 #define GAMEDATA_H
 
 
-// Forward declarations
-typedef struct Person;
-typedef struct Vehicle;
-typedef struct Object;
-typedef struct Weapon;
-typedef struct Effect;
-typedef struct Command;
-typedef struct World;
-typedef struct MapInfo;
-typedef struct Objective;
-typedef struct CPObjective;
+typedef struct  {                      // Map struct (128*128 tile map of references to People, Vehicles, Objects, etc.)
+	uint16_t  ObjRef[128*128];
+} MapWho;                              // 32768 bytes
 
 
-// Game data struct (covers entirety of content of GAMExx.DAT file)
-struct GameData {
-	/*      0 */  uint8_t    Unknown1[6];
-	/*      6 */  Map        Map;
-	/*  32774 */  uint8_t    Offset_ref[2];     // What is this? -> check FreeSynd sources
-	/*  32776 */  Person     People[256];
-	/*  56328 */  Vehicle    Vehicles[64];
-	/*  59016 */  Object     Objects[400];
-	/*  71016 */  Weapon     Weapons[512];
-	/*  89448 */  Effect     Effects[256];
-	/*  97128 */  Command    Commands[2048];
-	/* 113512 */  uint8_t    Unknown2[448];     // World[32] * 14 bytes = 448 bytes (?)
-	/* 113960 */  MapInfo    MapInfos;          // Might start EARLIER (to include additional members used in RGAME.C: SSMapX, SSMapY, SSMoveActive, SSScreenMode, SSVersion, SSSeed, SSPersonCount, SSTimer)
-	/* 113974 */  Objective  Objectives[6];     // Should be [8] according to RGAME.C (?)
-	/* 114058 */  uint8_t    Unknown3[1952];    // CPObjective[128] * 15 bytes = 1920 bytes (?)
-};
-
-
-// Person struct (item of People array)
-typedef struct {
+typedef struct {                       // Person struct (item of People array) | 92 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -42,8 +15,7 @@ typedef struct {
 	uint16_t  Zpos;
 	uint8_t   Status;
 	uint8_t   Affect;
-	uint8_t   Unknown1;
-	uint8_t   Unknown2;
+	uint8_t   Unknown[2];
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -113,8 +85,7 @@ typedef struct {
 } Person;
 
 
-// Vehicle struct (item of Vehicles array)
-typedef struct {
+typedef struct {                       // Vehicle struct (item of Vehicles array) | 42 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -122,8 +93,7 @@ typedef struct {
 	uint16_t  Zpos;
 	uint8_t   Status;
 	uint8_t   Affect;
-	uint8_t   Unknown1;
-	uint8_t   Unknown2;
+	uint8_t   Unknown[2];
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -145,8 +115,7 @@ typedef struct {
 } Vehicle;
 
 
-// Object struct (item of Objects array)
-typedef struct {
+typedef struct {                       // Object struct (item of Objects array) | 28 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -154,8 +123,7 @@ typedef struct {
 	uint16_t  Zpos;
 	uint8_t   Status;
 	uint8_t   Affect;
-	uint8_t   Unknown1;
-	uint8_t   Unknown2;
+	uint8_t   Unknown1[2];
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -165,11 +133,11 @@ typedef struct {
 	uint8_t   State;
 	uint8_t   Angle;
 	uint8_t   ZAngle;                  // Same as person until here; no unique stuff
+	uint8_t   Unknown2[2];
 } Object;
 
 
-// Weapon struct (item of Weapons array)
-typedef struct {
+typedef struct {                       // Weapon struct (item of Weapons array) | 36 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -177,8 +145,7 @@ typedef struct {
 	uint16_t  Zpos;
 	uint8_t   Status;
 	uint8_t   Affect;
-	uint8_t   Unknown1;
-	uint8_t   Unknown2;
+	uint8_t   Unknown[2];
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -196,8 +163,7 @@ typedef struct {
 } Weapon;
 
 
-// Effect struct (item of Effects array)
-typedef struct {
+typedef struct {                       // Effect struct (item of Effects array) | 30 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -205,8 +171,7 @@ typedef struct {
 	uint16_t  Zpos;
 	uint8_t   Status;
 	uint8_t   Affect;
-	uint8_t   Unknown1;
-	uint8_t   Unknown2;
+	uint8_t   Unknown[2];
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -221,21 +186,22 @@ typedef struct {
 } Effect;
 
 
-// Command struct (item of Commands array)
-typedef struct {
+typedef struct {                       // Command struct (item of Commands array) | 8 bytes
 	uint16_t  Next;                    // From RGAME.C (unverified)
 	uint16_t  Data;
-	uint16_t  GotoX;
-	uint16_t  GotoY;
-	uint16_t  GotoZ;
+	//uint16_t  GotoX;
+	//uint16_t  GotoY;
+	//uint16_t  GotoZ;
+	uint8_t   GotoX;                   // These seem to reference TILES (0-128), not POSITIONS (like in other structs), according to FreeSynd leveldata.h
+	uint8_t   GotoY;
+	uint8_t   GotoZ;
 	uint8_t   State;
 } Command;
 
 
-// World struct (item of Worlds array)
-typedef struct {
-	uint16_t  WindXSpeed;              // From RGAME.C (unverified); very unsure about sizing of members!
-	uint16_t  WindYSpeed;
+typedef struct {                       // World struct (item of Worlds array) | 12 bytes (could also be 14 bytes, but NOT more)
+	uint8_t   WindXSpeed;              // From RGAME.C (unverified); very unsure about sizing of members!
+	uint8_t   WindYSpeed;
 	uint16_t  Population;
 	uint8_t   Temperature;
 	uint8_t   WindSpeed;
@@ -247,22 +213,62 @@ typedef struct {
 } World;
 
 
-// MapInfo struct (single item, no array)
-typedef struct {
-	// tbd
+typedef struct {                        // MapInfo struct (single item, no array) | 14 bytes
+	uint16_t  MapNumber;                // From RGAME.C (unverified); sizes verified by FreeSynd leveldata.h
+	uint16_t  LoBoundaryx;
+	uint16_t  LoBoundaryy;
+	uint16_t  HiBoundaryx;
+	uint16_t  HiBoundaryy;
+	uint16_t  SSCPLvlInit;
+	uint16_t  SSStructEnd;
 } MapInfo;
 
 
-// Objective struct (item of Objectives array)
-typedef struct {
-	// tbd
+typedef struct {                       // Objective struct (item of Objectives array) | 14 bytes
+	uint16_t  Objective;               // From RGAME.C (unverified); sizes verified by FreeSynd leveldata.h
+	uint16_t  Data;
+	uint16_t  Xpos;
+	uint16_t  Ypos;
+	uint16_t  Zpos;
+	uint8_t   Status;                  // Unsure, might be uint16_t
+	uint8_t   Unknown[3];
 } Objective;
 
 
-// CPObjective struct (item of CPObjectives array)
-typedef struct {
-	// tbd
+typedef struct {                       // CPObjective struct (item of CPObjectives array) | 12 bytes (could also be 14 bytes, but NOT more)
+	uint16_t  Child;                   // From RGAME.C (unverified); sizes from Mefistotelis .xml
+	uint16_t  Parent;
+	uint8_t   UseCount;
+	uint8_t   Player;
+	uint8_t   Flags;
+	uint8_t   ActionType;
+	uint8_t   Action;
+	//uint16_t  X;                     // Is this referencing POSITIONS ...
+	//uint16_t  Y;
+	//uint16_t  Z;
+	uint8_t   X;                       // ... or TILES, similar to struct Command?
+	uint8_t   Y;
+	uint8_t   Z;
 } CPObjective;
+
+
+typedef struct {                                     // Game data struct (covers entirety of content of GAMExx.DAT file)
+	/*      0 */  uint8_t      Unknown_1[6];         // What is this? (two bytes might be header according to RGAME.C)
+	/*      6 */  MapWho       MapWho;
+	/*  32774 */  uint8_t      Offset_ref[2];        // What is this? -> check FreeSynd sources
+	/*  32776 */  Person       People[256];
+	/*  56328 */  Vehicle      Vehicles[64];
+	/*  59016 */  Object       Objects[400];
+	/*  71016 */  Weapon       Weapons[512];
+	/*  89448 */  Effect       Effects[256];
+	/*  97128 */  Command      Commands[2048];
+	/* 113512 */  World        Worlds[32];           // Was unknown before, guessing this is: World[32] * 12 bytes = 384 bytes
+	/* 113896 */  uint8_t      Unknown_2[64];        // Likely either MapInfos or Worlds (if sized 14 bytes per item)
+	/* 113960 */  MapInfo      MapInfos;             // Might start EARLIER (to include additional members used in RGAME.C: SSMapX, SSMapY, SSMoveActive, SSScreenMode, SSVersion, SSSeed, SSPersonCount, SSTimer)
+	/* 113974 */  Objective    Objectives[8];        // Array size is 8 according to RGAME.C, but 6 according to FreeSynd leveldata.h
+	/* 114086 */  CPObjective  CPObjectives[128];    // Could be: CPObjective[128] * 12 bytes = 1536 bytes (?) Max. would be 1924 bytes
+	/* 115622 */  uint8_t      Unknown_3[388];       // What is this?
+} GameData;
 
 
 #endif // GAMEDATA_H
