@@ -26,7 +26,7 @@ typedef struct {                       // Person struct (item of People array) |
 	uint8_t   Angle;
 	uint8_t   ZAngle;                  // Until here same for: Person, Vehicle, Object, Weapon, Effect
 
-	uint16_t  Unique;                  // Unique stuff starts here (no pun intended)
+	uint8_t   Unique;                  // Unique stuff starts here (no pun intended)
 
 	uint8_t   Hugdistance1;
 	uint16_t  Hugdistance2;
@@ -54,6 +54,7 @@ typedef struct {                       // Person struct (item of People array) |
 
 	uint16_t  ParentRank;
 	uint16_t  RankPosition;
+	uint16_t  Count;
 
 	uint16_t  WeaponHolding;
 	uint8_t   WeaponInUse;

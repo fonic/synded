@@ -19,9 +19,9 @@ int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, s
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown[0],Unknown[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unique,Hugdistance1,Hugdistance2,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,NewState,HugChangeDir,HugStartAngle,HitAngle\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown[0],Unknown[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unique,Hugdistance1,Hugdistance2,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,Count,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,NewState,HugChangeDir,HugStartAngle,HitAngle\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				people[i].Child,
@@ -62,6 +62,7 @@ int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, s
 				people[i].Equipment,
 				people[i].ParentRank,
 				people[i].RankPosition,
+				people[i].Count,
 				people[i].WeaponHolding,
 				people[i].WeaponInUse,
 				people[i].Level1Base,
