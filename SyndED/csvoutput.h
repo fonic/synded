@@ -1,8 +1,6 @@
 #ifndef CSVOUTPUT_H
 #define CSVOUTPUT_H
 
-#include <stdio.h>
-#include <stdint.h>
 #include <stddef.h>
 
 #include "gamedata.h"

@@ -223,7 +223,7 @@ typedef struct {                       // World struct (item of Worlds array) | 
 } MapInfo;*/                           // -> no longer in use, deconstructed into separate members (like in RGAME.C)
 
 
-#pragma pack(1)
+#pragma pack(push,1)
 typedef struct {                       // Objective struct (item of Objectives array) | 14 bytes
 	uint32_t  Status;
 	uint16_t  Objective;               // From RGAME.C (unverified); sizes verified by FreeSynd leveldata.h
@@ -232,9 +232,10 @@ typedef struct {                       // Objective struct (item of Objectives a
 	uint16_t  Ypos;
 	uint16_t  Zpos;
 } Objective;
+#pragma pack(pop)
 
 
-#pragma pack(1)
+#pragma pack(push,1)
 typedef struct {                       // CPObjective struct (item of CPObjectives array) | 15 bytes
 	uint16_t  Child;                   // From RGAME.C (unverified); sizes from Mefistotelis .xml
 	uint16_t  Parent;
@@ -247,7 +248,7 @@ typedef struct {                       // CPObjective struct (item of CPObjectiv
 	uint16_t  Y;
 	uint16_t  Z;
 } CPObjective;
-
+#pragma pack(pop)
 
 typedef struct {                                     // Game data struct (covers entirety of contents of GAMExx.DAT file)
 	/*      0 */  uint16_t     Seed;

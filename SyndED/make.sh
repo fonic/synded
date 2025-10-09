@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-gcc -o synded synded.c csvoutput.c
+gcc -o synded synded.c csvoutput.c asprintf.c

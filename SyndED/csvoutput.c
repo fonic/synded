@@ -3,6 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "asprintf.h"
 #include "gamedata.h"
 
 #define OFFSET_GLOBAL_TO_RELATIVE(ofs) ofs - 32774
