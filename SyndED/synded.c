@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
 
 	// Edit/modify game data (example): add more people
-	printf("Modifying game data... (disabled)\n");
+	printf("Modifying game data... (disabled, see sources)\n");
 	/*Person person = gamedata.People[people_count-1];
 	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 2;
 	gamedata.People[people_count] = person;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 
 	// Print offsets of GameData struct members
 	size_t offset = 0;
-	printf("GameData member offsets:\n");
+	printf("GameData offsets:\n");
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Seed");               offset += sizeof(gamedata.Seed);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     PersonCount");        offset += sizeof(gamedata.PersonCount);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Timer");              offset += sizeof(gamedata.Timer);

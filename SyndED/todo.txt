@@ -10,12 +10,11 @@
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
-- Write MapWho struct to CSV file (128 columns, 128 rows)
-
 - Translate known values into human-readable strings (e.g. Person.Unique)
   -> see Moburma's script (syndicatereader.ps1)
 
 - Further refine game data structs
+  -> ONGOING, will take time + input from Mefistotelis
 
 - Implement basic user menu for viewing/editing:
   1 - Print People
@@ -30,6 +29,16 @@
 --------------------------------------------------------------------------------
 - DONE                                                                         -
 --------------------------------------------------------------------------------
+
+- Change Unique in struct Person to uint16_t, eliminate following HugDistance1,
+  rename Hugdistance2 to just HugDistance
+
+- Add local offset to CSV output of Commands (to make reference via Command.Next
+  visible/readable)
+
+- Revise comments in gamedata.h
+
+- Write MapWho struct to CSV file (128 columns, 128 rows)
 
 - Apply fixes + test compiling on Windows -> WORKS
 - Add asprintf library (to allow compiling on Windows)

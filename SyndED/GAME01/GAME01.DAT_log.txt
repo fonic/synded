@@ -2,12 +2,15 @@ Opening input file 'GAME01/GAME01.DAT'...
 Reading input file 'GAME01/GAME01.DAT'...
 Closing input file 'GAME01/GAME01.DAT'...
 
-Modifying game data... (disabled)
+Modifying game data... (disabled, see sources)
 
 Opening output file 'GAME01/GAME01.DAT_modified'...
 Writing output file 'GAME01/GAME01.DAT_modified'...
 Closing output file 'GAME01/GAME01.DAT_modified'...
 
+Creating CSV file 'GAME01/GAME01.DAT_mapwho.csv'...
+Writing contents to CSV file 'GAME01/GAME01.DAT_mapwho.csv'...
+Closing CSV file 'GAME01/GAME01.DAT_mapwho.csv'...
 Creating CSV file 'GAME01/GAME01.DAT_people.csv'...
 Writing contents to CSV file 'GAME01/GAME01.DAT_people.csv'...
 Closing CSV file 'GAME01/GAME01.DAT_people.csv'...
@@ -52,12 +55,12 @@ Objective:   14
 CPObjective: 15
 GameData:    116010
 
-GameData member offsets:
+GameData offsets:
 /*      0 0x00000 */  uint16_t     Seed
 /*      2 0x00002 */  uint16_t     PersonCount
 /*      4 0x00004 */  uint16_t     Timer
 /*      6 0x00006 */  MapWho       MapWho
-/*  32774 0x08006 */  uint16_t     Unknown_1
+/*  32774 0x08006 */  uint16_t     Unknown
 /*  32776 0x08008 */  Person       People[256]
 /*  56328 0x0dc08 */  Vehicle      Vehicles[64]
 /*  59016 0x0e688 */  Object       Objects[400]
@@ -71,14 +74,14 @@ GameData member offsets:
 /* 113966 0x1bd2e */  uint16_t     HiBoundaryx
 /* 113968 0x1bd30 */  uint16_t     HiBoundaryy
 /* 113970 0x1bd32 */  Objective    Objectives[8]
-/* 114082 0x1bda2 */  uint8_t      Unknown_2
+/* 114082 0x1bda2 */  uint8_t      CPCount
 /* 114083 0x1bda3 */  uint8_t      CPTeamSize
-/* 114084 0x1bda4 */  uint8_t      Unknown_3
+/* 114084 0x1bda4 */  uint8_t      CPProcInt
 /* 114085 0x1bda5 */  uint8_t      CPLvlInit
-/* 114086 0x1bda6 */  uint8_t      Unknown_4
-/* 114087 0x1bda7 */  uint8_t      Unknown_5
-/* 114088 0x1bda8 */  uint8_t      Unknown_6
-/* 114089 0x1bda9 */  uint8_t      Unknown_7
+/* 114086 0x1bda6 */  uint8_t      CPIsBombTeam
+/* 114087 0x1bda7 */  uint8_t      CPIsPersTeam
+/* 114088 0x1bda8 */  uint8_t      CPFlags
+/* 114089 0x1bda9 */  uint8_t      CPWeapon
 /* 114090 0x1bdaa */  CPObjective  CPObjectives[128]
 /* 116010 0x1c52a */  [ End of struct ]
 

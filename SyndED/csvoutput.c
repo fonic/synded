@@ -55,9 +55,9 @@ int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, s
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unique,Hugdistance1,Hugdistance2,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,Count,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,NewState,HugChangeDir,HugStartAngle,HitAngle\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unique,HugDistance,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,Count,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,NewState,HugChangeDir,HugStartAngle,HitAngle\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				people[i].Child,
@@ -77,8 +77,7 @@ int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, s
 				people[i].Angle,
 				people[i].ZAngle,
 				people[i].Unique,
-				people[i].Hugdistance1,
-				people[i].Hugdistance2,
+				people[i].HugDistance,
 				people[i].Persuaded,
 				people[i].ChildHeld,
 				people[i].ParentHeld,
@@ -354,11 +353,12 @@ int write_commands_to_csv(const char *file_name, Command commands[], size_t arrl
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Next,Data,GotoX,GotoY,GotoZ,State\n");
+	fprintf(file, "GloOfs,RelOfs,LocOfs,Next,Data,GotoX,GotoY,GotoZ,State\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%zu,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
+				i * sizeof(Command),
 				commands[i].Next,
 				commands[i].Data,
 				commands[i].GotoX,
