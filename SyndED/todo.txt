@@ -12,6 +12,9 @@
 
 - Write MapWho struct to CSV file (128 columns, 128 rows)
 
+- Translate known values into human-readable strings (e.g. Person.Unique)
+  -> see Moburma's script (syndicatereader.ps1)
+
 - Further refine game data structs
 
 - Implement basic user menu:
