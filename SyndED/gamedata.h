@@ -213,25 +213,23 @@ typedef struct {                       // World struct (item of Worlds array) | 
 } World;
 
 
-typedef struct {                        // MapInfo struct (single item, no array) | 14 bytes
-	uint16_t  MapNumber;                // From RGAME.C (unverified)
+/*typedef struct {                     // MapInfo struct (single item, no array) | 10 bytes
+	uint16_t  MapNumber;               // From RGAME.C (unverified)
 	uint16_t  LoBoundaryx;
 	uint16_t  LoBoundaryy;
 	uint16_t  HiBoundaryx;
 	uint16_t  HiBoundaryy;
-	uint16_t  SSCPLvlInit;
-	uint16_t  SSStructEnd;
-} MapInfo;
+} MapInfo;*/                           // -> no longer in use, deconstructed into separate members
 
 
+#pragma pack(1)
 typedef struct {                       // Objective struct (item of Objectives array) | 14 bytes
+	uint32_t  Status;
 	uint16_t  Objective;               // From RGAME.C (unverified); sizes verified by FreeSynd leveldata.h
 	uint16_t  Data;
 	uint16_t  Xpos;
 	uint16_t  Ypos;
 	uint16_t  Zpos;
-	uint8_t   Status;                  // Unsure, might be uint16_t
-	uint8_t   Unknown[3];
 } Objective;
 
 
@@ -250,25 +248,58 @@ typedef struct {                       // CPObjective struct (item of CPObjectiv
 } CPObjective;
 
 
-typedef struct {                                     // Game data struct (covers entirety of content of GAMExx.DAT file)
+typedef struct {                                     // Game data struct (covers entirety of contents of GAMExx.DAT file)
 	/*      0 */  uint16_t     Seed;
-	/*      2 */  uint16_t     PersonCount;          // Not sure
+	/*      2 */  uint16_t     PersonCount;          // Not sure!
 	/*      4 */  uint16_t     Timer;
 	/*      6 */  MapWho       MapWho;
-	/*  32774 */  uint16_t     Unknown_1;            // What is this? -> check FreeSynd sources -> seems to be unused/unknown
+	/*  32774 */  uint16_t     Unknown_1;            // What is this? -> likely SSHeader[0]/SSHeader[1]
 	/*  32776 */  Person       People[256];
 	/*  56328 */  Vehicle      Vehicles[64];
 	/*  59016 */  Object       Objects[400];
 	/*  71016 */  Weapon       Weapons[512];
 	/*  89448 */  Effect       Effects[256];
 	/*  97128 */  Command      Commands[2048];
-	/* 113512 */  World        Worlds[32];           // Was unknown before, guessing this is: World[32] * 12 bytes = 384 bytes
-	/* 113960 */  MapInfo      MapInfos;
-	/* 113974 */  Objective    Objectives[8];        // Array size is 8 according to RGAME.C, but 6 according to FreeSynd leveldata.h
-	/* 114086 */  uint16_t     Unknown_2;            // What is this?
-	/* 114088 */  uint16_t     Unknown_3;            // What is this?
-	/* 114090 */  CPObjective  CPObjectives[128];    // Could be: CPObjective[128] * 15 bytes = 1920 bytes
+	/* 113512 */  World        Worlds[32];           // Should be: World[32] * 12 bytes = 384 bytes
+	/* 113960 */  //MapInfo      MapInfos;
+	/* 113960 */  uint16_t     MapNumber;            // Formerly part of struct MapInfos
+	/* 113962 */  uint16_t     LoBoundaryx;          // Formerly part of struct MapInfos
+	/* 113964 */  uint16_t     LoBoundaryy;          // Formerly part of struct MapInfos
+	/* 113966 */  uint16_t     HiBoundaryx;          // Formerly part of struct MapInfos
+	/* 113968 */  uint16_t     HiBoundaryy;          // Formerly part of struct MapInfos
+	/* 113970 */  Objective    Objectives[8];        // Array size is 8 according to RGAME.C, but 6 according to FreeSynd leveldata.h
+	/* 114082 */  uint8_t      Unknown_2;            // What is this?
+	/* 114083 */  uint8_t      CPTeamSize;
+	/* 114084 */  uint8_t      Unknown_3;            // What is this?
+	/* 114085 */  uint8_t      CPLvlInit;
+	/* 114086 */  uint8_t      Unknown_4;            // What is this?
+	/* 114087 */  uint8_t      Unknown_5;            // What is this?
+	/* 114088 */  uint8_t      Unknown_6;            // What is this?
+	/* 114089 */  uint8_t      Unknown_7;            // What is this?
+	/* 114090 */  CPObjective  CPObjectives[128];    // Should be: CPObjective[128] * 15 bytes = 1920 bytes
 } GameData;
+
+
+// Yet to be identified within GameData struct (commented out == identified):
+/*
+  MapX
+  MapY
+  MoveActive
+  ScreenMode
+  Version
+//Seed
+//PersonCount
+//Timer
+  Header[0]
+  Header[1]
+//MapNumber
+//LoBoundaryx
+//LoBoundaryy
+//HiBoundaryx
+//HiBoundaryy
+//CPLvlInit
+  StructEnd
+*/
 
 
 #endif // GAMEDATA_H

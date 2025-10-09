@@ -3,24 +3,14 @@
 - IN PROGRESS                                                                  -
 --------------------------------------------------------------------------------
 
-- Verify structs
+- Verify and fix CSV output
 
 
 --------------------------------------------------------------------------------
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
-- Change command line:
-  $ synded INFILE OUTFILE
-
-- Read entire input file into structure GameData
-
-- Write entire output file from structure GameData
-
-- Create 'print.c' to store functions for printing arrays
-  -or-
-  Create one .c file per structure and group struture + printing function
-  (might be easier to manage and navigate)
+- Further refine game data structs
 
 - Implement basic user menu:
   1 - Print People
@@ -35,6 +25,21 @@
 --------------------------------------------------------------------------------
 - DONE                                                                         -
 --------------------------------------------------------------------------------
+
+- Output ALL contents of GameData struct to CSV files
+
+- Deconstruct struct MapInfo into separate members (like in RGAME.C)
+
+- Change command line:
+  $ synded INFILE OUTFILE
+- Read entire input file into structure GameData
+- Write entire output file from structure GameData
+
+- Verify structs (together with Moburma and Mefistotelis)
+  -> DONE for now, but will be ongoing (still stuff to figure out / correct)
+
+- Add prints for struct sizes
+- Add prints for struct member offsets
 
 - Fill structs MapInfo, Objective, CPObjective
 
@@ -53,5 +58,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/08/25                                                    -
+- Date: 10/07/25 - 10/09/25                                                    -
 --------------------------------------------------------------------------------
