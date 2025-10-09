@@ -3,7 +3,7 @@
 - IN PROGRESS                                                                  -
 --------------------------------------------------------------------------------
 
-- Test compiling SyndED on Windows
+- Nothing atm
 
 
 --------------------------------------------------------------------------------
@@ -17,7 +17,7 @@
 
 - Further refine game data structs
 
-- Implement basic user menu:
+- Implement basic user menu for viewing/editing:
   1 - Print People
   2 - Print Vehicles
   3 - Print Objects
@@ -31,6 +31,7 @@
 - DONE                                                                         -
 --------------------------------------------------------------------------------
 
+- Apply fixes + test compiling on Windows -> WORKS
 - Add asprintf library (to allow compiling on Windows)
 
 - Verify and fix CSV output
