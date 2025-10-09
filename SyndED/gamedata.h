@@ -103,7 +103,7 @@ typedef struct {                       // Vehicle struct (item of Vehicles array
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Same as person until here
+	uint8_t   ZAngle;                  // Same as Person until here
 
 	uint16_t  ChildHeld;               // Unique stuff starts here; from RGAME.C (unverified)
 	uint16_t  ParentHeld;
@@ -133,7 +133,8 @@ typedef struct {                       // Object struct (item of Objects array) 
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Same as person until here; no unique stuff
+	uint8_t   ZAngle;                  // Same as Person until here
+
 	uint8_t   Unknown2[2];
 } Object;
 
@@ -155,7 +156,7 @@ typedef struct {                       // Weapon struct (item of Weapons array) 
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Same as person until here
+	uint8_t   ZAngle;                  // Same as Person until here
 
 	uint16_t  ChildWeapon;             // Unique stuff starts here; from RGAME.C (unverified)
 	uint16_t  ParentWeapon;
@@ -181,7 +182,7 @@ typedef struct {                       // Effect struct (item of Effects array) 
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Same as person until here
+	uint8_t   ZAngle;                  // Same as Person until here
 
 	uint16_t  Owner;                   // From FreeSynd leveldata.h (unverified)
 } Effect;
@@ -193,8 +194,8 @@ typedef struct {                       // Command struct (item of Commands array
 	//uint16_t  GotoX;
 	//uint16_t  GotoY;
 	//uint16_t  GotoZ;
-	uint8_t   GotoX;                   // These seem to reference TILES (0-128), not POSITIONS (like in other structs), according to FreeSynd leveldata.h
-	uint8_t   GotoY;
+	uint8_t   GotoX;                   // These seem to reference TILES (0-128), not POSITIONS (like in other structs),
+	uint8_t   GotoY;                   // according to FreeSynd leveldata.h
 	uint8_t   GotoZ;
 	uint8_t   State;
 } Command;
@@ -250,6 +251,7 @@ typedef struct {                       // CPObjective struct (item of CPObjectiv
 } CPObjective;
 #pragma pack(pop)
 
+
 typedef struct {                                     // Game data struct (covers entirety of contents of GAMExx.DAT file)
 	/*      0 */  uint16_t     Seed;
 	/*      2 */  uint16_t     PersonCount;          // Not sure!
@@ -264,11 +266,11 @@ typedef struct {                                     // Game data struct (covers
 	/*  97128 */  Command      Commands[2048];
 	/* 113512 */  World        Worlds[32];
 	/* 113960 */  //MapInfo      MapInfos;
-	/* 113960 */  uint16_t     MapNumber;            // Formerly part of struct MapInfos
-	/* 113962 */  uint16_t     LoBoundaryx;          // Formerly part of struct MapInfos
-	/* 113964 */  uint16_t     LoBoundaryy;          // Formerly part of struct MapInfos
-	/* 113966 */  uint16_t     HiBoundaryx;          // Formerly part of struct MapInfos
-	/* 113968 */  uint16_t     HiBoundaryy;          // Formerly part of struct MapInfos
+	/* 113960 */  uint16_t     MapNumber;            // Former member of struct MapInfos
+	/* 113962 */  uint16_t     LoBoundaryx;          // Former member of struct MapInfos
+	/* 113964 */  uint16_t     LoBoundaryy;          // Former member of struct MapInfos
+	/* 113966 */  uint16_t     HiBoundaryx;          // Former member of struct MapInfos
+	/* 113968 */  uint16_t     HiBoundaryy;          // Former member of struct MapInfos
 	/* 113970 */  Objective    Objectives[8];
 	/* 114082 */  uint8_t      Unknown_2;            // What is this?
 	/* 114083 */  uint8_t      CPTeamSize;
