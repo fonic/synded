@@ -220,7 +220,7 @@ typedef struct {                       // World struct (item of Worlds array) | 
 	uint16_t  LoBoundaryy;
 	uint16_t  HiBoundaryx;
 	uint16_t  HiBoundaryy;
-} MapInfo;*/                           // -> no longer in use, deconstructed into separate members
+} MapInfo;*/                           // -> no longer in use, deconstructed into separate members (like in RGAME.C)
 
 
 #pragma pack(1)
@@ -261,14 +261,14 @@ typedef struct {                                     // Game data struct (covers
 	/*  71016 */  Weapon       Weapons[512];
 	/*  89448 */  Effect       Effects[256];
 	/*  97128 */  Command      Commands[2048];
-	/* 113512 */  World        Worlds[32];           // Should be: World[32] * 12 bytes = 384 bytes
+	/* 113512 */  World        Worlds[32];
 	/* 113960 */  //MapInfo      MapInfos;
 	/* 113960 */  uint16_t     MapNumber;            // Formerly part of struct MapInfos
 	/* 113962 */  uint16_t     LoBoundaryx;          // Formerly part of struct MapInfos
 	/* 113964 */  uint16_t     LoBoundaryy;          // Formerly part of struct MapInfos
 	/* 113966 */  uint16_t     HiBoundaryx;          // Formerly part of struct MapInfos
 	/* 113968 */  uint16_t     HiBoundaryy;          // Formerly part of struct MapInfos
-	/* 113970 */  Objective    Objectives[8];        // Array size is 8 according to RGAME.C, but 6 according to FreeSynd leveldata.h
+	/* 113970 */  Objective    Objectives[8];
 	/* 114082 */  uint8_t      Unknown_2;            // What is this?
 	/* 114083 */  uint8_t      CPTeamSize;
 	/* 114084 */  uint8_t      Unknown_3;            // What is this?
@@ -277,7 +277,7 @@ typedef struct {                                     // Game data struct (covers
 	/* 114087 */  uint8_t      Unknown_5;            // What is this?
 	/* 114088 */  uint8_t      Unknown_6;            // What is this?
 	/* 114089 */  uint8_t      Unknown_7;            // What is this?
-	/* 114090 */  CPObjective  CPObjectives[128];    // Should be: CPObjective[128] * 15 bytes = 1920 bytes
+	/* 114090 */  CPObjective  CPObjectives[128];
 } GameData;
 
 

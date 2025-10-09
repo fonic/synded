@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 
 
-	// Print game data struct offsets
+	// Print offsets of GameData struct members
 	size_t offset = 0;
 	printf("GameData member offsets:\n");
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Seed");               offset += sizeof(gamedata.Seed);
@@ -185,11 +185,11 @@ int main(int argc, char *argv[]) {
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Command      Commands[2048]");     offset += sizeof(gamedata.Commands);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "World        Worlds[32]");         offset += sizeof(gamedata.Worlds);
 	//printf("/* %6zu 0x%05x */  %s\n", offset, offset, "MapInfo      MapInfos");           offset += sizeof(gamedata.MapInfos);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     MapNumber");         offset += sizeof(gamedata.MapNumber);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     LoBoundaryx");       offset += sizeof(gamedata.LoBoundaryx);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     LoBoundaryy");       offset += sizeof(gamedata.LoBoundaryy);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryx");       offset += sizeof(gamedata.HiBoundaryx);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryy");       offset += sizeof(gamedata.HiBoundaryy);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     MapNumber");          offset += sizeof(gamedata.MapNumber);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     LoBoundaryx");        offset += sizeof(gamedata.LoBoundaryx);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     LoBoundaryy");        offset += sizeof(gamedata.LoBoundaryy);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryx");        offset += sizeof(gamedata.HiBoundaryx);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryy");        offset += sizeof(gamedata.HiBoundaryy);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Objective    Objectives[8]");      offset += sizeof(gamedata.Objectives);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_2");          offset += sizeof(gamedata.Unknown_2);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPTeamSize");         offset += sizeof(gamedata.CPTeamSize);

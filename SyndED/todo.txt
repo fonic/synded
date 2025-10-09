@@ -10,6 +10,8 @@
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
+- Write MapWho struct to CSV file (128 columns, 128 rows)
+
 - Further refine game data structs
 
 - Implement basic user menu:
