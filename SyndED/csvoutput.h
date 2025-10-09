@@ -5,6 +5,7 @@
 
 #include "gamedata.h"
 
+int write_mapwho_to_csv(const char *file_name, MapWho *mapwho, size_t row_count, size_t col_count);
 int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, size_t offset);
 int write_vehicles_to_csv(const char *file_name, Vehicle vehicles[], size_t arrlen, size_t offset);
 int write_objects_to_csv(const char *file_name, Object objects[], size_t arrlen, size_t offset);

@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 	const char *infile_name = argv[1];
 	const char *outfile_name = argv[2];
 
+
 	// Open input file
 	printf("Opening input file '%s'...\n", infile_name);
 	FILE *infile = fopen(infile_name, "rb"); // read, binary mode
@@ -96,6 +97,11 @@ int main(int argc, char *argv[]) {
 
 	// CSV file name
 	char *csvfile_name;
+
+	// Write MapWho array to CSV file
+	asprintf(&csvfile_name, "%s_mapwho.csv", infile_name);
+	write_mapwho_to_csv(csvfile_name, &gamedata.MapWho, 128, 128);
+	free(csvfile_name);
 
 	// Write People array to CSV file
 	asprintf(&csvfile_name, "%s_people.csv", infile_name);
@@ -176,7 +182,7 @@ int main(int argc, char *argv[]) {
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     PersonCount");        offset += sizeof(gamedata.PersonCount);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Timer");              offset += sizeof(gamedata.Timer);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "MapWho       MapWho");             offset += sizeof(gamedata.MapWho);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Unknown_1");          offset += sizeof(gamedata.Unknown_1);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Unknown");            offset += sizeof(gamedata.Unknown);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Person       People[256]");        offset += sizeof(gamedata.People);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Vehicle      Vehicles[64]");       offset += sizeof(gamedata.Vehicles);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Object       Objects[400]");       offset += sizeof(gamedata.Objects);
@@ -191,14 +197,14 @@ int main(int argc, char *argv[]) {
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryx");        offset += sizeof(gamedata.HiBoundaryx);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryy");        offset += sizeof(gamedata.HiBoundaryy);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Objective    Objectives[8]");      offset += sizeof(gamedata.Objectives);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_2");          offset += sizeof(gamedata.Unknown_2);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPCount");            offset += sizeof(gamedata.CPCount);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPTeamSize");         offset += sizeof(gamedata.CPTeamSize);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_3");          offset += sizeof(gamedata.Unknown_3);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPProcInt");          offset += sizeof(gamedata.CPProcInt);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPLvlInit");          offset += sizeof(gamedata.CPLvlInit);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_4");          offset += sizeof(gamedata.Unknown_4);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_5");          offset += sizeof(gamedata.Unknown_5);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_6");          offset += sizeof(gamedata.Unknown_6);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      Unknown_7");          offset += sizeof(gamedata.Unknown_7);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPIsBombTeam");       offset += sizeof(gamedata.CPIsBombTeam);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPIsPersTeam");       offset += sizeof(gamedata.CPIsPersTeam);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPFlags");            offset += sizeof(gamedata.CPFlags);
+	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPWeapon");           offset += sizeof(gamedata.CPWeapon);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "CPObjective  CPObjectives[128]");  offset += sizeof(gamedata.CPObjectives);
 	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "[ End of struct ]");
 	printf("\n");

@@ -7,15 +7,15 @@ typedef struct  {                      // Map struct (128*128 tile map of refere
 } MapWho;                              // 32768 bytes
 
 
+#pragma pack(push,1)
 typedef struct {                       // Person struct (item of People array) | 92 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
 	uint16_t  Ypos;
 	uint16_t  Zpos;
-	uint8_t   Status;
-	uint8_t   Affect;
-	uint8_t   Unknown[2];
+	uint16_t  Status;
+	uint16_t  Affect;
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -26,9 +26,9 @@ typedef struct {                       // Person struct (item of People array) |
 	uint8_t   Angle;
 	uint8_t   ZAngle;                  // Until here same for: Person, Vehicle, Object, Weapon, Effect
 
-	uint8_t   Unique;                  // Unique stuff starts here (no pun intended)
+	uint8_t   Unique;                  // Might be uint16_t (not sure yet)
 
-	uint8_t   Hugdistance1;
+	uint8_t   Hugdistance1;            // Unique stuff starts here (no pun intended)
 	uint16_t  Hugdistance2;
 
 	uint16_t  Persuaded;
@@ -84,17 +84,18 @@ typedef struct {                       // Person struct (item of People array) |
 	uint8_t   HugStartAngle;
 	uint8_t   HitAngle;
 } Person;
+#pragma pack(pop)
 
 
+#pragma pack(push,1)
 typedef struct {                       // Vehicle struct (item of Vehicles array) | 42 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
 	uint16_t  Ypos;
 	uint16_t  Zpos;
-	uint8_t   Status;
-	uint8_t   Affect;
-	uint8_t   Unknown[2];
+	uint16_t  Status;
+	uint16_t  Affect;
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -114,17 +115,18 @@ typedef struct {                       // Vehicle struct (item of Vehicles array
 	uint8_t   MaxSpeed;
 	uint8_t   TravelAngle;
 } Vehicle;
+#pragma pack(pop)
 
 
+#pragma pack(push,1)
 typedef struct {                       // Object struct (item of Objects array) | 28 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
 	uint16_t  Ypos;
 	uint16_t  Zpos;
-	uint8_t   Status;
-	uint8_t   Affect;
-	uint8_t   Unknown1[2];
+	uint16_t  Status;
+	uint16_t  Affect;
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -135,19 +137,20 @@ typedef struct {                       // Object struct (item of Objects array) 
 	uint8_t   Angle;
 	uint8_t   ZAngle;                  // Same as Person until here
 
-	uint8_t   Unknown2[2];
+	uint8_t   Unknown[2];
 } Object;
+#pragma pack(pop)
 
 
+#pragma pack(push,1)
 typedef struct {                       // Weapon struct (item of Weapons array) | 36 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
 	uint16_t  Ypos;
 	uint16_t  Zpos;
-	uint8_t   Status;
-	uint8_t   Affect;
-	uint8_t   Unknown[2];
+	uint16_t  Status;
+	uint16_t  Affect;
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -161,19 +164,20 @@ typedef struct {                       // Weapon struct (item of Weapons array) 
 	uint16_t  ChildWeapon;             // Unique stuff starts here; from RGAME.C (unverified)
 	uint16_t  ParentWeapon;
 	uint16_t  WhoOwnsWeapon;
-	uint8_t   RepairCount;
+	uint16_t  RepairCount;
 } Weapon;
+#pragma pack(pop)
 
 
+#pragma pack(push,1)
 typedef struct {                       // Effect struct (item of Effects array) | 30 bytes
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
 	uint16_t  Ypos;
 	uint16_t  Zpos;
-	uint8_t   Status;
-	uint8_t   Affect;
-	uint8_t   Unknown[2];
+	uint16_t  Status;
+	uint16_t  Affect;
 	uint16_t  BaseFrame;
 	uint16_t  Frame;
 	uint16_t  OldFrame;
@@ -186,6 +190,7 @@ typedef struct {                       // Effect struct (item of Effects array) 
 
 	uint16_t  Owner;                   // From FreeSynd leveldata.h (unverified)
 } Effect;
+#pragma pack(pop)
 
 
 typedef struct {                       // Command struct (item of Commands array) | 8 bytes
@@ -212,6 +217,7 @@ typedef struct {                       // World struct (item of Worlds array) | 
 	uint8_t   Crime;
 	uint8_t   Gravity;
 	uint8_t   Density;
+	uint8_t   Unknown;
 } World;
 
 
@@ -257,7 +263,7 @@ typedef struct {                                     // Game data struct (covers
 	/*      2 */  uint16_t     PersonCount;          // Not sure!
 	/*      4 */  uint16_t     Timer;
 	/*      6 */  MapWho       MapWho;
-	/*  32774 */  uint16_t     Unknown_1;            // What is this? -> likely SSHeader[0]/SSHeader[1]
+	/*  32774 */  uint16_t     Unknown;              // What is this? -> likely SSHeader[0]/SSHeader[1]
 	/*  32776 */  Person       People[256];
 	/*  56328 */  Vehicle      Vehicles[64];
 	/*  59016 */  Object       Objects[400];
@@ -272,14 +278,14 @@ typedef struct {                                     // Game data struct (covers
 	/* 113966 */  uint16_t     HiBoundaryx;          // Former member of struct MapInfos
 	/* 113968 */  uint16_t     HiBoundaryy;          // Former member of struct MapInfos
 	/* 113970 */  Objective    Objectives[8];
-	/* 114082 */  uint8_t      Unknown_2;            // What is this?
+	/* 114082 */  uint8_t      CPCount;              // All of these until CPObjectives are not entirely sure yet
 	/* 114083 */  uint8_t      CPTeamSize;
-	/* 114084 */  uint8_t      Unknown_3;            // What is this?
+	/* 114084 */  uint8_t      CPProcInt;
 	/* 114085 */  uint8_t      CPLvlInit;
-	/* 114086 */  uint8_t      Unknown_4;            // What is this?
-	/* 114087 */  uint8_t      Unknown_5;            // What is this?
-	/* 114088 */  uint8_t      Unknown_6;            // What is this?
-	/* 114089 */  uint8_t      Unknown_7;            // What is this?
+	/* 114086 */  uint8_t      CPIsBombTeam;
+	/* 114087 */  uint8_t      CPIsPersTeam;
+	/* 114088 */  uint8_t      CPFlags;
+	/* 114089 */  uint8_t      CPWeapon;
 	/* 114090 */  CPObjective  CPObjectives[128];
 } GameData;
 

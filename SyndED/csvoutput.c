@@ -8,6 +8,41 @@
 
 #define OFFSET_GLOBAL_TO_RELATIVE(ofs) ofs - 32774
 
+int write_mapwho_to_csv(const char *file_name, MapWho *mapwho, size_t row_count, size_t col_count) {
+
+	// Create CSV file
+	printf("Creating CSV file '%s'...\n", file_name);
+	FILE *file = fopen(file_name, "wt");
+	if (!file) {
+		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
+		return 1;
+	}
+
+	// Write contents to CSV file
+	printf("Writing contents to CSV file '%s'...\n", file_name);
+	for (size_t col = 0; col < col_count; col++) { // Header with column index (first column left empty)
+		fprintf(file, ",%zu", col);
+	}
+	fprintf(file, "\n");
+	for (size_t row = 0; row < row_count; row++) {
+		fprintf(file, "%zu", row);                 // Row index in first column
+		for (size_t col = 0; col < col_count; col++) {
+			fprintf(file, ",%u", mapwho->ObjOfs[(row * col_count) + col]);
+		}
+		fprintf(file, "\n");
+	}
+
+	// Close CSV file
+	printf("Closing CSV file '%s'...\n", file_name);
+	if (fclose(file) != 0) {
+		fprintf(stderr, "Failed to close CSV file '%s': %s\n", file_name, strerror(errno));
+		return 1;
+	}
+
+	// Success
+	return 0;
+}
+
 int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, size_t offset_global) {
 
 	// Create CSV file
@@ -20,9 +55,9 @@ int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, s
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown[0],Unknown[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unique,Hugdistance1,Hugdistance2,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,Count,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,NewState,HugChangeDir,HugStartAngle,HitAngle\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unique,Hugdistance1,Hugdistance2,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,Count,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,NewState,HugChangeDir,HugStartAngle,HitAngle\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				people[i].Child,
@@ -32,8 +67,6 @@ int write_people_to_csv(const char *file_name, Person people[], size_t arrlen, s
 				people[i].Zpos,
 				people[i].Status,
 				people[i].Affect,
-				people[i].Unknown[0],
-				people[i].Unknown[1],
 				people[i].BaseFrame,
 				people[i].Frame,
 				people[i].OldFrame,
@@ -114,9 +147,9 @@ int write_vehicles_to_csv(const char *file_name, Vehicle vehicles[], size_t arrl
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown[0],Unknown[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				vehicles[i].Child,
@@ -126,8 +159,6 @@ int write_vehicles_to_csv(const char *file_name, Vehicle vehicles[], size_t arrl
 				vehicles[i].Zpos,
 				vehicles[i].Status,
 				vehicles[i].Affect,
-				vehicles[i].Unknown[0],
-				vehicles[i].Unknown[1],
 				vehicles[i].BaseFrame,
 				vehicles[i].Frame,
 				vehicles[i].OldFrame,
@@ -172,9 +203,9 @@ int write_objects_to_csv(const char *file_name, Object objects[], size_t arrlen,
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown1[0],Unknown1[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unknown2[0],Unknown2[1]\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Unknown[0],Unknown[1]\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				objects[i].Child,
@@ -184,8 +215,6 @@ int write_objects_to_csv(const char *file_name, Object objects[], size_t arrlen,
 				objects[i].Zpos,
 				objects[i].Status,
 				objects[i].Affect,
-				objects[i].Unknown1[0],
-				objects[i].Unknown1[1],
 				objects[i].BaseFrame,
 				objects[i].Frame,
 				objects[i].OldFrame,
@@ -195,8 +224,8 @@ int write_objects_to_csv(const char *file_name, Object objects[], size_t arrlen,
 				objects[i].State,
 				objects[i].Angle,
 				objects[i].ZAngle,
-				objects[i].Unknown2[0],
-				objects[i].Unknown2[1]
+				objects[i].Unknown[0],
+				objects[i].Unknown[1]
 		);
 		offset_global += sizeof(objects[i]);
 	}
@@ -224,9 +253,9 @@ int write_weapons_to_csv(const char *file_name, Weapon weapons[], size_t arrlen,
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown[0],Unknown[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				weapons[i].Child,
@@ -236,8 +265,6 @@ int write_weapons_to_csv(const char *file_name, Weapon weapons[], size_t arrlen,
 				weapons[i].Zpos,
 				weapons[i].Status,
 				weapons[i].Affect,
-				weapons[i].Unknown[0],
-				weapons[i].Unknown[1],
 				weapons[i].BaseFrame,
 				weapons[i].Frame,
 				weapons[i].OldFrame,
@@ -278,9 +305,9 @@ int write_effects_to_csv(const char *file_name, Effect effects[], size_t arrlen,
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,Unknown[0],Unknown[1],BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Owner\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Status,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,State,Angle,ZAngle,Owner\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				effects[i].Child,
@@ -290,8 +317,6 @@ int write_effects_to_csv(const char *file_name, Effect effects[], size_t arrlen,
 				effects[i].Zpos,
 				effects[i].Status,
 				effects[i].Affect,
-				effects[i].Unknown[0],
-				effects[i].Unknown[1],
 				effects[i].BaseFrame,
 				effects[i].Frame,
 				effects[i].OldFrame,
@@ -367,9 +392,9 @@ int write_worlds_to_csv(const char *file_name, World worlds[], size_t arrlen, si
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,WindXSpeed,WindYSpeed,Population,Temperature,WindSpeed,WindAngle,Industry,Crime,Gravity,Density\n");
+	fprintf(file, "GloOfs,RelOfs,WindXSpeed,WindYSpeed,Population,Temperature,WindSpeed,WindAngle,Industry,Crime,Gravity,Density,Unknown\n");
 	for (size_t i = 0; i < arrlen; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
+		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 				offset_global,
 				OFFSET_GLOBAL_TO_RELATIVE(offset_global),
 				worlds[i].WindXSpeed,
@@ -381,7 +406,8 @@ int write_worlds_to_csv(const char *file_name, World worlds[], size_t arrlen, si
 				worlds[i].Industry,
 				worlds[i].Crime,
 				worlds[i].Gravity,
-				worlds[i].Density
+				worlds[i].Density,
+				worlds[i].Unknown
 		);
 		offset_global += sizeof(worlds[i]);
 	}
@@ -489,25 +515,25 @@ int write_structless_to_csv(const char *file_name, GameData *gamedata) {
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Seed,PersonCount,Timer,Unknown_1,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,Unknown_2,CPTeamSize,Unknown_3,CPLvlInit,Unknown_4,Unknown_5,Unknown_6,Unknown_7\n");
+	fprintf(file, "Seed,PersonCount,Timer,Unknown,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon\n");
 	fprintf(file, "%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
 			gamedata->Seed,
 			gamedata->PersonCount,
 			gamedata->Timer,
-			gamedata->Unknown_1,
+			gamedata->Unknown,
 			gamedata->MapNumber,
 			gamedata->LoBoundaryx,
 			gamedata->LoBoundaryy,
 			gamedata->HiBoundaryx,
 			gamedata->HiBoundaryy,
-			gamedata->Unknown_2,
+			gamedata->CPCount,
 			gamedata->CPTeamSize,
-			gamedata->Unknown_3,
+			gamedata->CPProcInt,
 			gamedata->CPLvlInit,
-			gamedata->Unknown_4,
-			gamedata->Unknown_5,
-			gamedata->Unknown_6,
-			gamedata->Unknown_7
+			gamedata->CPIsBombTeam,
+			gamedata->CPIsPersTeam,
+			gamedata->CPFlags,
+			gamedata->CPWeapon
 	);
 
 	// Close CSV file
