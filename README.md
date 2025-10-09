@@ -1,3 +1,3 @@
 # Synd-ED
 
-Game editor (hopefully).
+Syndicate game editor.
