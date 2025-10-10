@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
-		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = 1537; person.Life = 8;
+		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
 		person.State = person.NewState = 0;person.Angle = 0; person.ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
-		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = 1537; person.Life = 8;
+		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
 		person.State = person.NewState = 0;person.Angle = 0; person.ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
-		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = 1537; person.Life = 8;
+		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
 		person.State = person.NewState = 0;person.Angle = 0; person.ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
