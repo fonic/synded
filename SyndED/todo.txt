@@ -3,18 +3,16 @@
 - IN PROGRESS                                                                  -
 --------------------------------------------------------------------------------
 
-- Nothing atm
+- Translate known values into human-readable strings for CSV output
+  (e.g. Person.Unique, Person.Status, Weapon.State, etc.)
 
 
 --------------------------------------------------------------------------------
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
-- Translate known values into human-readable strings (e.g. Person.Unique)
-  -> see Moburma's script (syndicatereader.ps1)
-
 - Further refine game data structs
-  -> ONGOING, will take time + input from Mefistotelis
+  -> ONGOING, will take some time + input from Mefistotelis
 
 - Implement basic user menu for viewing/editing:
   1 - Print People
@@ -66,7 +64,7 @@
 
 - Move structs to separate header file 'gamedata.h'
 
-- Create base structure
+- Create base structure as a starting point
 
 
 --------------------------------------------------------------------------------
@@ -77,5 +75,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/09/25                                                    -
+- Date: 10/07/25 - 10/10/25                                                    -
 --------------------------------------------------------------------------------
