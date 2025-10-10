@@ -1,4 +1,4 @@
-GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,XTile,YTile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount
+GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount
 71016,38242,5982,38278,12867,13323,1408,50,52,5,UNDEFINED,0,0,2259,369,1,0,4,TM_WEAPON,3,WS_GAUSS_GUN,173,0,38278,5890,5890,0
 71052,38278,38242,38314,12867,13323,1408,50,52,5,UNDEFINED,0,0,2258,369,1,0,4,TM_WEAPON,3,WS_GAUSS_GUN,173,0,38314,38242,5890,0
 71088,38314,38278,38350,12867,13323,1408,50,52,5,UNDEFINED,0,0,2259,369,1,0,4,TM_WEAPON,3,WS_GAUSS_GUN,173,0,0,38278,5890,0

@@ -51,19 +51,51 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 
 
-	// Edit/modify game data (example): add more people
-	printf("Modifying game data... (disabled, see sources)\n");
-	/*Person person = gamedata.People[people_count-1];
-	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 2;
-	gamedata.People[people_count] = person;
-	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 8;
-	gamedata.People[people_count+1] = person;
-	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 1;
-	gamedata.People[people_count+2] = person;
-	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 1;
-	gamedata.People[people_count+3] = person;
-	person.Parent = 0; person.Xpos += 100; person.Ypos += 100; person.Unique = 1;
-	gamedata.People[people_count+4] = person;*/
+	// Edit/modify example: make GAME01.DAT more interesting:
+	if (strstr(infile_name, "GAME01.DAT") != NULL) {
+		printf("Modifying GAME01.DAT...\n");
+		Vehicle vehicle = gamedata.Vehicles[0]; // existing Vehicle
+		Person person = gamedata.People[9];     // existing Guard
+		Weapon weapon = gamedata.Weapons[0];    // existing Uzi (belongs to last guard at road)
+
+		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;
+
+		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
+		gamedata.Weapons[weapon_slot] = weapon;
+		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = 1537; person.Life = 8;
+		person.State = person.NewState = 0;person.Angle = 0; person.ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
+		gamedata.People[person_slot] = person;
+		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
+		weapon_slot++; person_slot++;
+
+		vehicle.Xpos -= 500;
+		gamedata.Vehicles[vehicle_slot] = vehicle;
+		gamedata.MapWho.ObjOfs[(vehicle.Ypos >> 8) * 128 + (vehicle.Xpos >> 8)] = 23554 + sizeof(vehicle) * vehicle_slot;
+		vehicle_slot++;
+
+		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
+		gamedata.Weapons[weapon_slot] = weapon;
+		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = 1537; person.Life = 8;
+		person.State = person.NewState = 0;person.Angle = 0; person.ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
+		gamedata.People[person_slot] = person;
+		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
+		weapon_slot++; person_slot++;
+
+		vehicle.Xpos -= 500;
+		gamedata.Vehicles[vehicle_slot] = vehicle;
+		gamedata.MapWho.ObjOfs[(vehicle.Ypos >> 8) * 128 + (vehicle.Xpos >> 8)] = 23554 + sizeof(vehicle)*vehicle_slot;
+		vehicle_slot++;
+
+		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
+		gamedata.Weapons[weapon_slot] = weapon;
+		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = 1537; person.Life = 8;
+		person.State = person.NewState = 0;person.Angle = 0; person.ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
+		gamedata.People[person_slot] = person;
+		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
+		weapon_slot++; person_slot++;
+	} else {
+		printf("Not modifying game data (see sources).\n");
+	}
 	printf("\n");
 
 

@@ -1,4 +1,4 @@
-GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,XTile,YTile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,ZAngle,Unknown[0],Unknown[1]
+GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,ZAngle,Unknown[0],Unknown[1]
 59016,26242,0,0,18900,13436,256,73,52,4,TS_INMAPWHO,0,1077,4718,1078,40,0,5,TM_OBJECT,12,64,0,0,0
 59046,26272,0,0,15460,12524,256,60,48,4,TS_INMAPWHO,0,1101,4746,1101,40,0,5,TM_OBJECT,12,128,0,0,0
 59076,26302,0,0,18792,8664,256,73,33,4,TS_INMAPWHO,0,1077,4707,1077,50,0,5,TM_OBJECT,12,0,0,0,0

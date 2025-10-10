@@ -1,4 +1,4 @@
-GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,XTile,YTile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount
+GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount
 71016,38242,0,28492,2688,11104,256,10,43,4,TS_INMAPWHO,0,0,2026,372,1599,0,4,TM_WEAPON,6,WS_MINIGUN,0,0,0,0,0,0
 71052,38278,1474,0,16267,10991,896,63,42,5,UNDEFINED,0,0,2263,370,15,0,4,TM_WEAPON,4,WS_SHOTGUN,63,0,0,1474,1474,0
 71088,38314,1566,0,7009,8490,256,27,33,5,UNDEFINED,0,0,2263,370,15,0,4,TM_WEAPON,4,WS_SHOTGUN,123,0,0,1566,1566,0

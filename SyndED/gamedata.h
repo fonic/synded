@@ -1,13 +1,10 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
-#define TILE_COUNT_X 128
-#define TILE_COUNT_Y 128
 
 typedef struct  {                      // Map struct (32768 bytes)
-	uint16_t  ObjOfs[TILE_COUNT_Y*TILE_COUNT_X];
-} MapWho;                              // 128 x 128 tile map of references to People, Vehicles, Objects,
-                                       // Weapon, Effects (i.e. things that can appear on map)
+	uint16_t  ObjOfs[128*128];         // 128 x 128 tile map of references to People, Vehicles, Objects,
+} MapWho;                              // Weapon, Effects (i.e. things that can appear on map)
 
 
 #pragma pack(push,1)

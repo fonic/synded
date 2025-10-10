@@ -1,4 +1,4 @@
-GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,XTile,YTile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle
+GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle
 56328,23554,0,0,3204,11340,256,12,44,4,TS_INMAPWHO,0,0,1685,450,30,0,2,TM_VEHICLE,13,128,0,0,0,0,0,0,0,100,0
 56370,23596,0,0,3296,6496,256,12,25,4,TS_INMAPWHO,0,0,1890,520,40,0,2,TM_VEHICLE,17,64,0,0,0,0,0,0,0,110,0
 56412,23638,0,0,24396,11252,256,95,43,4,TS_INMAPWHO,0,0,1685,450,30,0,2,TM_VEHICLE,13,128,0,0,0,0,0,0,0,100,0

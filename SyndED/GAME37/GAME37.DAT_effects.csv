@@ -1,4 +1,4 @@
-GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,XTile,YTile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,ZAngle,Owner
+GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,ZAngle,Owner
 89448,56674,0,0,0,0,0,0,0,0,TS_NONE,0,0,0,0,0,0,0,TM_NONE,0,0,0,0
 89478,56704,0,0,0,0,0,0,0,0,TS_NONE,0,0,0,0,0,0,0,TM_NONE,0,0,0,0
 89508,56734,0,0,0,0,0,0,0,0,TS_NONE,0,0,0,0,0,0,0,TM_NONE,0,0,0,0
