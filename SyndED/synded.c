@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 
 
-	// Edit/modify example: make GAME01.DAT more interesting:
+	// Edit/modify example: make GAME01.DAT and GAME10.DAT more interesting
 	if (strstr(infile_name, "GAME01.DAT") != NULL) {
 		printf("Modifying GAME01.DAT...\n");
 		Vehicle vehicle = gamedata.Vehicles[0]; // existing Vehicle

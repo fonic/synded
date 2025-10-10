@@ -3,6 +3,31 @@
 - IN PROGRESS                                                                  -
 --------------------------------------------------------------------------------
 
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- OPEN                                                                         -
+--------------------------------------------------------------------------------
+
+- Changes enums in 'gdenums.h' to typedefs, then change _to_str() functions
+  from '(const enum PersonState value)' to '(const PersonState value)'
+
+- Deconstruct struct MapWho into struct GameData:
+  /*      6 0x00006 */  MapWho       MapWho;
+  becomes:
+  /*      6 0x00006 */  uint16_t     MapWho[128*128];
+  -> There is no reason to have a struct with just a single member
+
+- Add defines for all currently hard-coded parameters in 'gamedata.h':
+  TILES_COUNT_X, TILES_COUNT_Y,
+  PEOPLE_COUNT,
+  VEHICLES_COUNT,
+  ...
+  PEOPLE_BASE_OFFSET,    -> calculate these, required for editing (e.g. when
+  VEHICLES_BASE_OFFSET,     adding a new person, vehicle, weapon, etc.)
+  ...
+
 - Add more enums for known values to 'gdenums.h':
 
   Angle (from FreeSynd):
@@ -16,13 +41,14 @@
   //from 0xD0 to 0xF0 : west-south = 7
   // surface is mapped not to 360 degrees/surface, but 256 degrees/surface
 
-
---------------------------------------------------------------------------------
-- OPEN                                                                         -
---------------------------------------------------------------------------------
+  -> Create enum with middle values (e.g. 0x30 to 0x50 -> 0x40 == east)
+  -> Create custom _to_str() function that interprets full ranges
 
 - Further refine game data structs
   -> ONGOING, will take some time + input from Mefistotelis
+
+- Test compiling on Windows
+  -> Do this from time to time to ensure changes don't break Windows support
 
 - Implement basic user menu for viewing/editing:
   1 - Print People
@@ -30,8 +56,8 @@
   3 - Print Objects
   4 - Print ...
   ...
-
   Choice >
+  -> Not in the near future, editing via code is perfectly fine for now
 
 
 --------------------------------------------------------------------------------
@@ -51,7 +77,7 @@
 - Add local offset to CSV output of Commands (to make reference via Command.Next
   visible/readable)
 
-- Revise comments in gamedata.h
+- Revise comments in 'gamedata.h'
 
 - Write MapWho struct to CSV file (128 columns, 128 rows)
 
