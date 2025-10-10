@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 		Person person = gamedata.People[9];     // existing Guard
 		Weapon weapon = gamedata.Weapons[0];    // existing Uzi (belongs to last guard at road)
 
-		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;
+		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;  // lots of free space
 
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
@@ -93,6 +93,27 @@ int main(int argc, char *argv[]) {
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho.ObjOfs[(person.Ypos >> 8) * 128 + (person.Xpos >> 8)] = 2 + sizeof(person) * person_slot;
 		weapon_slot++; person_slot++;
+	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {
+		printf("Modifying GAME10.DAT...\n");
+		Weapon weapon = gamedata.Weapons[1];  // existing Uzi
+		size_t weapon_slot = 30;              // lots of free space
+		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {
+			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // women get Uzis
+				gamedata.People[i].Unique = PU_GUARD;
+				gamedata.People[i].Life = 8;
+				gamedata.People[i].ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
+				weapon.State = WS_UZI;
+				weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(gamedata.People[0]) * i;
+				gamedata.Weapons[weapon_slot++] = weapon;
+			} else if (gamedata.People[i].BaseFrame == PB_MAN_SUIT || gamedata.People[i].BaseFrame == PB_MAN_JACKET) {  // men get Shotguns
+				gamedata.People[i].Unique = PU_GUARD;
+				gamedata.People[i].Life = 8;
+				gamedata.People[i].ChildWeapon = 38242 + sizeof(weapon) * weapon_slot;
+				weapon.State = WS_SHOTGUN;
+				weapon.ParentWeapon = weapon.WhoOwnsWeapon = 2 + sizeof(gamedata.People[0]) * i;
+				gamedata.Weapons[weapon_slot++] = weapon;
+			}
+		}
 	} else {
 		printf("Not modifying game data (see sources).\n");
 	}
