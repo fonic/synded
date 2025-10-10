@@ -5,6 +5,7 @@
 #include <errno.h>
 
 #include "gamedata.h"
+#include "gdenums.h"
 #include "csvoutput.h"
 
 

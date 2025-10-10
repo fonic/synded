@@ -3,7 +3,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "asprintf.h"
 #include "gamedata.h"
 #include "gdenums.h"
 

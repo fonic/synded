@@ -44,7 +44,7 @@ enum StructMember {
 	STRUCT_MEMBER(GENERATE_ENUM_LINES)
 };
 
-const char* struct_member_to_str(const enum StructMember value) {
+static const char* struct_member_to_str(const enum StructMember value) {
 	GENERATE_SWITCH_CASE(STRUCT_MEMBER)
 }
 #undef STRUCT_MEMBER
@@ -67,7 +67,7 @@ enum ThingStatus {
 	THING_STATUS(GENERATE_ENUM_LINES)
 };
 
-const char* thing_status_to_str(const enum ThingStatus value) {
+static const char* thing_status_to_str(const enum ThingStatus value) {
 	GENERATE_SWITCH_CASE(THING_STATUS)
 }
 #undef THING_STATUS
@@ -85,7 +85,7 @@ enum ThingModel {
 	THING_MODEL(GENERATE_ENUM_LINES)
 };
 
-const char* thing_model_to_str(const enum ThingModel value) {
+static const char* thing_model_to_str(const enum ThingModel value) {
 	GENERATE_SWITCH_CASE(THING_MODEL)
 }
 #undef THING_MODEL
@@ -113,7 +113,7 @@ enum PersonAffect {
 	PERSON_AFFECT(GENERATE_ENUM_LINES)
 };
 
-const char* person_affect_to_str(const enum PersonAffect value) {
+static const char* person_affect_to_str(const enum PersonAffect value) {
 	GENERATE_SWITCH_CASE(PERSON_AFFECT)
 }
 #undef PERSON_AFFECT
@@ -133,7 +133,7 @@ enum PersonBaseframe {
 	PERSON_BASEFRAME(GENERATE_ENUM_LINES)
 };
 
-const char* person_baseframe_to_str(const enum PersonBaseframe value) {
+static const char* person_baseframe_to_str(const enum PersonBaseframe value) {
 	GENERATE_SWITCH_CASE(PERSON_BASEFRAME)
 }
 #undef PERSON_BASEFRAME
@@ -191,7 +191,7 @@ enum PersonState {
 	PERSON_STATE(GENERATE_ENUM_LINES)
 };
 
-const char* person_state_to_str(const enum PersonState value) {
+static const char* person_state_to_str(const enum PersonState value) {
 	GENERATE_SWITCH_CASE(PERSON_STATE)
 }
 #undef PERSON_STATE
@@ -209,7 +209,7 @@ enum PersonUnique {
 	PERSON_UNIQUE(GENERATE_ENUM_LINES)
 };
 
-const char* person_unique_to_str(const enum PersonUnique value) {
+static const char* person_unique_to_str(const enum PersonUnique value) {
 	GENERATE_SWITCH_CASE(PERSON_UNIQUE)
 }
 #undef PERSON_UNIQUE
@@ -245,7 +245,7 @@ enum WeaponState {
 	WEAPON_STATE(GENERATE_ENUM_LINES)
 };
 
-const char* weapon_state_to_str(const enum WeaponState value) {
+static const char* weapon_state_to_str(const enum WeaponState value) {
 	GENERATE_SWITCH_CASE(WEAPON_STATE)
 }
 #undef WEAPON_STATE
@@ -274,7 +274,7 @@ enum CommandState {
 	COMMAND_STATE(GENERATE_ENUM_LINES)
 };
 
-const char* command_state_to_str(const enum CommandState value) {
+static const char* command_state_to_str(const enum CommandState value) {
 	GENERATE_SWITCH_CASE(COMMAND_STATE)
 }
 #undef COMMAND_STATE
