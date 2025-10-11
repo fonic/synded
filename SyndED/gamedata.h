@@ -2,6 +2,12 @@
 #define GAMEDATA_H
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Defines (Dimensions, Array Lengths, Offsets)                               *
+ *                                                                             *
+ ******************************************************************************/
+
 #define TILES_COUNT_X                     128
 #define TILES_COUNT_Y                     128
 
@@ -15,10 +21,10 @@
 #define OBJECTIVES_COUNT                    8
 #define CPOBJECTIVES_COUNT                128
 
-#define RELATIVE_OFFSET_BASE          0x08006     // Location of 'Unknown' member in GameData struct (right above
-                                                  // People array); relative offsets are relative to THIS global offset
+#define RELATIVE_OFFSET_BASE          0x08006    // Location of 'Unknown' member in GameData struct (right above
+                                                 // People array); relative offsets are relative to THIS global offset
 
-#define PEOPLE_GLOBAL_OFFSET          0x08008     // 0x00000 == start of GameData struct = start of GAMExx.DAT contents
+#define PEOPLE_GLOBAL_OFFSET          0x08008    // 0x00000 == start of GameData struct = start of GAMExx.DAT contents
 #define VEHICLES_GLOBAL_OFFSET        0x0dc08
 #define OBJECTS_GLOBAL_OFFSET         0x0e688
 #define WEAPONS_GLOBAL_OFFSET         0x11568
@@ -28,15 +34,22 @@
 #define OBJECTIVES_GLOBAL_OFFSET      0x1bd32
 #define CPOBJECTIVES_GLOBAL_OFFSET    0x1bdaa
 
-#define PEOPLE_RELATIVE_OFFSET        0x00002     // 0x00000 == location of 'Unknown' member in GameData struct (right
-#define VEHICLES_RELATIVE_OFFSET      0x05c02     // above People array); relative offsets are important as THESE are
-#define OBJECTS_RELATIVE_OFFSET       0x06682     // used within game data to reference other things, e.g. to associate
-#define WEAPONS_RELATIVE_OFFSET       0x09562     // a Weapon with a Person (via Person.ChildWeapon)
+#define PEOPLE_RELATIVE_OFFSET        0x00002    // 0x00000 == location of 'Unknown' member in GameData struct (right
+#define VEHICLES_RELATIVE_OFFSET      0x05c02    // above People array); relative offsets are important as THESE are
+#define OBJECTS_RELATIVE_OFFSET       0x06682    // used within game data to reference other things, e.g. to associate
+#define WEAPONS_RELATIVE_OFFSET       0x09562    // a Weapon with a Person (via Person.ChildWeapon)
 #define EFFECTS_RELATIVE_OFFSET       0x0dd62
 #define COMMANDS_RELATIVE_OFFSET      0x0fb62
 #define WORLDS_RELATIVE_OFFSET        0x13b62
 #define OBJECTIVES_RELATIVE_OFFSET    0x13d2c
 #define CPOBJECTIVES_RELATIVE_OFFSET  0x13da4
+
+
+/*******************************************************************************
+ *                                                                             *
+ *  Helper Macros                                                              *
+ *                                                                             *
+ ******************************************************************************/
 
 #define OFFSET_GLOBAL_TO_RELATIVE(offset_global) offset_global - RELATIVE_OFFSET_BASE        // Offset global to relative conversion
 #define OFFSET_RELATIVE_TO_GLOBAL(offset_relative) RELATIVE_OFFSET_BASE + offset_relative    // Offset relative to global conversion
@@ -44,14 +57,28 @@
 #define POSITION_TO_MAPWHO_OFFSET(xpos, ypos) (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)      // Position to offset within MapWho array conversion
 
 
-/*typedef struct  {                                     // Map struct (32768 bytes)
-	uint16_t  ObjOfs[TILES_COUNT_X * TILES_COUNT_Y];    // N x M tile map of references to People, Vehicles, Objects,
-} MapWho;*/                                             // -> struct currently not in use, integrated sole member
-                                                        //    into GameData struct
+/*******************************************************************************
+ *                                                                             *
+ *  MapWho Struct (32768 bytes)                                                *
+ *  N x M tile map of references (relative offsets) to People, Vehicles,       *
+ *  Objects, Weapons and Effects                                               *
+ *  (currently not in use, integrated members into GameData struct instead)    *
+ *                                                                             *
+ ******************************************************************************/
 
+/*typedef struct  {
+	uint16_t  ObjOfs[TILES_COUNT_X * TILES_COUNT_Y];
+
+
+/*******************************************************************************
+ *                                                                             *
+ *  Person Struct (92 bytes)                                                   *
+ *  Represents in-mission people (agents, civilians, police, guards, etc.)     *
+ *                                                                             *
+ ******************************************************************************/
 
 #pragma pack(push,1)
-typedef struct {                       // Person struct (92 bytes)
+typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -69,38 +96,28 @@ typedef struct {                       // Person struct (92 bytes)
 	uint8_t   Angle;
 	uint8_t   ZAngle;                  // Until here same for: Person, Vehicle, Object, Weapon, Effect
 
-	uint16_t  Unique;                  // Not sure yet about uint16_t (before, there was 'uint8_t HugDistance1' following)
-                                       // Attributes unique to Person
+	uint16_t  Unique;                  // Attributes unique to Person; not sure yet about uint16_t here (before, there was 'uint8_t HugDistance1' following)
 	uint16_t  HugDistance;
-
 	uint16_t  Persuaded;
-
 	uint16_t  ChildHeld;
 	uint16_t  ParentHeld;
-
 	uint16_t  Command;
 	uint16_t  StartCommand;
 	uint16_t  Target;
 	uint16_t  Data;
-
 	uint16_t  GotoX;
 	uint16_t  GotoY;
 	uint16_t  GotoZ;
-
 	uint16_t  LastXpos;
 	uint16_t  LastYpos;
 	uint16_t  HugGotoZ;
-
 	uint16_t  ChildWeapon;
 	uint16_t  Equipment;
-
 	uint16_t  ParentRank;
 	uint16_t  RankPosition;
 	uint16_t  Count;
-
 	uint16_t  WeaponHolding;
 	uint8_t   WeaponInUse;
-
 	uint8_t   Level1Base;
 	uint8_t   Level1Balance;
 	uint8_t   Level1True;
@@ -114,14 +131,11 @@ typedef struct {                       // Person struct (92 bytes)
 	uint8_t   Level3True;
 	uint8_t   Level3Fixed;
 	uint8_t   LevelRecovery;
-
 	uint8_t   Speed;
 	uint8_t   MaxSpeed;
 	uint8_t   BaseSpeed;
-
 	uint8_t   OldState;
 	uint8_t   NewState;
-
 	uint8_t   HugChangeDir;
 	uint8_t   HugStartAngle;
 	uint8_t   HitAngle;
@@ -129,8 +143,15 @@ typedef struct {                       // Person struct (92 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Vehicle Struct (42 bytes)                                                  *
+ *  Represents in-mission vehicles (black car, police car, ambulance, etc.)    *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // Vehicle struct (42 bytes)
+typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -160,8 +181,15 @@ typedef struct {                       // Vehicle struct (42 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Object Struct (30 bytes)                                                   *
+ *  Represents in-mission objects (doors, trash cans, trees, etc.)             *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // Object struct (30 bytes)
+typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -184,8 +212,16 @@ typedef struct {                       // Object struct (30 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Weapon Struct (36 bytes)                                                   *
+ *  Represents in-mission weapons (minigun, time bomb, etc.; both visible,     *
+ *  i.e. lying on the ground AND invisible, i.e. carried by a Person)          *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // Weapon struct (36 bytes)
+typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -211,8 +247,15 @@ typedef struct {                       // Weapon struct (36 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Effect Struct (30 bytes)                                                   *
+ *  Represents in-mission effects (fire, explosions, sounds, etc.)             *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // Effect struct (30 bytes)
+typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
 	uint16_t  Xpos;
@@ -235,23 +278,40 @@ typedef struct {                       // Effect struct (30 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Command Struct (8 bytes)                                                   *
+ *  Represents in-mission commands for NPCs (e.g. go to a vehicle, use that    *
+ *  vehicle to drive to a certain location, trigger mission failure when       *
+ *  location is reached in GAME01.DAT)                                         *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // Command struct (8 bytes)
+typedef struct {
 	uint16_t  Next;                    // From RGAME.C (unverified)
 	uint16_t  Data;
 	//uint16_t  GotoX;
 	//uint16_t  GotoY;
 	//uint16_t  GotoZ;
 	uint8_t   GotoX;                   // These seem to reference TILES (0-128), not POSITIONS (like in other
-	uint8_t   GotoY;                   // structs), according to FreeSynd leveldata.h
+	uint8_t   GotoY;                   // structs), according to FreeSynd leveldata.h (thus only uint8_t)
 	uint8_t   GotoZ;
 	uint8_t   State;
 } Command;
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  World Struct (14 bytes)                                                    *
+ *  Not entirely sure what this is used for (if at all; seems like this was    *
+ *  a planned feature that never got properly implemented)                     *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // World struct (14 bytes)
+typedef struct {
 	uint16_t  WindXSpeed;              // From RGAME.C (unverified); unsure about sizes / order
 	uint16_t  WindYSpeed;
 	uint16_t  Population;
@@ -267,19 +327,34 @@ typedef struct {                       // World struct (14 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  MapInfo Struct (10 bytes)                                                  *
+ *  (currently not in use, integrated members into GameData struct instead)    *
+ *                                                                             *
+ ******************************************************************************/
+
 /*#pragma pack(push,1)
-typedef struct {                       // MapInfo struct (10 bytes)
+typedef struct {
 	uint16_t  MapNumber;
 	uint16_t  LoBoundaryx;
 	uint16_t  LoBoundaryy;
 	uint16_t  HiBoundaryx;
-	uint16_t  HiBoundaryy;             // -> struct currently not in use, using separate members
-} MapInfo;                             //    instead (like in RGAME.C)
+	uint16_t  HiBoundaryy;
+} MapInfo;
 #pragma pack(pop)*/
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  Objective Struct (14 bytes)                                                *
+ *  Represents mission objectives the human player has to accomplish           *
+ *  (e.g. kill a person, use a car, drive car to a location to evacuate)       *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // Objective struct (14 bytes)
+typedef struct {
 	uint32_t  Status;                  // From RGAME.C (unverified); sizes from FreeSynd leveldata.h + Mefistotelis .xml
 	uint16_t  Objective;
 	uint16_t  Data;
@@ -290,8 +365,15 @@ typedef struct {                       // Objective struct (14 bytes)
 #pragma pack(pop)
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  CPInfo Struct (8 bytes)                                                    *
+ *  (currently not in use, integrated members into GameData struct instead)    *
+ *                                                                             *
+ ******************************************************************************/
+
 /*#pragma pack(push,1)
-typedef struct {                       // CPInfo struct (10 bytes)
+typedef struct {
 	uint8_t   CPCount;                 // All of these are not entirely sure yet!
 	uint8_t   CPTeamSize;
 	uint8_t   CPProcInt;
@@ -300,13 +382,20 @@ typedef struct {                       // CPInfo struct (10 bytes)
 	uint8_t   CPIsPersTeam;
 	uint8_t   CPFlags;
 	uint8_t   CPWeapon;
-	uint16_t  HiBoundaryy;             // -> struct currently not in use, using separate members
-} CPInfo;                              //    instead (like in RGAME.C)
+} CPInfo;
 #pragma pack(pop)*/
 
 
+/*******************************************************************************
+ *                                                                             *
+ *  CPObjective Struct (15 bytes)                                              *
+ *  Represents mission objectives the computer players have to accomplish      *
+ *  (largely unknown for now, likely similar to how Commands for NPCs work)    *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma pack(push,1)
-typedef struct {                       // CPObjective struct (15 bytes)
+typedef struct {
 	uint16_t  Child;                   // From RGAME.C (unverified); sizes from Mefistotelis .xml
 	uint16_t  Parent;
 	uint8_t   UseCount;
@@ -321,12 +410,41 @@ typedef struct {                       // CPObjective struct (15 bytes)
 #pragma pack(pop)
 
 
-typedef struct {                                                                 // Game data struct (116.010 bytes -> covers entirety of contents of GAMExx.DAT file)
+/*******************************************************************************
+ *                                                                             *
+ *  GameData Struct (116.010 byte)                                             *
+ *  Represents everything that appears in and controls a mission               *
+ *  (covers the entirety of contents of GAMExx.DAT files)                      *
+ *                                                                             *
+ ******************************************************************************/
+
+// Yet to be identified within GameData struct (from RGAME.C; commented out == identified):
+/*
+ * MapX
+ * MapY
+ * MoveActive
+ * ScreenMode
+ * Version
+ / /*Seed
+ //PersonCount
+ //Timer
+ Header[0]
+ Header[1]
+ //MapNumber
+ //LoBoundaryx
+ //LoBoundaryy
+ //HiBoundaryx
+ //HiBoundaryy
+ //CPLvlInit
+ StructEnd
+ */
+
+typedef struct {
 	/*      0 0x00000 */  uint16_t     Seed;
 	/*      2 0x00002 */  uint16_t     PersonCount;                              // Not sure!
 	/*      4 0x00004 */  uint16_t     Timer;
-	/*      6 0x00006 */  //MapWho       MapWho;                                 // Could use this struct instead of separate member below
-	/*      6 0x00006 */  //uint16_t     MapWho[TILES_COUNT_Y][TILES_COUNT_X];   // Would this make more sense / make things easier?
+	/*      6 0x00006 */  //MapWho     MapWho;                                   // Could use this struct instead of separate member below
+	/*      6 0x00006 */  //uint16_t   MapWho[TILES_COUNT_Y][TILES_COUNT_X];     // Would this make more sense / make things easier?
 	/*      6 0x00006 */  uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];
 	/*  32774 0x08006 */  uint16_t     Unknown;                                  // What is this? -> likely SSHeader[0]/SSHeader[1]
 	/*  32776 0x08008 */  Person       People[PEOPLE_COUNT];
@@ -336,14 +454,14 @@ typedef struct {                                                                
 	/*  89448 0x15d68 */  Effect       Effects[EFFECTS_COUNT];
 	/*  97128 0x17b68 */  Command      Commands[COMMANDS_COUNT];
 	/* 113512 0x1bb68 */  World        Worlds[WORLDS_COUNT];
-	/* 113960 0x1bd28 */  //MapInfo      MapInfo;                                // Could use this struct instead of separate members below (until Objectives)
+	/* 113960 0x1bd28 */  //MapInfo    MapInfo;                                  // Could use this struct instead of separate members below (until Objectives)
 	/* 113960 0x1bd28 */  uint16_t     MapNumber;
 	/* 113962 0x1bd2a */  uint16_t     LoBoundaryx;
 	/* 113964 0x1bd2c */  uint16_t     LoBoundaryy;
 	/* 113966 0x1bd2e */  uint16_t     HiBoundaryx;
 	/* 113968 0x1bd30 */  uint16_t     HiBoundaryy;
 	/* 113970 0x1bd32 */  Objective    Objectives[OBJECTIVES_COUNT];
-	/* 114082 0x1bda2 */  //CPInfo       CPInfo;                                 // Could use this struct instead of separate members below (until CPObjectives)
+	/* 114082 0x1bda2 */  //CPInfo     CPInfo;                                   // Could use this struct instead of separate members below (until CPObjectives)
 	/* 114082 0x1bda2 */  uint8_t      CPCount;                                  // All of these are not entirely sure yet!
 	/* 114083 0x1bda3 */  uint8_t      CPTeamSize;
 	/* 114084 0x1bda4 */  uint8_t      CPProcInt;
@@ -355,28 +473,6 @@ typedef struct {                                                                
 	/* 114090 0x1bdaa */  CPObjective  CPObjectives[CPOBJECTIVES_COUNT];
 	/* 116010 0x1c52a */  // [ End of struct ]
 } GameData;
-
-
-// Yet to be identified within GameData struct (from RGAME.C; commented out == identified):
-/*
-  MapX
-  MapY
-  MoveActive
-  ScreenMode
-  Version
-//Seed
-//PersonCount
-//Timer
-  Header[0]
-  Header[1]
-//MapNumber
-//LoBoundaryx
-//LoBoundaryy
-//HiBoundaryx
-//HiBoundaryy
-//CPLvlInit
-  StructEnd
-*/
 
 
 #endif // GAMEDATA_H

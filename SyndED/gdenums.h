@@ -52,7 +52,9 @@ static const char* struct_member_to_str(const StructMember value) {
 
 
 /*******************************************************************************
- *  Thing (i.e. universal for Person, Vehicle, Object, Weapon, Effect)         *
+ *                                                                             *
+ *  Thing (universal for Person, Vehicle, Object, Weapon, Effect)              *
+ *                                                                             *
  ******************************************************************************/
 
 #define THING_STATUS(GENERATOR_FUNC)     \
@@ -92,7 +94,9 @@ static const char* thing_model_to_str(const ThingModel value) {
 
 
 /*******************************************************************************
+ *                                                                             *
  *  Person                                                                     *
+ *                                                                             *
  ******************************************************************************/
 
 #define PERSON_AFFECT(GENERATOR_FUNC)           \
@@ -216,7 +220,9 @@ static const char* person_unique_to_str(const PersonUnique value) {
 
 
 /*******************************************************************************
+ *                                                                             *
  *  Vehicle                                                                    *
+ *                                                                             *
  ******************************************************************************/
 
 #define VEHICLE_STATE(GENERATOR_FUNC)              \
@@ -277,7 +283,9 @@ static const char* vehicle_state_to_str(const VehicleState value) {
 
 
 /*******************************************************************************
+ *                                                                             *
  *  Weapon                                                                     *
+ *                                                                             *
  ******************************************************************************/
 
 #define WEAPON_STATE(GENERATOR_FUNC)         \
@@ -313,7 +321,9 @@ static const char* weapon_state_to_str(const WeaponState value) {
 
 
 /*******************************************************************************
+ *                                                                             *
  *  Command                                                                    *
+ *                                                                             *
  ******************************************************************************/
 
 #define COMMAND_STATE(GENERATOR_FUNC)          \

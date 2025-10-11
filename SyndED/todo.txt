@@ -10,6 +10,10 @@
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
+- Investigate how to print proper errors for file operations like
+  'fread'; currently, reading an RNC encoded file results in:
+  Error reading input file 'GAME99/GAME99.DAT': Success
+
 - Instead of using FIXED values for OFFSET defines in 'gamedata.h', use macro
     #include <stddef.h>
     size_t offsetof(type, member)
@@ -33,6 +37,10 @@
      (for use in editing)
   -> Create custom _to_str() function that interprets full ranges
      (for use in CSV output)
+
+- Implement checks/handling for RNCed files (at the very least, print an
+  error message if RNC is detected and/or if an input file has the wrong
+  filesize)
 
 - Think about changing MapWho from:
      uint16_t MapWho[TILES_COUNT_X * TILES_COUNT_Y];
@@ -63,6 +71,9 @@
 --------------------------------------------------------------------------------
 - DONE                                                                         -
 --------------------------------------------------------------------------------
+
+- Use comment blocks from 'gdenums.s' for separation of structs in 'gamedata.h'
+  as well; add brief description to each struct regarding its use
 
 - Add defines for all currently hard-coded parameters in 'gamedata.h':
   TILES_COUNT_X
@@ -106,7 +117,8 @@
 - Add enum for Vehicle.State to 'gdenums.h' + integrate into CSV output
 
 - Changes enums in 'gdenums.h' to typedefs, then change _to_str() functions
-  from '(const enum PersonState value)' to '(const PersonState value)'
+  from '(const enum PersonState value)' to '(const PersonState value)' (enum
+  keyword no longer necessary when using typedefs)
 
 - Deconstruct struct MapWho into struct GameData:
   /*      6 0x00006 */  MapWho       MapWho;
