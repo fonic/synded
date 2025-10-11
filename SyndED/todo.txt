@@ -22,26 +22,9 @@
   to calculate these during compile time (macro yields global offsets, global
   offset - global offset of member 'Unknown' == relative offset)
 
-- Add more enums for known values to 'gdenums.h' + add to CSV output:
-
-  Angle (from FreeSynd):
-  from 0xF0 to 0x10 : south = 0
-  from 0x10 to 0x30 : south-east = 1
-  from 0x30 to 0x50 : east = 2
-  from 0x50 to 0x70 : east-north = 3
-  from 0x70 to 0x90 : north = 4
-  from 0x90 to 0xB0 : north-west = 5
-  from 0xB0 to 0xD0 : west = 6
-  from 0xD0 to 0xF0 : west-south = 7
-  (surface is mapped not to 360 degrees/surface, but 256 degrees/surface)
-
-  -> Create enum with middle values (e.g. 0x30 to 0x50 -> 0x40 == east)
-     (for use in editing)
-  -> Create custom _to_str() function that interprets full ranges
-     (for use in CSV output)
-
-- Implement handling of RNCed files (currently using simple file size check to
-  rule out RNCed files as valid input files)
+- Implement an algorithm for reconstructing MapWho to allow arbitrary placement
+  of added things
+  -> See function 'move_mapwho()' and similar in RGAME.C
 
 - Think about changing MapWho from:
      uint16_t MapWho[TILES_COUNT_X * TILES_COUNT_Y];
@@ -53,9 +36,10 @@
      first), so might not be desirable after all
   -> Investigate
 
-- Implement an algorithm for reconstructing MapWho to allow arbitrary placement
-  of added things
-  -> See function 'move_mapwho()' and similar in RGAME.C
+- Fix compiler warnings on Windows
+
+- Implement handling of RNCed files (currently using simple file size check to
+  rule out RNCed files as valid input files, thus low priority)
 
 - Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
   investigate the differences and check if other versions have discrepancies
@@ -80,6 +64,22 @@
 --------------------------------------------------------------------------------
 - DONE                                                                         -
 --------------------------------------------------------------------------------
+
+- Add enum + _to_str() function for Thing.Angle to 'gdenums.h' + integrate into
+  CSV output:
+
+  Angle ranges (from testing, as it appears on-screen):
+  0xF0 - 0x0F: South-West
+  0x10 - 0x2F: South
+  0x30 - 0x4F: South-East
+  0x50 - 0x6F: East
+  0x70 - 0x8F: North-East
+  0x90 - 0xAF: North
+  0xB0 - 0xCF: North-West
+  0xD0 - 0xEF: West
+
+-> Might get revised later if it should turn out that ACTUAL world orientation
+   (i.e. considering the isometric perspective) is better suited
 
 - Make compiler warning visible and fix as many as possible
 

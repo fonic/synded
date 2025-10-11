@@ -4,6 +4,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "asprintf.h"
 #include "gamedata.h"
 #include "gdenums.h"
 #include "csvoutput.h"
@@ -83,7 +84,7 @@ int main(int argc, char *argv[]) {
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
 		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_MAN_JACKET; person.Life = 8;
-		person.State = person.NewState = 0; person.Angle = 0; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
+		person.State = person.NewState = 0; person.Angle = TA_SOUTH; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(person.Xpos, person.Ypos)] = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 		weapon_slot++; person_slot++;
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
 		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_POLICE; person.Life = 8;
-		person.State = person.NewState = 0; person.Angle = 0; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
+		person.State = person.NewState = 0; person.Angle = TA_SOUTHWEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(person.Xpos, person.Ypos)] = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 		weapon_slot++; person_slot++;
@@ -107,7 +108,7 @@ int main(int argc, char *argv[]) {
 		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 		gamedata.Weapons[weapon_slot] = weapon;
 		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
-		person.State = person.NewState = 0; person.Angle = 0; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
+		person.State = person.NewState = 0; person.Angle = TA_WEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
 		gamedata.People[person_slot] = person;
 		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(person.Xpos, person.Ypos)] = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 		weapon_slot++; person_slot++;

@@ -93,6 +93,43 @@ static const char* thing_model_to_str(const ThingModel value) {
 #undef THING_MODEL
 
 
+#define THING_ANGLE(GENERATOR_FUNC)       \
+	GENERATOR_FUNC(TA_SOUTHWEST,  0x00)  \
+	GENERATOR_FUNC(TA_SOUTH,      0x20)  \
+	GENERATOR_FUNC(TA_SOUTHEAST,  0x40)  \
+	GENERATOR_FUNC(TA_EAST,       0x60)  \
+	GENERATOR_FUNC(TA_NORTHEAST,  0x80)  \
+	GENERATOR_FUNC(TA_NORTH,      0xA0)  \
+	GENERATOR_FUNC(TA_NORTHWEST,  0xC0)  \
+	GENERATOR_FUNC(TA_WEST,       0xE0)
+
+typedef enum {
+	THING_ANGLE(GENERATE_ENUM_LINES)
+} ThingAngle;
+
+static const char* thing_angle_to_str(const ThingAngle value) {
+	//GENERATE_SWITCH_CASE(THING_ANGLE)
+	if (value >= 0xF0 || value <= 0x0F)
+		return "TA_SOUTHWEST";
+	else if (value >= 0x10 && value <= 0x2F)
+		return "TA_SOUTH";
+	else if (value >= 0x30 && value <= 0x4F)
+		return "TA_SOUTHEAST";
+	else if (value >= 0x50 && value <= 0x6F)
+		return "TA_EAST";
+	else if (value >= 0x70 && value <= 0x8F)
+		return "TA_NORTHEAST";
+	else if (value >= 0x90 && value <= 0xAF)
+		return "TA_NORTH";
+	else if (value >= 0xB0 && value <= 0xCF)
+		return "TA_NORTHWEST";
+	//else if (value >= 0xD0 && value <= 0xEF)
+	else
+		return "TA_WEST";
+}
+#undef THING_ANGLE
+
+
 /*******************************************************************************
  *                                                                             *
  *  Person                                                                     *
