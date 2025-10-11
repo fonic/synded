@@ -1,3 +1,3 @@
 # Synd-ED
 
-Syndicate game editor.
+Syndicate reverse engineering effort - Game editor
