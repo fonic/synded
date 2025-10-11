@@ -2,9 +2,52 @@
 #define GAMEDATA_H
 
 
-typedef struct  {                      // Map struct (32768 bytes)
-	uint16_t  ObjOfs[128*128];         // 128 x 128 tile map of references to People, Vehicles, Objects,
-} MapWho;                              // Weapon, Effects (i.e. things that can appear on map)
+#define TILES_COUNT_X                     128
+#define TILES_COUNT_Y                     128
+
+#define PEOPLE_COUNT                      256
+#define VEHICLES_COUNT                     64
+#define OBJECTS_COUNT                     400
+#define WEAPONS_COUNT                     512
+#define EFFECTS_COUNT                     256
+#define COMMANDS_COUNT                   2048
+#define WORLDS_COUNT                       32
+#define OBJECTIVES_COUNT                    8
+#define CPOBJECTIVES_COUNT                128
+
+#define RELATIVE_OFFSET_BASE          0x08006     // Location of 'Unknown' member in GameData struct (right above
+                                                  // People array); relative offsets are relative to THIS global offset
+
+#define PEOPLE_GLOBAL_OFFSET          0x08008     // 0x00000 == start of GameData struct = start of GAMExx.DAT contents
+#define VEHICLES_GLOBAL_OFFSET        0x0dc08
+#define OBJECTS_GLOBAL_OFFSET         0x0e688
+#define WEAPONS_GLOBAL_OFFSET         0x11568
+#define EFFECTS_GLOBAL_OFFSET         0x15d68
+#define COMMANDS_GLOBAL_OFFSET        0x17b68
+#define WORLDS_GLOBAL_OFFSET          0x1bb68
+#define OBJECTIVES_GLOBAL_OFFSET      0x1bd32
+#define CPOBJECTIVES_GLOBAL_OFFSET    0x1bdaa
+
+#define PEOPLE_RELATIVE_OFFSET        0x00002     // 0x00000 == location of 'Unknown' member in GameData struct (right
+#define VEHICLES_RELATIVE_OFFSET      0x05c02     // above People array); relative offsets are important as THESE are
+#define OBJECTS_RELATIVE_OFFSET       0x06682     // used within game data to reference other things, e.g. to associate
+#define WEAPONS_RELATIVE_OFFSET       0x09562     // a Weapon with a Person (via Person.ChildWeapon)
+#define EFFECTS_RELATIVE_OFFSET       0x0dd62
+#define COMMANDS_RELATIVE_OFFSET      0x0fb62
+#define WORLDS_RELATIVE_OFFSET        0x13b62
+#define OBJECTIVES_RELATIVE_OFFSET    0x13d2c
+#define CPOBJECTIVES_RELATIVE_OFFSET  0x13da4
+
+#define OFFSET_GLOBAL_TO_RELATIVE(offset_global) offset_global - RELATIVE_OFFSET_BASE        // Offset global to relative conversion
+#define OFFSET_RELATIVE_TO_GLOBAL(offset_relative) RELATIVE_OFFSET_BASE + offset_relative    // Offset relative to global conversion
+
+#define POSITION_TO_MAPWHO_OFFSET(xpos, ypos) (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)      // Position to offset within MapWho array conversion
+
+
+/*typedef struct  {                                     // Map struct (32768 bytes)
+	uint16_t  ObjOfs[TILES_COUNT_X * TILES_COUNT_Y];    // N x M tile map of references to People, Vehicles, Objects,
+} MapWho;*/                                             // -> struct currently not in use, integrated sole member
+                                                        //    into GameData struct
 
 
 #pragma pack(push,1)
@@ -278,28 +321,30 @@ typedef struct {                       // CPObjective struct (15 bytes)
 #pragma pack(pop)
 
 
-typedef struct {                                             // Game data struct (116.010 bytes -> covers entirety of contents of GAMExx.DAT file)
+typedef struct {                                                                 // Game data struct (116.010 bytes -> covers entirety of contents of GAMExx.DAT file)
 	/*      0 0x00000 */  uint16_t     Seed;
-	/*      2 0x00002 */  uint16_t     PersonCount;          // Not sure!
+	/*      2 0x00002 */  uint16_t     PersonCount;                              // Not sure!
 	/*      4 0x00004 */  uint16_t     Timer;
-	/*      6 0x00006 */  MapWho       MapWho;
-	/*  32774 0x08006 */  uint16_t     Unknown;              // What is this? -> likely SSHeader[0]/SSHeader[1]
-	/*  32776 0x08008 */  Person       People[256];
-	/*  56328 0x0dc08 */  Vehicle      Vehicles[64];
-	/*  59016 0x0e688 */  Object       Objects[400];
-	/*  71016 0x11568 */  Weapon       Weapons[512];
-	/*  89448 0x15d68 */  Effect       Effects[256];
-	/*  97128 0x17b68 */  Command      Commands[2048];
-	/* 113512 0x1bb68 */  World        Worlds[32];
-	/* 113960 0x1bd28 */  //MapInfo      MapInfo;            // Could use this struct instead of separate members below (until Objectives)
+	/*      6 0x00006 */  //MapWho       MapWho;                                 // Could use this struct instead of separate member below
+	/*      6 0x00006 */  //uint16_t     MapWho[TILES_COUNT_Y][TILES_COUNT_X];   // Would this make more sense / make things easier?
+	/*      6 0x00006 */  uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];
+	/*  32774 0x08006 */  uint16_t     Unknown;                                  // What is this? -> likely SSHeader[0]/SSHeader[1]
+	/*  32776 0x08008 */  Person       People[PEOPLE_COUNT];
+	/*  56328 0x0dc08 */  Vehicle      Vehicles[VEHICLES_COUNT];
+	/*  59016 0x0e688 */  Object       Objects[OBJECTS_COUNT];
+	/*  71016 0x11568 */  Weapon       Weapons[WEAPONS_COUNT];
+	/*  89448 0x15d68 */  Effect       Effects[EFFECTS_COUNT];
+	/*  97128 0x17b68 */  Command      Commands[COMMANDS_COUNT];
+	/* 113512 0x1bb68 */  World        Worlds[WORLDS_COUNT];
+	/* 113960 0x1bd28 */  //MapInfo      MapInfo;                                // Could use this struct instead of separate members below (until Objectives)
 	/* 113960 0x1bd28 */  uint16_t     MapNumber;
 	/* 113962 0x1bd2a */  uint16_t     LoBoundaryx;
 	/* 113964 0x1bd2c */  uint16_t     LoBoundaryy;
 	/* 113966 0x1bd2e */  uint16_t     HiBoundaryx;
 	/* 113968 0x1bd30 */  uint16_t     HiBoundaryy;
-	/* 113970 0x1bd32 */  Objective    Objectives[8];
-	/* 114082 0x1bda2 */  //CPInfo       CPInfo;             // Could use this struct instead of separate members below (until CPObjectives)
-	/* 114082 0x1bda2 */  uint8_t      CPCount;              // All of these are not entirely sure yet!
+	/* 113970 0x1bd32 */  Objective    Objectives[OBJECTIVES_COUNT];
+	/* 114082 0x1bda2 */  //CPInfo       CPInfo;                                 // Could use this struct instead of separate members below (until CPObjectives)
+	/* 114082 0x1bda2 */  uint8_t      CPCount;                                  // All of these are not entirely sure yet!
 	/* 114083 0x1bda3 */  uint8_t      CPTeamSize;
 	/* 114084 0x1bda4 */  uint8_t      CPProcInt;
 	/* 114085 0x1bda5 */  uint8_t      CPLvlInit;
@@ -307,7 +352,7 @@ typedef struct {                                             // Game data struct
 	/* 114087 0x1bda7 */  uint8_t      CPIsPersTeam;
 	/* 114088 0x1bda8 */  uint8_t      CPFlags;
 	/* 114089 0x1bda9 */  uint8_t      CPWeapon;
-	/* 114090 0x1bdaa */  CPObjective  CPObjectives[128];
+	/* 114090 0x1bdaa */  CPObjective  CPObjectives[CPOBJECTIVES_COUNT];
 	/* 116010 0x1c52a */  // [ End of struct ]
 } GameData;
 

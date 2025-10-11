@@ -40,11 +40,11 @@
 	GENERATOR_FUNC(SM_SOMETHING, 0x04)  \
 	GENERATOR_FUNC(SM_SOMETHING, 0x10)
 
-enum StructMember {
+typedef enum {
 	STRUCT_MEMBER(GENERATE_ENUM_LINES)
-};
+} StructMember;
 
-static const char* struct_member_to_str(const enum StructMember value) {
+static const char* struct_member_to_str(const StructMember value) {
 	GENERATE_SWITCH_CASE(STRUCT_MEMBER)
 }
 #undef STRUCT_MEMBER
@@ -63,11 +63,11 @@ static const char* struct_member_to_str(const enum StructMember value) {
 	GENERATOR_FUNC(TS_UNKNOWN_8,  0x08)  \
 	GENERATOR_FUNC(TS_UNKNOWN_10, 0x10)
 
-enum ThingStatus {
+typedef enum {
 	THING_STATUS(GENERATE_ENUM_LINES)
-};
+} ThingStatus;
 
-static const char* thing_status_to_str(const enum ThingStatus value) {
+static const char* thing_status_to_str(const ThingStatus value) {
 	GENERATE_SWITCH_CASE(THING_STATUS)
 }
 #undef THING_STATUS
@@ -81,11 +81,11 @@ static const char* thing_status_to_str(const enum ThingStatus value) {
 	GENERATOR_FUNC(TM_WEAPON,   0x04)  \
 	GENERATOR_FUNC(TM_OBJECT,   0x05)
 
-enum ThingModel {
+typedef enum {
 	THING_MODEL(GENERATE_ENUM_LINES)
-};
+} ThingModel;
 
-static const char* thing_model_to_str(const enum ThingModel value) {
+static const char* thing_model_to_str(const ThingModel value) {
 	GENERATE_SWITCH_CASE(THING_MODEL)
 }
 #undef THING_MODEL
@@ -109,11 +109,11 @@ static const char* thing_model_to_str(const enum ThingModel value) {
 	GENERATOR_FUNC(PA_UNKNOWN_200,      0x200)  \
 	GENERATOR_FUNC(PA_HIT_BY_PERSUADER, 0x400)
 
-enum PersonAffect {
+typedef enum {
 	PERSON_AFFECT(GENERATE_ENUM_LINES)
-};
+} PersonAffect;
 
-static const char* person_affect_to_str(const enum PersonAffect value) {
+static const char* person_affect_to_str(const PersonAffect value) {
 	GENERATE_SWITCH_CASE(PERSON_AFFECT)
 }
 #undef PERSON_AFFECT
@@ -129,11 +129,11 @@ static const char* person_affect_to_str(const enum PersonAffect value) {
 	GENERATOR_FUNC(PB_SOLDIER,       1537)  \
 	GENERATOR_FUNC(PB_MAN_JACKET,    1744)
 
-enum PersonBaseframe {
+typedef enum {
 	PERSON_BASEFRAME(GENERATE_ENUM_LINES)
-};
+} PersonBaseframe;
 
-static const char* person_baseframe_to_str(const enum PersonBaseframe value) {
+static const char* person_baseframe_to_str(const PersonBaseframe value) {
 	GENERATE_SWITCH_CASE(PERSON_BASEFRAME)
 }
 #undef PERSON_BASEFRAME
@@ -187,11 +187,11 @@ static const char* person_baseframe_to_str(const enum PersonBaseframe value) {
 	GENERATOR_FUNC(PS_BEING_PERSUADED,    0x2C)  \
 	GENERATOR_FUNC(PS_TOTAL_STATES,       0x2D)
 
-enum PersonState {
+typedef enum {
 	PERSON_STATE(GENERATE_ENUM_LINES)
-};
+} PersonState;
 
-static const char* person_state_to_str(const enum PersonState value) {
+static const char* person_state_to_str(const PersonState value) {
 	GENERATE_SWITCH_CASE(PERSON_STATE)
 }
 #undef PERSON_STATE
@@ -205,14 +205,75 @@ static const char* person_state_to_str(const enum PersonState value) {
 	GENERATOR_FUNC(PU_GUARD,    0x08)  \
 	GENERATOR_FUNC(PU_CRIMINAL, 0x10)
 
-enum PersonUnique {
+typedef enum {
 	PERSON_UNIQUE(GENERATE_ENUM_LINES)
-};
+} PersonUnique;
 
-static const char* person_unique_to_str(const enum PersonUnique value) {
+static const char* person_unique_to_str(const PersonUnique value) {
 	GENERATE_SWITCH_CASE(PERSON_UNIQUE)
 }
 #undef PERSON_UNIQUE
+
+
+/*******************************************************************************
+ *  Vehicle                                                                    *
+ ******************************************************************************/
+
+#define VEHICLE_STATE(GENERATOR_FUNC)              \
+	GENERATOR_FUNC(VS_NONE,                  0x0)  \
+	GENERATOR_FUNC(VS_APC,                   0x1)  \
+	GENERATOR_FUNC(VS_APC_MOVING,            0x2)  \
+	GENERATOR_FUNC(VS_APC_ON_FIRE,           0x3)  \
+	GENERATOR_FUNC(VS_APC_DESTROYED,         0x4)  \
+	GENERATOR_FUNC(VS_TRAIN,                 0x5)  \
+	GENERATOR_FUNC(VS_TRAIN_MOVING,          0x6)  \
+	GENERATOR_FUNC(VS_TRAIN_ON_FIRE,         0x7)  \
+	GENERATOR_FUNC(VS_TRAIN_DESTROYED,       0x8)  \
+	GENERATOR_FUNC(VS_CARRIAGE,              0x9)  \
+	GENERATOR_FUNC(VS_CARRIAGE_MOVING,       0xA)  \
+	GENERATOR_FUNC(VS_CARRIAGE_ON_FIRE,      0xB)  \
+	GENERATOR_FUNC(VS_CARRIAGE_DESTROYED,    0xC)  \
+	GENERATOR_FUNC(VS_CIVILCAR,              0xD)  \
+	GENERATOR_FUNC(VS_CIVILCAR_MOVING,       0xE)  \
+	GENERATOR_FUNC(VS_CIVILCAR_ON_FIRE,      0xF)  \
+	GENERATOR_FUNC(VS_CIVILCAR_DESTROYED,   0x10)  \
+	GENERATOR_FUNC(VS_FIREENGINE,           0x11)  \
+	GENERATOR_FUNC(VS_FIREENGINE_MOVING,    0x12)  \
+	GENERATOR_FUNC(VS_FIREENGINE_ON_FIRE,   0x13)  \
+	GENERATOR_FUNC(VS_FIREENGINE_DESTROYED, 0x14)  \
+	GENERATOR_FUNC(VS_UNKNOWN_15,           0x15)  \
+	GENERATOR_FUNC(VS_UNKNOWN_16,           0x16)  \
+	GENERATOR_FUNC(VS_UNKNOWN_17,           0x17)  \
+	GENERATOR_FUNC(VS_UNKNOWN_18,           0x18)  \
+	GENERATOR_FUNC(VS_UNKNOWN_19,           0x19)  \
+	GENERATOR_FUNC(VS_UNKNOWN_1a,           0x1A)  \
+	GENERATOR_FUNC(VS_UNKNOWN_1b,           0x1B)  \
+	GENERATOR_FUNC(VS_INDUSTRIAL,           0x1C)  \
+	GENERATOR_FUNC(VS_INDUSTRIAL_MOVING,    0x1D)  \
+	GENERATOR_FUNC(VS_INDUSTRIAL_ON_FIRE,   0x1E)  \
+	GENERATOR_FUNC(VS_INDUSTRIAL_DESTROYED, 0x1F)  \
+	GENERATOR_FUNC(VS_UNKNOWN_20,           0x20)  \
+	GENERATOR_FUNC(VS_UNKNOWN_21,           0x21)  \
+	GENERATOR_FUNC(VS_UNKNOWN_22,           0x22)  \
+	GENERATOR_FUNC(VS_UNKNOWN_23,           0x23)  \
+	GENERATOR_FUNC(VS_POLICECAR,            0x24)  \
+	GENERATOR_FUNC(VS_POLICECAR_MOVING,     0x25)  \
+	GENERATOR_FUNC(VS_POLICECAR_ON_FIRE,    0x26)  \
+	GENERATOR_FUNC(VS_POLICECAR_DESTROYED,  0x27)  \
+	GENERATOR_FUNC(VS_AMBULANCE,            0x28)  \
+	GENERATOR_FUNC(VS_AMBULANCE_MOVING,     0x29)  \
+	GENERATOR_FUNC(VS_AMBULANCE_ON_FIRE,    0x2A)  \
+	GENERATOR_FUNC(VS_AMBULANCE_DESTROYED,  0x2B)  \
+	GENERATOR_FUNC(VS_STATES_COUNT,         0x2C)
+
+typedef enum {
+	VEHICLE_STATE(GENERATE_ENUM_LINES)
+} VehicleState;
+
+static const char* vehicle_state_to_str(const VehicleState value) {
+	GENERATE_SWITCH_CASE(VEHICLE_STATE)
+}
+#undef VEHICLE_STATE
 
 
 /*******************************************************************************
@@ -241,11 +302,11 @@ static const char* person_unique_to_str(const enum PersonUnique value) {
 	GENERATOR_FUNC(WS_UNUSED_18,      0x12)  \
 	GENERATOR_FUNC(WS_UNUSED_19,      0x13)
 
-enum WeaponState {
+typedef enum {
 	WEAPON_STATE(GENERATE_ENUM_LINES)
-};
+} WeaponState;
 
-static const char* weapon_state_to_str(const enum WeaponState value) {
+static const char* weapon_state_to_str(const WeaponState value) {
 	GENERATE_SWITCH_CASE(WEAPON_STATE)
 }
 #undef WEAPON_STATE
@@ -270,11 +331,11 @@ static const char* weapon_state_to_str(const enum WeaponState value) {
 	GENERATOR_FUNC(CS_COMPLETE_LEVEL,   0x0B)  \
 	GENERATOR_FUNC(CS_TOTAL_COMMANDS,   0x0C)
 
-enum CommandState {
+typedef enum {
 	COMMAND_STATE(GENERATE_ENUM_LINES)
-};
+} CommandState;
 
-static const char* command_state_to_str(const enum CommandState value) {
+static const char* command_state_to_str(const CommandState value) {
 	GENERATE_SWITCH_CASE(COMMAND_STATE)
 }
 #undef COMMAND_STATE

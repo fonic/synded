@@ -43,7 +43,6 @@ Writing contents to CSV file 'GAME10/GAME10.DAT_structless.csv'...
 Closing CSV file 'GAME10/GAME10.DAT_structless.csv'...
 
 Struct sizes:
-MapWho:      32768
 Person:      92
 Vehicle:     42
 Object:      30
@@ -59,21 +58,21 @@ GameData offsets:
 /*      0 0x00000 */  uint16_t     Seed
 /*      2 0x00002 */  uint16_t     PersonCount
 /*      4 0x00004 */  uint16_t     Timer
-/*      6 0x00006 */  MapWho       MapWho
+/*      6 0x00006 */  uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];
 /*  32774 0x08006 */  uint16_t     Unknown
-/*  32776 0x08008 */  Person       People[256]
-/*  56328 0x0dc08 */  Vehicle      Vehicles[64]
-/*  59016 0x0e688 */  Object       Objects[400]
-/*  71016 0x11568 */  Weapon       Weapons[512]
-/*  89448 0x15d68 */  Effect       Effects[256]
-/*  97128 0x17b68 */  Command      Commands[2048]
-/* 113512 0x1bb68 */  World        Worlds[32]
+/*  32776 0x08008 */  Person       People[PEOPLE_COUNT]
+/*  56328 0x0dc08 */  Vehicle      Vehicles[VEHICLES_COUNT]
+/*  59016 0x0e688 */  Object       Objects[OBJECTS_COUNT]
+/*  71016 0x11568 */  Weapon       Weapons[WEAPONS_COUNT]
+/*  89448 0x15d68 */  Effect       Effects[EFFECTS_COUNT]
+/*  97128 0x17b68 */  Command      Commands[COMMANDS_COUNT]
+/* 113512 0x1bb68 */  World        Worlds[WORLDS_COUNT]
 /* 113960 0x1bd28 */  uint16_t     MapNumber
 /* 113962 0x1bd2a */  uint16_t     LoBoundaryx
 /* 113964 0x1bd2c */  uint16_t     LoBoundaryy
 /* 113966 0x1bd2e */  uint16_t     HiBoundaryx
 /* 113968 0x1bd30 */  uint16_t     HiBoundaryy
-/* 113970 0x1bd32 */  Objective    Objectives[8]
+/* 113970 0x1bd32 */  Objective    Objectives[OBJECTIVES_COUNT]
 /* 114082 0x1bda2 */  uint8_t      CPCount
 /* 114083 0x1bda3 */  uint8_t      CPTeamSize
 /* 114084 0x1bda4 */  uint8_t      CPProcInt
@@ -82,6 +81,6 @@ GameData offsets:
 /* 114087 0x1bda7 */  uint8_t      CPIsPersTeam
 /* 114088 0x1bda8 */  uint8_t      CPFlags
 /* 114089 0x1bda9 */  uint8_t      CPWeapon
-/* 114090 0x1bdaa */  CPObjective  CPObjectives[128]
+/* 114090 0x1bdaa */  CPObjective  CPObjectives[CPOBJECTIVES_COUNT]
 /* 116010 0x1c52a */  [ End of struct ]
 
