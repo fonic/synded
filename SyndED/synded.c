@@ -8,7 +8,6 @@
 #include "gdenums.h"
 #include "csvoutput.h"
 
-
 int main(int argc, char *argv[]) {
 
 	// Game data struct
@@ -29,7 +28,28 @@ int main(int argc, char *argv[]) {
 	printf("Opening input file '%s'...\n", infile_name);
 	FILE *infile = fopen(infile_name, "rb"); // read, binary mode
 	if (!infile) {
-		fprintf(stderr, "Failed to open input file '%s': %s\n", infile_name, strerror(errno));
+		fprintf(stderr, "Error: failed to open input file '%s': %s\n", infile_name, strerror(errno));
+		return 1;
+	}
+
+	// Check input file size (to rule out incompatible input files, e.g. RNCed or Beta version)
+	// Should be the most portable approach (https://stackoverflow.com/a/238609/1976617)
+	printf("Checking size of file '%s'...\n", infile_name);
+	if (fseek(infile, 0, SEEK_END) != 0) {
+		fprintf(stderr, "Error: failed to seek to end of input file '%s': %s\n", infile_name, strerror(errno));
+		return 1;
+	}
+	long size = ftell(infile);
+	if (size == -1) {
+		fprintf(stderr, "Error: failed to determine size of input file '%s': %s\n", infile_name, strerror(errno));
+		return 1;
+	}
+	if (size != sizeof(GameData)) {
+		fprintf(stderr, "Error: incorrect size of input file '%s': got %ld bytes, expected %lu bytes\n", infile_name, size, sizeof(GameData));
+		return 1;
+	}
+	if (fseek(infile, 0, SEEK_SET) != 0) { // Important, need to seek back to start!
+		fprintf(stderr, "Error: failed to seek to start of input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
 
@@ -37,7 +57,7 @@ int main(int argc, char *argv[]) {
 	printf("Reading input file '%s'...\n", infile_name);
 	size_t read_count = fread(&gamedata, sizeof(GameData), 1, infile);
 	if (read_count != 1) {
-		fprintf(stderr, "Error reading input file '%s': %s\n", infile_name, strerror(errno));
+		fprintf(stderr, "Error: error reading input file '%s': %s\n", infile_name, strerror(errno));
 		fclose(infile);
 		return 1;
 	}
@@ -45,7 +65,7 @@ int main(int argc, char *argv[]) {
 	// Close input file
 	printf("Closing input file '%s'...\n", infile_name);
 	if (fclose(infile) != 0) {
-		fprintf(stderr, "Failed to close input file '%s': %s\n", infile_name, strerror(errno));
+		fprintf(stderr, "Error: failed to close input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
 	printf("\n");
@@ -122,7 +142,7 @@ int main(int argc, char *argv[]) {
 	printf("Opening output file '%s'...\n", outfile_name);
 	FILE *outfile = fopen(outfile_name, "wb"); // write, binary mode
 	if (!outfile) {
-		fprintf(stderr, "Failed to open output file '%s': %s\n", outfile_name, strerror(errno));
+		fprintf(stderr, "Error: failed to open output file '%s': %s\n", outfile_name, strerror(errno));
 		return 1;
 	}
 
@@ -130,7 +150,7 @@ int main(int argc, char *argv[]) {
 	printf("Writing output file '%s'...\n", outfile_name);
 	size_t write_count = fwrite(&gamedata, sizeof(GameData), 1, outfile);
 	if (write_count != 1) {
-		fprintf(stderr, "Error writing output file '%s': %s\n", outfile_name, strerror(errno));
+		fprintf(stderr, "Error: failed to write output file '%s': %s\n", outfile_name, strerror(errno));
 		fclose(outfile);
 		return 1;
 	}
@@ -138,7 +158,7 @@ int main(int argc, char *argv[]) {
 	// Close output file
 	printf("Closing output file '%s'...\n", outfile_name);
 	if (fclose(outfile) != 0) {
-		fprintf(stderr, "Failed to close output file '%s': %s\n", outfile_name, strerror(errno));
+		fprintf(stderr, "Error: failed to close output file '%s': %s\n", outfile_name, strerror(errno));
 		return 1;
 	}
 	printf("\n");
@@ -230,37 +250,37 @@ int main(int argc, char *argv[]) {
 	// Print offsets of GameData struct members
 	size_t offset = 0;
 	printf("GameData offsets:\n");
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Seed");                                    offset += sizeof(gamedata.Seed);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     PersonCount");                             offset += sizeof(gamedata.PersonCount);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Timer");                                   offset += sizeof(gamedata.Timer);
-	//printf("/* %6zu 0x%05x */  %s\n", offset, offset, "MapWho       MapWho");                                  offset += sizeof(gamedata.MapWho);
-	//printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     MapWho[TILES_COUNT_Y][TILES_COUNT_X];");   offset += sizeof(gamedata.MapWho);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];");  offset += sizeof(gamedata.MapWho);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     Unknown");                                 offset += sizeof(gamedata.Unknown);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Person       People[PEOPLE_COUNT]");                    offset += sizeof(gamedata.People);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Vehicle      Vehicles[VEHICLES_COUNT]");                offset += sizeof(gamedata.Vehicles);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Object       Objects[OBJECTS_COUNT]");                  offset += sizeof(gamedata.Objects);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Weapon       Weapons[WEAPONS_COUNT]");                  offset += sizeof(gamedata.Weapons);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Effect       Effects[EFFECTS_COUNT]");                  offset += sizeof(gamedata.Effects);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Command      Commands[COMMANDS_COUNT]");                offset += sizeof(gamedata.Commands);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "World        Worlds[WORLDS_COUNT]");                    offset += sizeof(gamedata.Worlds);
-	//printf("/* %6zu 0x%05x */  %s\n", offset, offset, "MapInfo      MapInfos");                                offset += sizeof(gamedata.MapInfos);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     MapNumber");                               offset += sizeof(gamedata.MapNumber);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     LoBoundaryx");                             offset += sizeof(gamedata.LoBoundaryx);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     LoBoundaryy");                             offset += sizeof(gamedata.LoBoundaryy);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryx");                             offset += sizeof(gamedata.HiBoundaryx);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint16_t     HiBoundaryy");                             offset += sizeof(gamedata.HiBoundaryy);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "Objective    Objectives[OBJECTIVES_COUNT]");            offset += sizeof(gamedata.Objectives);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPCount");                                 offset += sizeof(gamedata.CPCount);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPTeamSize");                              offset += sizeof(gamedata.CPTeamSize);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPProcInt");                               offset += sizeof(gamedata.CPProcInt);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPLvlInit");                               offset += sizeof(gamedata.CPLvlInit);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPIsBombTeam");                            offset += sizeof(gamedata.CPIsBombTeam);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPIsPersTeam");                            offset += sizeof(gamedata.CPIsPersTeam);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPFlags");                                 offset += sizeof(gamedata.CPFlags);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "uint8_t      CPWeapon");                                offset += sizeof(gamedata.CPWeapon);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "CPObjective  CPObjectives[CPOBJECTIVES_COUNT]");        offset += sizeof(gamedata.CPObjectives);
-	printf("/* %6zu 0x%05x */  %s\n", offset, offset, "[ End of struct ]");
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     Seed");                                    offset += sizeof(gamedata.Seed);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     PersonCount");                             offset += sizeof(gamedata.PersonCount);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     Timer");                                   offset += sizeof(gamedata.Timer);
+	//printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "MapWho       MapWho");                                  offset += sizeof(gamedata.MapWho);
+	//printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     MapWho[TILES_COUNT_Y][TILES_COUNT_X];");   offset += sizeof(gamedata.MapWho);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];");  offset += sizeof(gamedata.MapWho);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     Unknown");                                 offset += sizeof(gamedata.Unknown);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Person       People[PEOPLE_COUNT]");                    offset += sizeof(gamedata.People);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Vehicle      Vehicles[VEHICLES_COUNT]");                offset += sizeof(gamedata.Vehicles);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Object       Objects[OBJECTS_COUNT]");                  offset += sizeof(gamedata.Objects);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Weapon       Weapons[WEAPONS_COUNT]");                  offset += sizeof(gamedata.Weapons);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Effect       Effects[EFFECTS_COUNT]");                  offset += sizeof(gamedata.Effects);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Command      Commands[COMMANDS_COUNT]");                offset += sizeof(gamedata.Commands);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "World        Worlds[WORLDS_COUNT]");                    offset += sizeof(gamedata.Worlds);
+	//printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "MapInfo      MapInfos");                                offset += sizeof(gamedata.MapInfos);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     MapNumber");                               offset += sizeof(gamedata.MapNumber);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     LoBoundaryx");                             offset += sizeof(gamedata.LoBoundaryx);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     LoBoundaryy");                             offset += sizeof(gamedata.LoBoundaryy);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     HiBoundaryx");                             offset += sizeof(gamedata.HiBoundaryx);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     HiBoundaryy");                             offset += sizeof(gamedata.HiBoundaryy);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Objective    Objectives[OBJECTIVES_COUNT]");            offset += sizeof(gamedata.Objectives);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPCount");                                 offset += sizeof(gamedata.CPCount);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPTeamSize");                              offset += sizeof(gamedata.CPTeamSize);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPProcInt");                               offset += sizeof(gamedata.CPProcInt);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPLvlInit");                               offset += sizeof(gamedata.CPLvlInit);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPIsBombTeam");                            offset += sizeof(gamedata.CPIsBombTeam);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPIsPersTeam");                            offset += sizeof(gamedata.CPIsPersTeam);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPFlags");                                 offset += sizeof(gamedata.CPFlags);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPWeapon");                                offset += sizeof(gamedata.CPWeapon);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "CPObjective  CPObjectives[CPOBJECTIVES_COUNT]");        offset += sizeof(gamedata.CPObjectives);
+	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "[ End of struct ]");
 	printf("\n");
 
 

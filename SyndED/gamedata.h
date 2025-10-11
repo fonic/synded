@@ -68,6 +68,7 @@
 
 /*typedef struct  {
 	uint16_t  ObjOfs[TILES_COUNT_X * TILES_COUNT_Y];
+} MapWho;*/
 
 
 /*******************************************************************************
@@ -420,24 +421,24 @@ typedef struct {
 
 // Yet to be identified within GameData struct (from RGAME.C; commented out == identified):
 /*
- * MapX
- * MapY
- * MoveActive
- * ScreenMode
- * Version
- / /*Seed
- //PersonCount
- //Timer
- Header[0]
- Header[1]
- //MapNumber
- //LoBoundaryx
- //LoBoundaryy
- //HiBoundaryx
- //HiBoundaryy
- //CPLvlInit
- StructEnd
- */
+	MapX
+	MapY
+	MoveActive
+	ScreenMode
+	Version
+	//Seed
+	//PersonCount
+	//Timer
+	Header[0]
+	Header[1]
+	//MapNumber
+	//LoBoundaryx
+	//LoBoundaryy
+	//HiBoundaryx
+	//HiBoundaryy
+	//CPLvlInit
+	StructEnd
+*/
 
 typedef struct {
 	/*      0 0x00000 */  uint16_t     Seed;

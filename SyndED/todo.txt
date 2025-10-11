@@ -13,6 +13,8 @@
 - Investigate how to print proper errors for file operations like
   'fread'; currently, reading an RNC encoded file results in:
   Error reading input file 'GAME99/GAME99.DAT': Success
+  -> 'strerror(errno)' does NOT seem to work for file operations (at least not
+     for all, seems to work e.g. for fseek)
 
 - Instead of using FIXED values for OFFSET defines in 'gamedata.h', use macro
     #include <stddef.h>
@@ -38,9 +40,8 @@
   -> Create custom _to_str() function that interprets full ranges
      (for use in CSV output)
 
-- Implement checks/handling for RNCed files (at the very least, print an
-  error message if RNC is detected and/or if an input file has the wrong
-  filesize)
+- Implement handling of RNCed files (currently using simple file size check to
+  rule out RNCed files as valid input files)
 
 - Think about changing MapWho from:
      uint16_t MapWho[TILES_COUNT_X * TILES_COUNT_Y];
@@ -51,6 +52,14 @@
      multidimensional array must have bounds for all dimensions except the
      first), so might not be desirable after all
   -> Investigate
+
+- Implement an algorithm for reconstructing MapWho to allow arbitrary placement
+  of added things
+  -> See function 'move_mapwho()' and similar in RGAME.C
+
+- Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
+  investigate the differences and check if other versions have discrepancies
+  as well in that regard
 
 - Further refine game data structs
   -> ONGOING, will take some time + input from Mefistotelis
@@ -71,6 +80,11 @@
 --------------------------------------------------------------------------------
 - DONE                                                                         -
 --------------------------------------------------------------------------------
+
+- Make compiler warning visible and fix as many as possible
+
+- Implement file size check for input file (to detect and deny incompatible
+  files, e.g. RNCed or from beta version)
 
 - Use comment blocks from 'gdenums.s' for separation of structs in 'gamedata.h'
   as well; add brief description to each struct regarding its use
