@@ -11,7 +11,7 @@ int write_mapwho_to_csv(const char *file_name, const uint16_t mapwho[], const si
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -46,7 +46,7 @@ int write_people_to_csv(const char *file_name, const Person people[], const size
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -55,80 +55,79 @@ int write_people_to_csv(const char *file_name, const Person people[], const size
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,Affect_S,BaseFrame,BaseFrame_S,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,Unique,Unique_S,HugDistance,Persuaded,ChildHeld,ParentHeld,Command,StartCommand,Target,Data,GotoX,GotoY,GotoZ,LastXpos,LastYpos,HugGotoZ,ChildWeapon,Equipment,ParentRank,RankPosition,Count,WeaponHolding,WeaponInUse,Level1Base,Level1Balance,Level1True,Level1Fixed,Level2Base,Level2Balance,Level2True,Level2Fixed,Level3Base,Level3Balance,Level3True,Level3Fixed,LevelRecovery,Speed,MaxSpeed,BaseSpeed,OldState,OldState_S,NewState,NewState_S,HugChangeDir,HugStartAngle,HitAngle\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%s,%u,%s,%u,%s,%u,%u,%u,%u,%u,%s,%u,%s,%u,%s,%u,%u,%s,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%s,%u,%s,%u,%u,%u\n",
-				offset_global + sizeof(Person) * i,
-				offset_relative + sizeof(Person) * i,
-				people[i].Child,
-				people[i].Parent,
-				people[i].Xpos,
-				people[i].Ypos,
-				people[i].Zpos,
-				people[i].Xpos >> 8,
-				people[i].Ypos >> 8,
-				people[i].Status,
-				thing_status_to_str(people[i].Status),
-				people[i].Affect,
-				person_affect_to_str(people[i].Affect),
-				people[i].BaseFrame,
-				person_baseframe_to_str(people[i].BaseFrame),
-				people[i].Frame,
-				people[i].OldFrame,
-				people[i].Life,
-				people[i].WhoShotMe,
-				people[i].Model,
-				thing_model_to_str(people[i].Model),
-				people[i].State,
-				person_state_to_str(people[i].State),
-				people[i].Angle,
-				thing_angle_to_str(people[i].Angle),
-				people[i].ZAngle,
-				people[i].Unique,
-				person_unique_to_str(people[i].Unique),
-				people[i].HugDistance,
-				people[i].Persuaded,
-				people[i].ChildHeld,
-				people[i].ParentHeld,
-				people[i].Command,
-				people[i].StartCommand,
-				people[i].Target,
-				people[i].Data,
-				people[i].GotoX,
-				people[i].GotoY,
-				people[i].GotoZ,
-				people[i].LastXpos,
-				people[i].LastYpos,
-				people[i].HugGotoZ,
-				people[i].ChildWeapon,
-				people[i].Equipment,
-				people[i].ParentRank,
-				people[i].RankPosition,
-				people[i].Count,
-				people[i].WeaponHolding,
-				people[i].WeaponInUse,
-				people[i].Level1Base,
-				people[i].Level1Balance,
-				people[i].Level1True,
-				people[i].Level1Fixed,
-				people[i].Level2Base,
-				people[i].Level2Balance,
-				people[i].Level2True,
-				people[i].Level2Fixed,
-				people[i].Level3Base,
-				people[i].Level3Balance,
-				people[i].Level3True,
-				people[i].Level3Fixed,
-				people[i].LevelRecovery,
-				people[i].Speed,
-				people[i].MaxSpeed,
-				people[i].BaseSpeed,
-				people[i].OldState,
-				person_state_to_str(people[i].OldState),
-				people[i].NewState,
-				person_state_to_str(people[i].NewState),
-				people[i].HugChangeDir,
-				people[i].HugStartAngle,
-				people[i].HitAngle
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Person) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Person) * i);
+		fprintf(file, "%u,",  people[i].Child);
+		fprintf(file, "%u,",  people[i].Parent);
+		fprintf(file, "%u,",  people[i].Xpos);
+		fprintf(file, "%u,",  people[i].Ypos);
+		fprintf(file, "%u,",  people[i].Zpos);
+		fprintf(file, "%u,",  people[i].Xpos >> 8);
+		fprintf(file, "%u,",  people[i].Ypos >> 8);
+		fprintf(file, "%u,",  people[i].Status);
+		fprintf(file, "%s,",  thing_status_to_str(people[i].Status));
+		fprintf(file, "%u,",  people[i].Affect);
+		fprintf(file, "%s,",  person_affect_to_str(people[i].Affect));
+		fprintf(file, "%u,",  people[i].BaseFrame);
+		fprintf(file, "%s,",  person_baseframe_to_str(people[i].BaseFrame));
+		fprintf(file, "%u,",  people[i].Frame);
+		fprintf(file, "%u,",  people[i].OldFrame);
+		fprintf(file, "%u,",  people[i].Life);
+		fprintf(file, "%u,",  people[i].WhoShotMe);
+		fprintf(file, "%u,",  people[i].Model);
+		fprintf(file, "%s,",  thing_model_to_str(people[i].Model));
+		fprintf(file, "%u,",  people[i].State);
+		fprintf(file, "%s,",  person_state_to_str(people[i].State));
+		fprintf(file, "%u,",  people[i].Angle);
+		fprintf(file, "%s,",  thing_angle_to_str(people[i].Angle));
+		fprintf(file, "%u,",  people[i].ZAngle);
+		fprintf(file, "%u,",  people[i].Unique);
+		fprintf(file, "%s,",  person_unique_to_str(people[i].Unique));
+		fprintf(file, "%u,",  people[i].HugDistance);
+		fprintf(file, "%u,",  people[i].Persuaded);
+		fprintf(file, "%u,",  people[i].ChildHeld);
+		fprintf(file, "%u,",  people[i].ParentHeld);
+		fprintf(file, "%u,",  people[i].Command);
+		fprintf(file, "%u,",  people[i].StartCommand);
+		fprintf(file, "%u,",  people[i].Target);
+		fprintf(file, "%u,",  people[i].Data);
+		fprintf(file, "%u,",  people[i].GotoX);
+		fprintf(file, "%u,",  people[i].GotoY);
+		fprintf(file, "%u,",  people[i].GotoZ);
+		fprintf(file, "%u,",  people[i].LastXpos);
+		fprintf(file, "%u,",  people[i].LastYpos);
+		fprintf(file, "%u,",  people[i].HugGotoZ);
+		fprintf(file, "%u,",  people[i].ChildWeapon);
+		fprintf(file, "%u,",  people[i].Equipment);
+		fprintf(file, "%u,",  people[i].ParentRank);
+		fprintf(file, "%u,",  people[i].RankPosition);
+		fprintf(file, "%u,",  people[i].Count);
+		fprintf(file, "%u,",  people[i].WeaponHolding);
+		fprintf(file, "%u,",  people[i].WeaponInUse);
+		fprintf(file, "%u,",  people[i].Level1Base);
+		fprintf(file, "%u,",  people[i].Level1Balance);
+		fprintf(file, "%u,",  people[i].Level1True);
+		fprintf(file, "%u,",  people[i].Level1Fixed);
+		fprintf(file, "%u,",  people[i].Level2Base);
+		fprintf(file, "%u,",  people[i].Level2Balance);
+		fprintf(file, "%u,",  people[i].Level2True);
+		fprintf(file, "%u,",  people[i].Level2Fixed);
+		fprintf(file, "%u,",  people[i].Level3Base);
+		fprintf(file, "%u,",  people[i].Level3Balance);
+		fprintf(file, "%u,",  people[i].Level3True);
+		fprintf(file, "%u,",  people[i].Level3Fixed);
+		fprintf(file, "%u,",  people[i].LevelRecovery);
+		fprintf(file, "%u,",  people[i].Speed);
+		fprintf(file, "%u,",  people[i].MaxSpeed);
+		fprintf(file, "%u,",  people[i].BaseSpeed);
+		fprintf(file, "%u,",  people[i].OldState);
+		fprintf(file, "%s,",  person_state_to_str(people[i].OldState));
+		fprintf(file, "%u,",  people[i].NewState);
+		fprintf(file, "%s,",  person_state_to_str(people[i].NewState));
+		fprintf(file, "%u,",  people[i].HugChangeDir);
+		fprintf(file, "%u,",  people[i].HugStartAngle);
+		fprintf(file, "%u",   people[i].HitAngle);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -147,7 +146,7 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -156,40 +155,39 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%s,%u,%u,%u,%u,%u,%u,%u,%s,%u,%s,%u,%s,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-				offset_global + sizeof(Vehicle) * i,
-				offset_relative + sizeof(Vehicle) * i,
-				vehicles[i].Child,
-				vehicles[i].Parent,
-				vehicles[i].Xpos,
-				vehicles[i].Ypos,
-				vehicles[i].Zpos,
-				vehicles[i].Xpos >> 8,
-				vehicles[i].Ypos >> 8,
-				vehicles[i].Status,
-				thing_status_to_str(vehicles[i].Status),
-				vehicles[i].Affect,
-				vehicles[i].BaseFrame,
-				vehicles[i].Frame,
-				vehicles[i].OldFrame,
-				vehicles[i].Life,
-				vehicles[i].WhoShotMe,
-				vehicles[i].Model,
-				thing_model_to_str(vehicles[i].Model),
-				vehicles[i].State,
-				vehicle_state_to_str(vehicles[i].State),
-				vehicles[i].Angle,
-				thing_angle_to_str(vehicles[i].Angle),
-				vehicles[i].ZAngle,
-				vehicles[i].ChildHeld,
-				vehicles[i].ParentHeld,
-				vehicles[i].LinkTo,
-				vehicles[i].LinkX,
-				vehicles[i].LinkY,
-				vehicles[i].LinkZ,
-				vehicles[i].MaxSpeed,
-				vehicles[i].TravelAngle
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Vehicle) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Vehicle) * i);
+		fprintf(file, "%u,",  vehicles[i].Child);
+		fprintf(file, "%u,",  vehicles[i].Parent);
+		fprintf(file, "%u,",  vehicles[i].Xpos);
+		fprintf(file, "%u,",  vehicles[i].Ypos);
+		fprintf(file, "%u,",  vehicles[i].Zpos);
+		fprintf(file, "%u,",  vehicles[i].Xpos >> 8);
+		fprintf(file, "%u,",  vehicles[i].Ypos >> 8);
+		fprintf(file, "%u,",  vehicles[i].Status);
+		fprintf(file, "%s,",  thing_status_to_str(vehicles[i].Status));
+		fprintf(file, "%u,",  vehicles[i].Affect);
+		fprintf(file, "%u,",  vehicles[i].BaseFrame);
+		fprintf(file, "%u,",  vehicles[i].Frame);
+		fprintf(file, "%u,",  vehicles[i].OldFrame);
+		fprintf(file, "%u,",  vehicles[i].Life);
+		fprintf(file, "%u,",  vehicles[i].WhoShotMe);
+		fprintf(file, "%u,",  vehicles[i].Model);
+		fprintf(file, "%s,",  thing_model_to_str(vehicles[i].Model));
+		fprintf(file, "%u,",  vehicles[i].State);
+		fprintf(file, "%s,",  vehicle_state_to_str(vehicles[i].State));
+		fprintf(file, "%u,",  vehicles[i].Angle);
+		fprintf(file, "%s,",  thing_angle_to_str(vehicles[i].Angle));
+		fprintf(file, "%u,",  vehicles[i].ZAngle);
+		fprintf(file, "%u,",  vehicles[i].ChildHeld);
+		fprintf(file, "%u,",  vehicles[i].ParentHeld);
+		fprintf(file, "%u,",  vehicles[i].LinkTo);
+		fprintf(file, "%u,",  vehicles[i].LinkX);
+		fprintf(file, "%u,",  vehicles[i].LinkY);
+		fprintf(file, "%u,",  vehicles[i].LinkZ);
+		fprintf(file, "%u,",  vehicles[i].MaxSpeed);
+		fprintf(file, "%u",   vehicles[i].TravelAngle);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -208,7 +206,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -217,33 +215,32 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Unknown[0],Unknown[1]\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%s,%u,%u,%u,%u,%u,%u,%u,%s,%u,%u,%s,%u,%u,%u\n",
-				offset_global + sizeof(Object) * i,
-				offset_relative + sizeof(Object) * i,
-				objects[i].Child,
-				objects[i].Parent,
-				objects[i].Xpos,
-				objects[i].Ypos,
-				objects[i].Zpos,
-				objects[i].Xpos >> 8,
-				objects[i].Ypos >> 8,
-				objects[i].Status,
-				thing_status_to_str(objects[i].Status),
-				objects[i].Affect,
-				objects[i].BaseFrame,
-				objects[i].Frame,
-				objects[i].OldFrame,
-				objects[i].Life,
-				objects[i].WhoShotMe,
-				objects[i].Model,
-				thing_model_to_str(objects[i].Model),
-				objects[i].State,
-				objects[i].Angle,
-				thing_angle_to_str(objects[i].Angle),
-				objects[i].ZAngle,
-				objects[i].Unknown[0],
-				objects[i].Unknown[1]
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Object) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Object) * i);
+		fprintf(file, "%u,",  objects[i].Child);
+		fprintf(file, "%u,",  objects[i].Parent);
+		fprintf(file, "%u,",  objects[i].Xpos);
+		fprintf(file, "%u,",  objects[i].Ypos);
+		fprintf(file, "%u,",  objects[i].Zpos);
+		fprintf(file, "%u,",  objects[i].Xpos >> 8);
+		fprintf(file, "%u,",  objects[i].Ypos >> 8);
+		fprintf(file, "%u,",  objects[i].Status);
+		fprintf(file, "%s,",  thing_status_to_str(objects[i].Status));
+		fprintf(file, "%u,",  objects[i].Affect);
+		fprintf(file, "%u,",  objects[i].BaseFrame);
+		fprintf(file, "%u,",  objects[i].Frame);
+		fprintf(file, "%u,",  objects[i].OldFrame);
+		fprintf(file, "%u,",  objects[i].Life);
+		fprintf(file, "%u,",  objects[i].WhoShotMe);
+		fprintf(file, "%u,",  objects[i].Model);
+		fprintf(file, "%s,",  thing_model_to_str(objects[i].Model));
+		fprintf(file, "%u,",  objects[i].State);
+		fprintf(file, "%u,",  objects[i].Angle);
+		fprintf(file, "%s,",  thing_angle_to_str(objects[i].Angle));
+		fprintf(file, "%u,",  objects[i].ZAngle);
+		fprintf(file, "%u,",  objects[i].Unknown[0]);
+		fprintf(file, "%u",   objects[i].Unknown[1]);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -262,7 +259,7 @@ int write_weapons_to_csv(const char *file_name, const Weapon weapons[], const si
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -271,36 +268,35 @@ int write_weapons_to_csv(const char *file_name, const Weapon weapons[], const si
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,ChildWeapon,ParentWeapon,WhoOwnsWeapon,RepairCount\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%s,%u,%u,%u,%u,%u,%u,%u,%s,%u,%s,%u,%s,%u,%u,%u,%u,%u\n",
-				offset_global + sizeof(Weapon) * i,
-				offset_relative + sizeof(Weapon) * i,
-				weapons[i].Child,
-				weapons[i].Parent,
-				weapons[i].Xpos,
-				weapons[i].Ypos,
-				weapons[i].Zpos,
-				weapons[i].Xpos >> 8,
-				weapons[i].Ypos >> 8,
-				weapons[i].Status,
-				thing_status_to_str(weapons[i].Status),
-				weapons[i].Affect,
-				weapons[i].BaseFrame,
-				weapons[i].Frame,
-				weapons[i].OldFrame,
-				weapons[i].Life,
-				weapons[i].WhoShotMe,
-				weapons[i].Model,
-				thing_model_to_str(weapons[i].Model),
-				weapons[i].State,
-				weapon_state_to_str(weapons[i].State),
-				weapons[i].Angle,
-				thing_angle_to_str(weapons[i].Angle),
-				weapons[i].ZAngle,
-				weapons[i].ChildWeapon,
-				weapons[i].ParentWeapon,
-				weapons[i].WhoOwnsWeapon,
-				weapons[i].RepairCount
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Weapon) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Weapon) * i);
+		fprintf(file, "%u,",  weapons[i].Child);
+		fprintf(file, "%u,",  weapons[i].Parent);
+		fprintf(file, "%u,",  weapons[i].Xpos);
+		fprintf(file, "%u,",  weapons[i].Ypos);
+		fprintf(file, "%u,",  weapons[i].Zpos);
+		fprintf(file, "%u,",  weapons[i].Xpos >> 8);
+		fprintf(file, "%u,",  weapons[i].Ypos >> 8);
+		fprintf(file, "%u,",  weapons[i].Status);
+		fprintf(file, "%s,",  thing_status_to_str(weapons[i].Status));
+		fprintf(file, "%u,",  weapons[i].Affect);
+		fprintf(file, "%u,",  weapons[i].BaseFrame);
+		fprintf(file, "%u,",  weapons[i].Frame);
+		fprintf(file, "%u,",  weapons[i].OldFrame);
+		fprintf(file, "%u,",  weapons[i].Life);
+		fprintf(file, "%u,",  weapons[i].WhoShotMe);
+		fprintf(file, "%u,",  weapons[i].Model);
+		fprintf(file, "%s,",  thing_model_to_str(weapons[i].Model));
+		fprintf(file, "%u,",  weapons[i].State);
+		fprintf(file, "%s,",  weapon_state_to_str(weapons[i].State));
+		fprintf(file, "%u,",  weapons[i].Angle);
+		fprintf(file, "%s,",  thing_angle_to_str(weapons[i].Angle));
+		fprintf(file, "%u,",  weapons[i].ZAngle);
+		fprintf(file, "%u,",  weapons[i].ChildWeapon);
+		fprintf(file, "%u,",  weapons[i].ParentWeapon);
+		fprintf(file, "%u,",  weapons[i].WhoOwnsWeapon);
+		fprintf(file, "%u",   weapons[i].RepairCount);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -319,7 +315,7 @@ int write_effects_to_csv(const char *file_name, const Effect effects[], const si
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -328,32 +324,31 @@ int write_effects_to_csv(const char *file_name, const Effect effects[], const si
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Owner\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%s,%u,%u,%u,%u,%u,%u,%u,%s,%u,%u,%s,%u,%u\n",
-				offset_global + sizeof(Effect) * i,
-				offset_relative + sizeof(Effect) * i,
-				effects[i].Child,
-				effects[i].Parent,
-				effects[i].Xpos,
-				effects[i].Ypos,
-				effects[i].Zpos,
-				effects[i].Xpos >> 8,
-				effects[i].Ypos >> 8,
-				effects[i].Status,
-				thing_status_to_str(effects[i].Status),
-				effects[i].Affect,
-				effects[i].BaseFrame,
-				effects[i].Frame,
-				effects[i].OldFrame,
-				effects[i].Life,
-				effects[i].WhoShotMe,
-				effects[i].Model,
-				thing_model_to_str(effects[i].Model),
-				effects[i].State,
-				effects[i].Angle,
-				thing_angle_to_str(effects[i].Angle),
-				effects[i].ZAngle,
-				effects[i].Owner
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Effect) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Effect) * i);
+		fprintf(file, "%u,",  effects[i].Child);
+		fprintf(file, "%u,",  effects[i].Parent);
+		fprintf(file, "%u,",  effects[i].Xpos);
+		fprintf(file, "%u,",  effects[i].Ypos);
+		fprintf(file, "%u,",  effects[i].Zpos);
+		fprintf(file, "%u,",  effects[i].Xpos >> 8);
+		fprintf(file, "%u,",  effects[i].Ypos >> 8);
+		fprintf(file, "%u,",  effects[i].Status);
+		fprintf(file, "%s,",  thing_status_to_str(effects[i].Status));
+		fprintf(file, "%u,",  effects[i].Affect);
+		fprintf(file, "%u,",  effects[i].BaseFrame);
+		fprintf(file, "%u,",  effects[i].Frame);
+		fprintf(file, "%u,",  effects[i].OldFrame);
+		fprintf(file, "%u,",  effects[i].Life);
+		fprintf(file, "%u,",  effects[i].WhoShotMe);
+		fprintf(file, "%u,",  effects[i].Model);
+		fprintf(file, "%s,",  thing_model_to_str(effects[i].Model));
+		fprintf(file, "%u,",  effects[i].State);
+		fprintf(file, "%u,",  effects[i].Angle);
+		fprintf(file, "%s,",  thing_angle_to_str(effects[i].Angle));
+		fprintf(file, "%u,",  effects[i].ZAngle);
+		fprintf(file, "%u",   effects[i].Owner);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -372,7 +367,7 @@ int write_commands_to_csv(const char *file_name, const Command commands[], const
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -381,18 +376,17 @@ int write_commands_to_csv(const char *file_name, const Command commands[], const
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,LocOfs,Next,Data,GotoX,GotoY,GotoZ,State,State_S\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%zu,%u,%u,%u,%u,%u,%u,%s\n",
-				offset_global + sizeof(Command) * i,
-				offset_relative + sizeof(Command) * i,
-				sizeof(Command) * i,
-				commands[i].Next,
-				commands[i].Data,
-				commands[i].GotoX,
-				commands[i].GotoY,
-				commands[i].GotoZ,
-				commands[i].State,
-				command_state_to_str(commands[i].State)
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Command) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Command) * i);
+		fprintf(file, "%zu,", sizeof(Command) * i);
+		fprintf(file, "%u,",  commands[i].Next);
+		fprintf(file, "%u,",  commands[i].Data);
+		fprintf(file, "%u,",  commands[i].GotoX);
+		fprintf(file, "%u,",  commands[i].GotoY);
+		fprintf(file, "%u,",  commands[i].GotoZ);
+		fprintf(file, "%u,",  commands[i].State);
+		fprintf(file, "%s",   command_state_to_str(commands[i].State));
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -411,7 +405,7 @@ int write_worlds_to_csv(const char *file_name, const World worlds[], const size_
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -420,21 +414,20 @@ int write_worlds_to_csv(const char *file_name, const World worlds[], const size_
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,WindXSpeed,WindYSpeed,Population,Temperature,WindSpeed,WindAngle,Industry,Crime,Gravity,Density,Unknown\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-				offset_global + sizeof(World) * i,
-				offset_relative + sizeof(World) * i,
-				worlds[i].WindXSpeed,
-				worlds[i].WindYSpeed,
-				worlds[i].Population,
-				worlds[i].Temperature,
-				worlds[i].WindSpeed,
-				worlds[i].WindAngle,
-				worlds[i].Industry,
-				worlds[i].Crime,
-				worlds[i].Gravity,
-				worlds[i].Density,
-				worlds[i].Unknown
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(World) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(World) * i);
+		fprintf(file, "%u,",  worlds[i].WindXSpeed);
+		fprintf(file, "%u,",  worlds[i].WindYSpeed);
+		fprintf(file, "%u,",  worlds[i].Population);
+		fprintf(file, "%u,",  worlds[i].Temperature);
+		fprintf(file, "%u,",  worlds[i].WindSpeed);
+		fprintf(file, "%u,",  worlds[i].WindAngle);
+		fprintf(file, "%u,",  worlds[i].Industry);
+		fprintf(file, "%u,",  worlds[i].Crime);
+		fprintf(file, "%u,",  worlds[i].Gravity);
+		fprintf(file, "%u,",  worlds[i].Density);
+		fprintf(file, "%u",   worlds[i].Unknown);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -453,7 +446,7 @@ int write_objectives_to_csv(const char *file_name, const Objective objectives[],
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -462,18 +455,17 @@ int write_objectives_to_csv(const char *file_name, const Objective objectives[],
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Status,Objective,Data,Xpos,Ypos,Zpos,Xtile,Ytile\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u\n",
-				offset_global + sizeof(Objective) * i,
-				offset_relative + sizeof(Objective) * i,
-				objectives[i].Status,
-				objectives[i].Objective,
-				objectives[i].Data,
-				objectives[i].Xpos,
-				objectives[i].Ypos,
-				objectives[i].Zpos,
-				objectives[i].Xpos >> 8,
-				objectives[i].Ypos >> 8
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(Objective) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(Objective) * i);
+		fprintf(file, "%u,",  objectives[i].Status);
+		fprintf(file, "%u,",  objectives[i].Objective);
+		fprintf(file, "%u,",  objectives[i].Data);
+		fprintf(file, "%u,",  objectives[i].Xpos);
+		fprintf(file, "%u,",  objectives[i].Ypos);
+		fprintf(file, "%u,",  objectives[i].Zpos);
+		fprintf(file, "%u,",  objectives[i].Xpos >> 8);
+		fprintf(file, "%u",   objectives[i].Ypos >> 8);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -492,7 +484,7 @@ int write_cpobjectives_to_csv(const char *file_name, const CPObjective cpobjecti
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -501,20 +493,19 @@ int write_cpobjectives_to_csv(const char *file_name, const CPObjective cpobjecti
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "GloOfs,RelOfs,Child,Parent,UseCount,Player,Flags,ActionType,Action,X,Y,Z\n");
 	for (size_t i = 0; i < count; i++) {
-		fprintf(file, "%zu,%zu,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-				offset_global + sizeof(CPObjective) * i,
-				offset_relative + sizeof(CPObjective) * i,
-				cpobjectives[i].Child,
-				cpobjectives[i].Parent,
-				cpobjectives[i].UseCount,
-				cpobjectives[i].Player,
-				cpobjectives[i].Flags,
-				cpobjectives[i].ActionType,
-				cpobjectives[i].Action,
-				cpobjectives[i].X,
-				cpobjectives[i].Y,
-				cpobjectives[i].Z
-		);
+		fprintf(file, "%zu,", offset_global + sizeof(CPObjective) * i);
+		fprintf(file, "%zu,", offset_relative + sizeof(CPObjective) * i);
+		fprintf(file, "%u,",  cpobjectives[i].Child);
+		fprintf(file, "%u,",  cpobjectives[i].Parent);
+		fprintf(file, "%u,",  cpobjectives[i].UseCount);
+		fprintf(file, "%u,",  cpobjectives[i].Player);
+		fprintf(file, "%u,",  cpobjectives[i].Flags);
+		fprintf(file, "%u,",  cpobjectives[i].ActionType);
+		fprintf(file, "%u,",  cpobjectives[i].Action);
+		fprintf(file, "%u,",  cpobjectives[i].X);
+		fprintf(file, "%u,",  cpobjectives[i].Y);
+		fprintf(file, "%u",   cpobjectives[i].Z);
+		fprintf(file, "\n");
 	}
 
 	// Close CSV file
@@ -533,7 +524,7 @@ int write_structless_to_csv(const char *file_name, const GameData *gamedata) {
 	// Create CSV file
 	printf("Creating CSV file '%s'...\n", file_name);
 	FILE *file = fopen(file_name, "wt");
-	if (!file) {
+	if (file == NULL) {
 		fprintf(stderr, "Failed to create CSV file '%s': %s\n", file_name, strerror(errno));
 		return 1;
 	}
@@ -541,25 +532,24 @@ int write_structless_to_csv(const char *file_name, const GameData *gamedata) {
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
 	fprintf(file, "Seed,PersonCount,Timer,Unknown,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon\n");
-	fprintf(file, "%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-			gamedata->Seed,
-			gamedata->PersonCount,
-			gamedata->Timer,
-			gamedata->Unknown,
-			gamedata->MapNumber,
-			gamedata->LoBoundaryx,
-			gamedata->LoBoundaryy,
-			gamedata->HiBoundaryx,
-			gamedata->HiBoundaryy,
-			gamedata->CPCount,
-			gamedata->CPTeamSize,
-			gamedata->CPProcInt,
-			gamedata->CPLvlInit,
-			gamedata->CPIsBombTeam,
-			gamedata->CPIsPersTeam,
-			gamedata->CPFlags,
-			gamedata->CPWeapon
-	);
+	fprintf(file, "%u,",  gamedata->Seed);
+	fprintf(file, "%u,",  gamedata->PersonCount);
+	fprintf(file, "%u,",  gamedata->Timer);
+	fprintf(file, "%u,",  gamedata->Unknown);
+	fprintf(file, "%u,",  gamedata->MapNumber);
+	fprintf(file, "%u,",  gamedata->LoBoundaryx);
+	fprintf(file, "%u,",  gamedata->LoBoundaryy);
+	fprintf(file, "%u,",  gamedata->HiBoundaryx);
+	fprintf(file, "%u,",  gamedata->HiBoundaryy);
+	fprintf(file, "%u,",  gamedata->CPCount);
+	fprintf(file, "%u,",  gamedata->CPTeamSize);
+	fprintf(file, "%u,",  gamedata->CPProcInt);
+	fprintf(file, "%u,",  gamedata->CPLvlInit);
+	fprintf(file, "%u,",  gamedata->CPIsBombTeam);
+	fprintf(file, "%u,",  gamedata->CPIsPersTeam);
+	fprintf(file, "%u,",  gamedata->CPFlags);
+	fprintf(file, "%u",   gamedata->CPWeapon);
+	fprintf(file, "\n");
 
 	// Close CSV file
 	printf("Closing CSV file '%s'...\n", file_name);

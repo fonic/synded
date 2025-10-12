@@ -73,6 +73,37 @@
 
 /*******************************************************************************
  *                                                                             *
+ *  Thing Struct (28 bytes)                                                    *
+ *  Represents the COMMON attributes of in-mission things (People, Vehicles,   *
+ *  Objects, Weapons and Effects). Used as a 'base class' for struct casting.  *
+ *  NOTE: RGAME.C calls this struct 'Global'                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+#pragma pack(push,1)
+typedef struct {
+	uint16_t  Child;
+	uint16_t  Parent;
+	uint16_t  Xpos;
+	uint16_t  Ypos;
+	uint16_t  Zpos;
+	uint16_t  Status;
+	uint16_t  Affect;
+	uint16_t  BaseFrame;
+	uint16_t  Frame;
+	uint16_t  OldFrame;
+	uint16_t  Life;
+	uint16_t  WhoShotMe;
+	uint8_t   Model;
+	uint8_t   State;
+	uint8_t   Angle;
+	uint8_t   ZAngle;
+} Thing;
+#pragma pack(pop)
+
+
+/*******************************************************************************
+ *                                                                             *
  *  Person Struct (92 bytes)                                                   *
  *  Represents in-mission people (agents, civilians, police, guards, etc.)     *
  *                                                                             *
@@ -95,7 +126,7 @@ typedef struct {
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Until here same for: Person, Vehicle, Object, Weapon, Effect
+	uint8_t   ZAngle;                  // Until here same as Thing
 
 	uint16_t  Unique;                  // Attributes unique to Person; not sure yet about uint16_t here (before, there was 'uint8_t HugDistance1' following)
 	uint16_t  HugDistance;
@@ -168,7 +199,7 @@ typedef struct {
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Until here same as Person
+	uint8_t   ZAngle;                  // Until here same as Thing
 
 	uint16_t  ChildHeld;               // Attributes unique to Vehicle
 	uint16_t  ParentHeld;
@@ -206,7 +237,7 @@ typedef struct {
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Until here same as Person
+	uint8_t   ZAngle;                  // Until here same as Thing
 
 	uint8_t   Unknown[2];              // Attributes unique to Object
 } Object;
@@ -238,7 +269,7 @@ typedef struct {
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Until here same as Person
+	uint8_t   ZAngle;                  // Until here same as Thing
 
 	uint16_t  ChildWeapon;             // Attributes unique to Weapon; from RGAME.C (unverified)
 	uint16_t  ParentWeapon;
@@ -272,7 +303,7 @@ typedef struct {
 	uint8_t   Model;
 	uint8_t   State;
 	uint8_t   Angle;
-	uint8_t   ZAngle;                  // Until here same as Person
+	uint8_t   ZAngle;                  // Until here same as Thing
 
 	uint16_t  Owner;                   // Attributes unique to Weapon; from FreeSynd leveldata.h (unverified)
 } Effect;

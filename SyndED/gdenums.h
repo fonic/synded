@@ -93,7 +93,7 @@ static const char* thing_model_to_str(const ThingModel value) {
 #undef THING_MODEL
 
 
-#define THING_ANGLE(GENERATOR_FUNC)       \
+#define THING_ANGLE(GENERATOR_FUNC)      \
 	GENERATOR_FUNC(TA_SOUTHWEST,  0x00)  \
 	GENERATOR_FUNC(TA_SOUTH,      0x20)  \
 	GENERATOR_FUNC(TA_SOUTHEAST,  0x40)  \

@@ -44,6 +44,7 @@ Writing contents to CSV file 'GAME45/GAME45.DAT_structless.csv'...
 Closing CSV file 'GAME45/GAME45.DAT_structless.csv'...
 
 Struct sizes:
+Thing:       28
 Person:      92
 Vehicle:     42
 Object:      30

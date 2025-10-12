@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
 
 	// Process command line
 	if (argc != 3) {
-		fprintf(stderr, "Usage: %s INFILE OUTFILE\n", argv[0]);
-		fprintf(stderr, "Usage: %s GAMExx.DAT GAMExx.DAT_modified\n", argv[0]);
+		fprintf(stderr, "Usage:   %s INFILE OUTFILE\n", argv[0]);
+		fprintf(stderr, "Example: %s GAMExx.DAT GAMExx.DAT_modified\n", argv[0]);
 		return 2;
 	}
 	const char *infile_name = argv[1];
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	// Open input file
 	printf("Opening input file '%s'...\n", infile_name);
 	FILE *infile = fopen(infile_name, "rb"); // read, binary mode
-	if (!infile) {
+	if (infile == NULL) {
 		fprintf(stderr, "Error: failed to open input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
@@ -40,13 +40,13 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: failed to seek to end of input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
-	long size = ftell(infile);
-	if (size == -1) {
+	long file_size = ftell(infile);
+	if (file_size == -1) {
 		fprintf(stderr, "Error: failed to determine size of input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
-	if (size != sizeof(GameData)) {
-		fprintf(stderr, "Error: incorrect size of input file '%s': got %ld bytes, expected %lu bytes\n", infile_name, size, sizeof(GameData));
+	if (file_size != sizeof(GameData)) {
+		fprintf(stderr, "Error: incorrect size of input file '%s': got %ld bytes, expected %zu bytes\n", infile_name, file_size, sizeof(GameData));
 		return 1;
 	}
 	if (fseek(infile, 0, SEEK_SET) != 0) { // Important, need to seek back to start!
@@ -56,9 +56,9 @@ int main(int argc, char *argv[]) {
 
 	// Read contents of input file into game data struct
 	printf("Reading input file '%s'...\n", infile_name);
-	size_t read_count = fread(&gamedata, sizeof(GameData), 1, infile);
-	if (read_count != 1) {
-		fprintf(stderr, "Error: error reading input file '%s': %s\n", infile_name, strerror(errno));
+	size_t read_count = fread(&gamedata, 1, sizeof(GameData), infile);
+	if (read_count != sizeof(GameData)) {
+		fprintf(stderr, "Error: failed to read input file '%s': read only %ld bytes out of %lu bytes\n", infile_name, read_count, sizeof(GameData));
 		fclose(infile);
 		return 1;
 	}
@@ -142,16 +142,16 @@ int main(int argc, char *argv[]) {
 	// Open output file
 	printf("Opening output file '%s'...\n", outfile_name);
 	FILE *outfile = fopen(outfile_name, "wb"); // write, binary mode
-	if (!outfile) {
+	if (outfile == NULL) {
 		fprintf(stderr, "Error: failed to open output file '%s': %s\n", outfile_name, strerror(errno));
 		return 1;
 	}
 
 	// Write contents of game data struct to output file
 	printf("Writing output file '%s'...\n", outfile_name);
-	size_t write_count = fwrite(&gamedata, sizeof(GameData), 1, outfile);
-	if (write_count != 1) {
-		fprintf(stderr, "Error: failed to write output file '%s': %s\n", outfile_name, strerror(errno));
+	size_t write_count = fwrite(&gamedata, 1, sizeof(GameData), outfile);
+	if (write_count != sizeof(GameData)) {
+		fprintf(stderr, "Error: failed to write output file '%s': wrote only %ld bytes out of %lu bytes\n", infile_name, write_count, sizeof(GameData));
 		fclose(outfile);
 		return 1;
 	}
@@ -234,6 +234,7 @@ int main(int argc, char *argv[]) {
 	// Print struct sizes
 	printf("Struct sizes:\n");
 	//printf("MapWho:      %zu\n", sizeof(MapWho));
+	printf("Thing:       %zu\n", sizeof(Thing));
 	printf("Person:      %zu\n", sizeof(Person));
 	printf("Vehicle:     %zu\n", sizeof(Vehicle));
 	printf("Object:      %zu\n", sizeof(Object));
