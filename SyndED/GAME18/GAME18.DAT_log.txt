@@ -61,7 +61,7 @@ GameData offsets:
 /*      2 0x00002 */  uint16_t     PersonCount
 /*      4 0x00004 */  uint16_t     Timer
 /*      6 0x00006 */  uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];
-/*  32774 0x08006 */  uint16_t     Unknown
+/*  32774 0x08006 */  uint16_t     RelOfsBase
 /*  32776 0x08008 */  Person       People[PEOPLE_COUNT]
 /*  56328 0x0dc08 */  Vehicle      Vehicles[VEHICLES_COUNT]
 /*  59016 0x0e688 */  Object       Objects[OBJECTS_COUNT]

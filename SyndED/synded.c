@@ -8,6 +8,7 @@
 #include "gamedata.h"
 #include "gdenums.h"
 #include "csvoutput.h"
+#include "mapwho.h"
 
 int main(int argc, char *argv[]) {
 
@@ -75,56 +76,93 @@ int main(int argc, char *argv[]) {
 	// Edit/modify example: make GAME01.DAT and GAME10.DAT more interesting
 	if (strstr(infile_name, "GAME01.DAT") != NULL) {
 		printf("Modifying GAME01.DAT...\n");
-		Vehicle vehicle = gamedata.Vehicles[0]; // existing Vehicle
-		Person person = gamedata.People[9];     // existing Guard
-		Weapon weapon = gamedata.Weapons[0];    // existing Uzi (belongs to last guard at road)
+		Vehicle vehicle = gamedata.Vehicles[0];  // Existing Vehicle
+		Person person = gamedata.People[9];      // Existing Guard
+		Weapon weapon = gamedata.Weapons[0];     // Existing Uzi (belongs to last guard at road)
 
-		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;  // lots of free space
+		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;  // Lots of free space for new stuff
 
-		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
-		gamedata.Weapons[weapon_slot] = weapon;
-		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_MAN_JACKET; person.Life = 8;
-		person.State = person.NewState = 0; person.Angle = TA_SOUTH; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-		gamedata.People[person_slot] = person;
-		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(person.Xpos, person.Ypos)] = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
-		weapon_slot++; person_slot++;
+		// Add three people in front of existing car
+		for (int16_t shiftx = -50; shiftx <= 50; shiftx += 50) {
+			person.Xpos = vehicle.Xpos + shiftx; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_MAN_JACKET; person.Life = 8;
+			person.State = person.NewState = 0; person.Angle = TA_SOUTH; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
+			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
+			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
+		}
 
+		// Add second car + three people in front of it
 		vehicle.Xpos -= 500; vehicle.State = VS_POLICECAR; vehicle.Life = 60; vehicle.MaxSpeed = 100;
-		gamedata.Vehicles[vehicle_slot] = vehicle;
-		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(vehicle.Xpos, vehicle.Ypos)] = VEHICLES_RELATIVE_OFFSET + sizeof(Vehicle) * vehicle_slot;
-		vehicle_slot++;
-		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
-		gamedata.Weapons[weapon_slot] = weapon;
-		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_POLICE; person.Life = 8;
-		person.State = person.NewState = 0; person.Angle = TA_SOUTHWEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-		gamedata.People[person_slot] = person;
-		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(person.Xpos, person.Ypos)] = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
-		weapon_slot++; person_slot++;
+		gamedata.Vehicles[vehicle_slot++] = vehicle;
+		for (int16_t shiftx = -50; shiftx <= 50; shiftx += 50) {
+			person.Xpos = vehicle.Xpos + shiftx; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_POLICE; person.Life = 8;
+			person.State = person.NewState = 0; person.Angle = TA_SOUTHWEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
+			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
+			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
+		}
 
+		// Add third car + three people in front of it
 		vehicle.Xpos -= 500; vehicle.State = VS_APC; vehicle.Life = 90; vehicle.MaxSpeed = 50;
-		gamedata.Vehicles[vehicle_slot] = vehicle;
-		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(vehicle.Xpos, vehicle.Ypos)] = VEHICLES_RELATIVE_OFFSET + sizeof(Vehicle)*vehicle_slot;
-		vehicle_slot++;
-		weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
-		gamedata.Weapons[weapon_slot] = weapon;
-		person.Xpos = vehicle.Xpos + 50; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
-		person.State = person.NewState = 0; person.Angle = TA_WEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-		gamedata.People[person_slot] = person;
-		gamedata.MapWho[POSITION_TO_MAPWHO_OFFSET(person.Xpos, person.Ypos)] = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
-		weapon_slot++; person_slot++;
+		gamedata.Vehicles[vehicle_slot++] = vehicle;
+		for (int16_t shiftx = -50; shiftx <= 50; shiftx += 50) {
+			person.Xpos = vehicle.Xpos + shiftx; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
+			person.State = person.NewState = 0; person.Angle = TA_WEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
+			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
+			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
+		}
+
+		// TESTING: Command your own agents
+		gamedata.LoBoundaryx -= 50;
+		gamedata.LoBoundaryy -= 50;
+		gamedata.HiBoundaryx += 50;
+		gamedata.HiBoundaryy += 50;
+		Command command; size_t command_slot = 63;
+		for (size_t i = 0; i <= 7; i++) {
+			gamedata.People[i].NewState = PS_NEXT_COMMAND;
+			gamedata.People[i].StartCommand = gamedata.People[i].Command = sizeof(Command) * command_slot;
+		}
+		memset(&command, 0, sizeof(Command));
+		command.Next = sizeof(Command) * (command_slot+1);
+		command.GotoX = ((gamedata.People[0].Xpos >> 8) - 14) * 2; // Goto 14 tiles north-west of starting point
+		command.GotoY = (gamedata.People[0].Ypos >> 8) * 2;        // (more or less central court after bridge)
+		command.State = CS_GOTO_POINT;
+		gamedata.Commands[command_slot++] = command;
+		for (size_t i = 0; i < PEOPLE_COUNT; i++) {
+			if (gamedata.People[i].Unique != PU_GUARD)
+				continue;
+			command.Next = sizeof(Command) * (command_slot+1);
+			command.GotoX = (gamedata.People[i].Xpos >> 8) * 2;    // Hunt down guards
+			command.GotoY = (gamedata.People[i].Ypos >> 8) * 2;
+			command.State = CS_GOTO_POINT;
+			gamedata.Commands[command_slot++] = command;
+		}
+		gamedata.Commands[command_slot-1].Next = 456;
+
+		// TESTING: Macros GET_RELOFS_FOR_THING + GET_THING_FOR_RELOFS
+		printf("Relative offset of gamedata.People[12]:   %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.People[12]));
+		printf("Relative offset of gamedata.Vehicles[20]: %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.Vehicles[20]));
+		Thing *t = GET_THING_FOR_RELOFS(&gamedata, 1106);   // Retrieved thing must match gamedata.People[12]
+		printf("Thing.RelOfs:  %u, Thing.Xpos:  %u, Thing.Ypos:  %u\n", 1106, t->Xpos, t->Ypos);
+		printf("Person.RelOfs: %u, Person.Xpos: %u, Person.Ypos: %u\n", (uint16_t)(PEOPLE_RELATIVE_OFFSET + sizeof(Person) * 12), gamedata.People[12].Xpos, gamedata.People[12].Ypos);
+		Thing *t2 = GET_THING_FOR_RELOFS(&gamedata, 24394); // Retrieved thing must match gamedata.Vehicles[20]
+		printf("Thing.RelOfs:   %u, Thing.Xpos:   %u, Thing.Ypos:   %u\n", 24394, t2->Xpos, t2->Ypos);
+		printf("Vehicle.RelOfs: %u, Vehicle.Xpos: %u, Vehicle.Ypos: %u\n", (uint16_t)(VEHICLES_RELATIVE_OFFSET + sizeof(Vehicle) * 20), gamedata.Vehicles[20].Xpos, gamedata.Vehicles[20].Ypos);
+
+		// TESTING: MapWho Rebuilding
+		rebuild_mapwho(&gamedata);
+
 	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {
 		printf("Modifying GAME10.DAT...\n");
 		Weapon weapon = gamedata.Weapons[1];  // existing Uzi
 		size_t weapon_slot = 30;              // lots of free space
-		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // power to the people
-			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // women get Uzis
+		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People
+			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // Women get Uzis
 				gamedata.People[i].Unique = PU_GUARD;
 				gamedata.People[i].Life = 10;
 				gamedata.People[i].Parent = gamedata.People[i].ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
 				weapon.State = WS_UZI;
 				weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * i;
 				gamedata.Weapons[weapon_slot++] = weapon;
-			} else if (gamedata.People[i].BaseFrame == PB_MAN_SUIT || gamedata.People[i].BaseFrame == PB_MAN_JACKET) {  // men get Shotguns
+			} else if (gamedata.People[i].BaseFrame == PB_MAN_SUIT || gamedata.People[i].BaseFrame == PB_MAN_JACKET) {  // Men get Shotguns
 				gamedata.People[i].Unique = PU_GUARD;
 				gamedata.People[i].Life = 10;
 				gamedata.People[i].Parent = gamedata.People[i].ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
@@ -250,39 +288,38 @@ int main(int argc, char *argv[]) {
 
 
 	// Print offsets of GameData struct members
-	size_t offset = 0;
 	printf("GameData offsets:\n");
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     Seed");                                    offset += sizeof(gamedata.Seed);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     PersonCount");                             offset += sizeof(gamedata.PersonCount);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     Timer");                                   offset += sizeof(gamedata.Timer);
-	//printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "MapWho       MapWho");                                  offset += sizeof(gamedata.MapWho);
-	//printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     MapWho[TILES_COUNT_Y][TILES_COUNT_X];");   offset += sizeof(gamedata.MapWho);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];");  offset += sizeof(gamedata.MapWho);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     Unknown");                                 offset += sizeof(gamedata.Unknown);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Person       People[PEOPLE_COUNT]");                    offset += sizeof(gamedata.People);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Vehicle      Vehicles[VEHICLES_COUNT]");                offset += sizeof(gamedata.Vehicles);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Object       Objects[OBJECTS_COUNT]");                  offset += sizeof(gamedata.Objects);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Weapon       Weapons[WEAPONS_COUNT]");                  offset += sizeof(gamedata.Weapons);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Effect       Effects[EFFECTS_COUNT]");                  offset += sizeof(gamedata.Effects);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Command      Commands[COMMANDS_COUNT]");                offset += sizeof(gamedata.Commands);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "World        Worlds[WORLDS_COUNT]");                    offset += sizeof(gamedata.Worlds);
-	//printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "MapInfo      MapInfos");                                offset += sizeof(gamedata.MapInfos);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     MapNumber");                               offset += sizeof(gamedata.MapNumber);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     LoBoundaryx");                             offset += sizeof(gamedata.LoBoundaryx);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     LoBoundaryy");                             offset += sizeof(gamedata.LoBoundaryy);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     HiBoundaryx");                             offset += sizeof(gamedata.HiBoundaryx);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint16_t     HiBoundaryy");                             offset += sizeof(gamedata.HiBoundaryy);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "Objective    Objectives[OBJECTIVES_COUNT]");            offset += sizeof(gamedata.Objectives);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPCount");                                 offset += sizeof(gamedata.CPCount);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPTeamSize");                              offset += sizeof(gamedata.CPTeamSize);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPProcInt");                               offset += sizeof(gamedata.CPProcInt);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPLvlInit");                               offset += sizeof(gamedata.CPLvlInit);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPIsBombTeam");                            offset += sizeof(gamedata.CPIsBombTeam);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPIsPersTeam");                            offset += sizeof(gamedata.CPIsPersTeam);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPFlags");                                 offset += sizeof(gamedata.CPFlags);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "uint8_t      CPWeapon");                                offset += sizeof(gamedata.CPWeapon);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "CPObjective  CPObjectives[CPOBJECTIVES_COUNT]");        offset += sizeof(gamedata.CPObjectives);
-	printf("/* %6zu 0x%05lx */  %s\n", offset, offset, "[ End of struct ]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Seed),         offsetof(GameData, Seed),         "uint16_t     Seed");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, PersonCount),  offsetof(GameData, PersonCount),  "uint16_t     PersonCount");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Timer),        offsetof(GameData, Timer),        "uint16_t     Timer");
+	//printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, MapWho),     offsetof(GameData, MapWho),       "MapWho       MapWho");
+	//printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, MapWho),     offsetof(GameData, MapWho),       "uint16_t     MapWho[TILES_COUNT_Y][TILES_COUNT_X];");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, MapWho),       offsetof(GameData, MapWho),       "uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, RelOfsBase),   offsetof(GameData, RelOfsBase),   "uint16_t     RelOfsBase");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, People),       offsetof(GameData, People),       "Person       People[PEOPLE_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Vehicles),     offsetof(GameData, Vehicles),     "Vehicle      Vehicles[VEHICLES_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Objects),      offsetof(GameData, Objects),      "Object       Objects[OBJECTS_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Weapons),      offsetof(GameData, Weapons),      "Weapon       Weapons[WEAPONS_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Effects),      offsetof(GameData, Effects),      "Effect       Effects[EFFECTS_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Commands),     offsetof(GameData, Commands),     "Command      Commands[COMMANDS_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Worlds),       offsetof(GameData, Worlds),       "World        Worlds[WORLDS_COUNT]");
+	//printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, MapInfo),    offsetof(GameData, MapInfo),      "MapInfo      MapInfos");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, MapNumber),    offsetof(GameData, MapNumber),    "uint16_t     MapNumber");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, LoBoundaryx),  offsetof(GameData, LoBoundaryx),  "uint16_t     LoBoundaryx");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, LoBoundaryy),  offsetof(GameData, LoBoundaryy),  "uint16_t     LoBoundaryy");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, HiBoundaryx),  offsetof(GameData, HiBoundaryx),  "uint16_t     HiBoundaryx");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, HiBoundaryy),  offsetof(GameData, HiBoundaryy),  "uint16_t     HiBoundaryy");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Objectives),   offsetof(GameData, Objectives),   "Objective    Objectives[OBJECTIVES_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPCount),      offsetof(GameData, CPCount),      "uint8_t      CPCount");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPTeamSize),   offsetof(GameData, CPTeamSize),   "uint8_t      CPTeamSize");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPProcInt),    offsetof(GameData, CPProcInt),    "uint8_t      CPProcInt");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPLvlInit),    offsetof(GameData, CPLvlInit),    "uint8_t      CPLvlInit");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPIsBombTeam), offsetof(GameData, CPIsBombTeam), "uint8_t      CPIsBombTeam");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPIsPersTeam), offsetof(GameData, CPIsPersTeam), "uint8_t      CPIsPersTeam");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPFlags),      offsetof(GameData, CPFlags),      "uint8_t      CPFlags");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPWeapon),     offsetof(GameData, CPWeapon),     "uint8_t      CPWeapon");
+	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPObjectives), offsetof(GameData, CPObjectives), "CPObjective  CPObjectives[CPOBJECTIVES_COUNT]");
+	printf("/* %6zu 0x%05lx */  %s\n", sizeof(GameData),                 sizeof(GameData),                 "[ End of struct ]");
 	printf("\n");
 
 

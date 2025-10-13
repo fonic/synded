@@ -3,33 +3,34 @@
 - IN PROGRESS                                                                  -
 --------------------------------------------------------------------------------
 
-- Nothing atm
+- Add 'mapwho.h' + 'mapwho.c' with MapWho management functions:
+  add_thing_to_mapwho
+  remove_thing_from_mapwho
+  move_thing_within_mapwho
+  verify_mapwho             -> check if mapwho contents are sane/valid
+  rebuild_mapwho            -> rebuild mapwho from scratch
+
+-> This requires defining a 'Thing' struct first that derived structs like
+   Person can be cast to; this struct appears to be named 'Global' in RGAME.C
+
+-> See RGAME.C for MapWho functions (move_mapwho, move_off_mapwho)
+
+-> When done, update example for GAME01.DAT to test MapWho management
 
 
 --------------------------------------------------------------------------------
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
-- Add 'edfuncs.h' + 'edfuncs.c' with editing functions:
-  add_thing_to_mapwho
-  remove_thing_from_mapwho
-  ...
-  add_person
-  add_vehicle
-  add_person_to_vehicle
-  add_weapon
-  add_weapon_to_person
-  ...
-  remove_thing
-  ...
-  -> This requires defining a 'Thing' struct first that derived structs like
-     Person can be cast to (at least for MapWho and remove_thing); this struct
-     appears to be named 'Global' in RGAME.C
-  -> See RGAME.C for MapWho functions
+- Migrate project to proper IDE (with Makefile and all)
+
+- Several enums are BITMASKS / FLAG-BASED (see enums in Mefistotelis .xml)
+  -> Need to revise existing enums + come up with appropriate _to_str() functions
+     that print ALL flags
 
 - Instead of using FIXED values for OFFSET defines in 'gamedata.h', use macro
-    #include <stddef.h>
-    size_t offsetof(type, member)
+     #include <stddef.h>
+     size_t offsetof(type, member)
   to calculate these during compile time (macro yields global offsets, global
   offset - global offset of member 'Unknown' == relative offset).
   (https://stackoverflow.com/a/7180389/1976617)
@@ -37,10 +38,6 @@
   Also consider/look at 'member_size' macro:
      #define member_size(type, member) (sizeof( ((type *)0)->member ))
   (https://stackoverflow.com/a/3553321/1976617)
-
-- Implement an algorithm for reconstructing MapWho to allow arbitrary placement
-  of added things
-  -> See function 'move_mapwho()' and similar in RGAME.C
 
 - Think about changing MapWho from:
      uint16_t MapWho[TILES_COUNT_X * TILES_COUNT_Y];
@@ -55,7 +52,7 @@
 - Fix compiler warnings reported by Windows CL (differ from GCC)
 
 - Implement handling of RNCed files (currently using simple file size check to
-  rule out RNCed files as valid input files, thus low priority)
+  rule out RNCed files as valid input files, works well, thus low priority)
 
 - Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
   investigate the differences and check if other versions have discrepancies
@@ -81,6 +78,16 @@
 --------------------------------------------------------------------------------
 - DONE                                                                         -
 --------------------------------------------------------------------------------
+
+- Positions and tile references are all SWORD (== int16_t) in RGAME.C; until
+  now, UWORD (== uint16_t) was used; change ALL associated members in structs
+  to int16_t: ?pos, Goto?, Last?Pos, Link?, etc.
+
+- Use macro 'offsetof' for GameData offsets printing in 'synded.c'
+
+- Add macros 'GET_THING_FOR_RELOFS' and 'GET_RELOFS_FOR_THING' based on macros
+  'GET_GLOBAL_PTR' and 'GET_MODEL_OFFSET' in RGAME.C (which are only used, but
+  not actually defined in that source file)
 
 - Detect and print proper errors for file operations 'fread'/'fwrite' as
   'strerror(errno)' does NOT work for these (prints 'Success' on failure)
@@ -226,5 +233,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/12/25                                                    -
+- Date: 10/07/25 - 10/13/25                                                    -
 --------------------------------------------------------------------------------

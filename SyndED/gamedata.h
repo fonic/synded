@@ -1,6 +1,9 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
+#include <stdint.h>
+#include <stddef.h>
+
 
 /*******************************************************************************
  *                                                                             *
@@ -8,8 +11,19 @@
  *                                                                             *
  ******************************************************************************/
 
-#define TILES_COUNT_X                     128
+#define TILES_COUNT_X                     128    // Called MAP_XSIZE/MAP_YSIZE in RGAME.C (see function move_mapwho)
 #define TILES_COUNT_Y                     128
+
+#define MIN_TILE_X                          1    // Minimum allowed tile for positioning (see function move_mapwho in RGAME.C)
+#define MIN_TILE_Y                          1
+
+#define MAX_TILE_X                        126    // Maximum allowed tile for positioning (see function move_mapwho in RGAME.C)
+#define MAX_TILE_Y                        126
+
+#define POS_PER_TILE                      256    // Each tile consists of 256 sub-positions
+                                                 // (positions are 16 bit -> highest 8 bit == tile, lowest 8 bit == subpos)
+
+#define MAX_ZPOS                         4095    // Highest possible Z position (see function move_mapwho in RGAME.C)
 
 #define PEOPLE_COUNT                      256
 #define VEHICLES_COUNT                     64
@@ -21,7 +35,7 @@
 #define OBJECTIVES_COUNT                    8
 #define CPOBJECTIVES_COUNT                128
 
-#define RELATIVE_OFFSET_BASE          0x08006    // Location of 'Unknown' member in GameData struct (right above
+#define RELATIVE_OFFSET_BASE          0x08006    // Location of 'RelOfsBase' member in GameData struct (right above
                                                  // People array); relative offsets are relative to THIS global offset
 
 #define PEOPLE_GLOBAL_OFFSET          0x08008    // 0x00000 == start of GameData struct = start of GAMExx.DAT contents
@@ -34,7 +48,7 @@
 #define OBJECTIVES_GLOBAL_OFFSET      0x1bd32
 #define CPOBJECTIVES_GLOBAL_OFFSET    0x1bdaa
 
-#define PEOPLE_RELATIVE_OFFSET        0x00002    // 0x00000 == location of 'Unknown' member in GameData struct (right
+#define PEOPLE_RELATIVE_OFFSET        0x00002    // 0x00000 == location of 'RelOfsBase' member in GameData struct (right
 #define VEHICLES_RELATIVE_OFFSET      0x05c02    // above People array); relative offsets are important as THESE are
 #define OBJECTS_RELATIVE_OFFSET       0x06682    // used within game data to reference other things, e.g. to associate
 #define WEAPONS_RELATIVE_OFFSET       0x09562    // a Weapon with a Person (via Person.ChildWeapon)
@@ -51,10 +65,15 @@
  *                                                                             *
  ******************************************************************************/
 
-#define OFFSET_GLOBAL_TO_RELATIVE(offset_global) offset_global - RELATIVE_OFFSET_BASE        // Offset global to relative conversion
-#define OFFSET_RELATIVE_TO_GLOBAL(offset_relative) RELATIVE_OFFSET_BASE + offset_relative    // Offset relative to global conversion
+#define OFS_GLOBAL_TO_RELATIVE(offset_global) offset_global - RELATIVE_OFFSET_BASE        // Offset global to relative conversion
+#define OFS_RELATIVE_TO_GLOBAL(offset_relative) RELATIVE_OFFSET_BASE + offset_relative    // Offset relative to global conversion
 
-#define POSITION_TO_MAPWHO_OFFSET(xpos, ypos) (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)      // Position to offset within MapWho array conversion
+#define POS_TO_MAPWHO_OFS(xpos, ypos) (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)           // Position to offset within MapWho array conversion
+
+#define GET_THING_FOR_RELOFS(gamedata, relofs) (Thing*)((size_t)(gamedata) + offsetof(GameData, RelOfsBase) + relofs)               // Get Thing from GameData struct based on relative offset
+#define GET_RELOFS_FOR_THING(gamedata, thing)  (uint16_t)((size_t)(thing) - (size_t)(gamedata) - offsetof(GameData, RelOfsBase))    // Get relative offset of Thing in GameData struct (CAUTION:
+                                                                                                                                    // only valid for Things that are actually part of the specified
+                                                                                                                                    // struct)
 
 
 /*******************************************************************************
@@ -84,9 +103,9 @@
 typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;
+	int16_t   Ypos;
+	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
 	uint16_t  BaseFrame;
@@ -113,9 +132,9 @@ typedef struct {
 typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;
+	int16_t   Ypos;
+	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
 	uint16_t  BaseFrame;
@@ -137,11 +156,11 @@ typedef struct {
 	uint16_t  StartCommand;
 	uint16_t  Target;
 	uint16_t  Data;
-	uint16_t  GotoX;
-	uint16_t  GotoY;
-	uint16_t  GotoZ;
-	uint16_t  LastXpos;
-	uint16_t  LastYpos;
+	int16_t   GotoX;
+	int16_t   GotoY;
+	int16_t   GotoZ;
+	int16_t   LastXpos;
+	int16_t   LastYpos;
 	uint16_t  HugGotoZ;
 	uint16_t  ChildWeapon;
 	uint16_t  Equipment;
@@ -186,9 +205,9 @@ typedef struct {
 typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;
+	int16_t   Ypos;
+	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
 	uint16_t  BaseFrame;
@@ -204,9 +223,9 @@ typedef struct {
 	uint16_t  ChildHeld;               // Attributes unique to Vehicle
 	uint16_t  ParentHeld;
 	uint16_t  LinkTo;
-	uint16_t  LinkX;
-	uint16_t  LinkY;
-	uint16_t  LinkZ;
+	int16_t   LinkX;
+	int16_t   LinkY;
+	int16_t   LinkZ;
 	uint8_t   MaxSpeed;
 	uint8_t   TravelAngle;
 } Vehicle;
@@ -224,9 +243,9 @@ typedef struct {
 typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;
+	int16_t   Ypos;
+	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
 	uint16_t  BaseFrame;
@@ -256,9 +275,9 @@ typedef struct {
 typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;
+	int16_t   Ypos;
+	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
 	uint16_t  BaseFrame;
@@ -290,9 +309,9 @@ typedef struct {
 typedef struct {
 	uint16_t  Child;
 	uint16_t  Parent;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;
+	int16_t   Ypos;
+	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
 	uint16_t  BaseFrame;
@@ -323,11 +342,11 @@ typedef struct {
 typedef struct {
 	uint16_t  Next;                    // From RGAME.C (unverified)
 	uint16_t  Data;
-	//uint16_t  GotoX;
-	//uint16_t  GotoY;
-	//uint16_t  GotoZ;
-	uint8_t   GotoX;                   // These seem to reference TILES (0-128), not POSITIONS (like in other
-	uint8_t   GotoY;                   // structs), according to FreeSynd leveldata.h (thus only uint8_t)
+	//int16_t   GotoX;
+	//int16_t   GotoY;
+	//int16_t   GotoZ;
+	uint8_t   GotoX;                   // These reference TILES of HALF SIZE, i.e. to convert
+	uint8_t   GotoY;                   // a position to this use: GotoX = (Xpos >> 8) * 2
 	uint8_t   GotoZ;
 	uint8_t   State;
 } Command;
@@ -390,9 +409,9 @@ typedef struct {
 	uint32_t  Status;                  // From RGAME.C (unverified); sizes from FreeSynd leveldata.h + Mefistotelis .xml
 	uint16_t  Objective;
 	uint16_t  Data;
-	uint16_t  Xpos;
-	uint16_t  Ypos;
-	uint16_t  Zpos;
+	int16_t   Xpos;                    // Changed these from uint16_t to int16_t as well
+	int16_t   Ypos;                    // (while changing position types for Things, but not sure HERE)
+	int16_t   Zpos;
 } Objective;
 #pragma pack(pop)
 
@@ -435,9 +454,9 @@ typedef struct {
 	uint8_t   Flags;
 	uint8_t   ActionType;
 	uint8_t   Action;
-	uint16_t  X;
-	uint16_t  Y;
-	uint16_t  Z;
+	int16_t   X;
+	int16_t   Y;
+	int16_t   Z;
 } CPObjective;
 #pragma pack(pop)
 
@@ -478,7 +497,7 @@ typedef struct {
 	/*      6 0x00006 */  //MapWho     MapWho;                                   // Could use this struct instead of separate member below
 	/*      6 0x00006 */  //uint16_t   MapWho[TILES_COUNT_Y][TILES_COUNT_X];     // Would this make more sense / make things easier?
 	/*      6 0x00006 */  uint16_t     MapWho[TILES_COUNT_X * TILES_COUNT_Y];
-	/*  32774 0x08006 */  uint16_t     Unknown;                                  // What is this? -> likely SSHeader[0]/SSHeader[1]
+	/*  32774 0x08006 */  uint16_t     RelOfsBase;                               // Name is not final, could also be SSHeader[0]/SSHeader[1]
 	/*  32776 0x08008 */  Person       People[PEOPLE_COUNT];
 	/*  56328 0x0dc08 */  Vehicle      Vehicles[VEHICLES_COUNT];
 	/*  59016 0x0e688 */  Object       Objects[OBJECTS_COUNT];
