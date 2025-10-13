@@ -1,6 +1,7 @@
 #ifndef GDENUMS_H
 #define GDENUMS_H
 
+#include <string.h>
 
 /*******************************************************************************
  *                                                                             *
@@ -9,15 +10,17 @@
  *  https://stackoverflow.com/a/10966395/1976617                               *
  *                                                                             *
  *  Usage:                                                                     *
- *  1) Determine if enum should be values-based or bitmask-based               *
+ *  1) Determine if enum should be value-based or bitmask-based                *
  *  2) Copy corresponding commented block from '#define' until '#undef'        *
  *  3) Replace 'STRUCT_MEMBER' with '<STRUCT-NAME>_<MEMBER-NAME>'              *
  *  4) Replace 'StructMember'  with '<Struct-Name><Member-Name>'               *
  *  5) Replace 'struct_member' with '<struct-name>_<member-name>'              *
- *  6) Replace value list below '#define STRUCT_MEMBER(GENERATOR_FUNC)'        *
- *     using format 'GENERATOR_FUNC( <PREFIX>_NAME, <VALUE> )', with           *
- *     <PREFIX> being a unique identifier (e.g. first letter of struct         *
- *     name + first letter of member name)                                     *
+ *  6) Replace value/flag list below line                                      *
+ *       '#define STRUCT_MEMBER(GENERATOR_FUNC)'                               *
+ *     using format                                                            *
+ *       'GENERATOR_FUNC(<PREFIX>_NAME, <VALUE>)'                              *
+ *     with <PREFIX> being a unique identifier (e.g. first letter of           *
+ *     struct name + first letter of member name)                              *
  *                                                                             *
  ******************************************************************************/
 
