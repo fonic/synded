@@ -33,7 +33,7 @@
 	case VALUE: return #NAME;
 
 #define GENERATE_TOSTR_BITMASK(ENUM_MACRO, NAME_NONE)  \
-	static char buffer[512];                           \
+	static char buffer[1024];                          \
 	                                                   \
 	if (value == NAME_NONE)                            \
 		return #NAME_NONE;                             \
