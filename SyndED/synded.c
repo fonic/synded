@@ -73,12 +73,13 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 
 
-	// Edit/modify example: make GAME01.DAT and GAME10.DAT more interesting
-	if (strstr(infile_name, "GAME01.DAT") != NULL) {
+	// Editing/modification examples: make GAME01.DAT and GAME10.DAT more interesting
+	if (strstr(infile_name, "GAME01.DAT") != NULL) {  // Western Europe
+
 		printf("Modifying GAME01.DAT...\n");
-		Vehicle vehicle = gamedata.Vehicles[0];  // Existing Vehicle
-		Person person = gamedata.People[9];      // Existing Guard
-		Weapon weapon = gamedata.Weapons[0];     // Existing Uzi (belongs to last guard at road)
+		Vehicle vehicle = gamedata.Vehicles[0];       // Existing Vehicle
+		Person person = gamedata.People[9];           // Existing Guard
+		Weapon weapon = gamedata.Weapons[0];          // Existing Uzi (belongs to last guard at road)
 
 		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;  // Lots of free space for new stuff
 
@@ -110,32 +111,37 @@ int main(int argc, char *argv[]) {
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}
 
-		// TESTING: Command your own agents
-		gamedata.LoBoundaryx -= 50;
-		gamedata.LoBoundaryy -= 50;
-		gamedata.HiBoundaryx += 50;
-		gamedata.HiBoundaryy += 50;
-		Command command; size_t command_slot = 63;
+		// Rebuild MapWho to account for added things
+		rebuild_mapwho(&gamedata);
+
+		// TESTING: Command your own agents to be useful on their own
+		gamedata.LoBoundaryx = 0;
+		gamedata.LoBoundaryy = 0;
+		gamedata.HiBoundaryx = 255;
+		gamedata.HiBoundaryy = 255;
+		Command command; memset(&command, 0, sizeof(Command)); size_t command_slot = 63;
 		for (size_t i = 0; i <= 7; i++) {
 			gamedata.People[i].NewState = PS_NEXT_COMMAND;
 			gamedata.People[i].StartCommand = gamedata.People[i].Command = sizeof(Command) * command_slot;
 		}
-		memset(&command, 0, sizeof(Command));
 		command.Next = sizeof(Command) * (command_slot+1);
-		command.GotoX = ((gamedata.People[0].Xpos >> 8) - 14) * 2; // Goto 14 tiles north-west of starting point
-		command.GotoY = (gamedata.People[0].Ypos >> 8) * 2;        // (more or less central court after bridge)
+		command.GotoX = ((gamedata.People[0].Xpos >> 8) - 14) * 2;  // Goto 14 tiles north-west of starting point
+		command.GotoY = (gamedata.People[0].Ypos >> 8) * 2;         // (more or less central court after bridge)
 		command.State = CS_GOTO_POINT;
 		gamedata.Commands[command_slot++] = command;
 		for (size_t i = 0; i < PEOPLE_COUNT; i++) {
 			if (gamedata.People[i].Unique != PU_GUARD)
 				continue;
 			command.Next = sizeof(Command) * (command_slot+1);
-			command.GotoX = (gamedata.People[i].Xpos >> 8) * 2;    // Hunt down guards
+			command.GotoX = (gamedata.People[i].Xpos >> 8) * 2;     // Hunt down guards
 			command.GotoY = (gamedata.People[i].Ypos >> 8) * 2;
 			command.State = CS_GOTO_POINT;
 			gamedata.Commands[command_slot++] = command;
 		}
-		gamedata.Commands[command_slot-1].Next = 456;
+		/*memset(&command, 0, sizeof(Command));                     // End of command list
+		command.State = CS_END_COMMANDS;
+		gamedata.Commands[command_slot++] = command;*/
+		gamedata.Commands[command_slot-1].Next = 456;               // Let's get that shiny black car (pre-existing command)
 
 		// TESTING: Macros GET_RELOFS_FOR_THING + GET_THING_FOR_RELOFS
 		printf("Relative offset of gamedata.People[12]:   %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.People[12]));
@@ -147,13 +153,11 @@ int main(int argc, char *argv[]) {
 		printf("Thing.RelOfs:   %u, Thing.Xpos:   %u, Thing.Ypos:   %u\n", 24394, t2->Xpos, t2->Ypos);
 		printf("Vehicle.RelOfs: %u, Vehicle.Xpos: %u, Vehicle.Ypos: %u\n", (uint16_t)(VEHICLES_RELATIVE_OFFSET + sizeof(Vehicle) * 20), gamedata.Vehicles[20].Xpos, gamedata.Vehicles[20].Ypos);
 
-		// TESTING: MapWho Rebuilding
-		rebuild_mapwho(&gamedata);
+	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {  // Eastern Europe
 
-	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {
 		printf("Modifying GAME10.DAT...\n");
-		Weapon weapon = gamedata.Weapons[1];  // existing Uzi
-		size_t weapon_slot = 30;              // lots of free space
+		Weapon weapon = gamedata.Weapons[1];                 // Existing Uzi
+		size_t weapon_slot = 30;                             // Lots of free space
 		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People
 			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // Women get Uzis
 				gamedata.People[i].Unique = PU_GUARD;
@@ -171,6 +175,39 @@ int main(int argc, char *argv[]) {
 				gamedata.Weapons[weapon_slot++] = weapon;
 			}
 		}
+
+	} else if (strstr(infile_name, "GAME20.DAT") != NULL) {  // Scandinavia
+
+		printf("Modifying GAME20.DAT...\n");
+		size_t person_slot = 65;                             // Lots of free space
+		for (size_t i = 8; i < 60; i++) {                    // Twice the civilians == twice the fun
+			if (gamedata.People[i].Unique == PU_CIVILIAN) {
+				Person person = gamedata.People[i];          // Two tiles variation in positioning
+				person.Xpos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
+				person.Ypos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
+				person.Angle = rand() % 256;                 // Wander somewhere nice
+				person.NewState = PS_WANDER;
+				switch (rand() % 4) {
+					case 0:
+						person.BaseFrame = PB_WOMAN_BLONDE;
+						break;
+					case 1:
+						person.BaseFrame = PB_WOMAN_REDHEAD;
+						break;
+					case 2:
+						person.BaseFrame = PB_MAN_SUIT;
+						break;
+					default:
+						person.BaseFrame = PB_MAN_JACKET;
+						break;
+				}
+				gamedata.People[person_slot++] = person;
+			}
+		}
+
+		// Rebuild MapWho to account for added things
+		rebuild_mapwho(&gamedata);
+
 	} else {
 		printf("Not modifying game data (see sources).\n");
 	}
@@ -285,7 +322,6 @@ int main(int argc, char *argv[]) {
 	printf("CPObjective: %zu\n", sizeof(CPObjective));
 	printf("GameData:    %zu\n", sizeof(GameData));
 	printf("\n");
-
 
 	// Print offsets of GameData struct members
 	printf("GameData offsets:\n");

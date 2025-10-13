@@ -507,7 +507,7 @@ typedef struct {
 	/* 113512 0x1bb68 */  World        Worlds[WORLDS_COUNT];
 	/* 113960 0x1bd28 */  //MapInfo    MapInfo;                                  // Could use this struct instead of separate members below (until Objectives)
 	/* 113960 0x1bd28 */  uint16_t     MapNumber;
-	/* 113962 0x1bd2a */  uint16_t     LoBoundaryx;
+	/* 113962 0x1bd2a */  uint16_t     LoBoundaryx;                              // These seem use TILES of HALF SIZE (i.e. range 0-255)
 	/* 113964 0x1bd2c */  uint16_t     LoBoundaryy;
 	/* 113966 0x1bd2e */  uint16_t     HiBoundaryx;
 	/* 113968 0x1bd30 */  uint16_t     HiBoundaryy;

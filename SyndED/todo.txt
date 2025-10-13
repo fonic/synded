@@ -12,27 +12,25 @@
 
 -> This requires defining a 'Thing' struct first that derived structs like
    Person can be cast to; this struct appears to be named 'Global' in RGAME.C
-
 -> See RGAME.C for MapWho functions (move_mapwho, move_off_mapwho)
-
 -> When done, update example for GAME01.DAT to test MapWho management
+
+- Several enums are BITMASKS / FLAG-BASED (see enums in Mefistotelis .xml)
+-> Need to revise existing enums + come up with appropriate _to_str() functions
+   that print ALL flags that are set
 
 
 --------------------------------------------------------------------------------
 - OPEN                                                                         -
 --------------------------------------------------------------------------------
 
-- Migrate project to proper IDE (with Makefile and all)
-
-- Several enums are BITMASKS / FLAG-BASED (see enums in Mefistotelis .xml)
-  -> Need to revise existing enums + come up with appropriate _to_str() functions
-     that print ALL flags
+- Migrate project to proper IDE (with Makefile and all other shenanigans)
 
 - Instead of using FIXED values for OFFSET defines in 'gamedata.h', use macro
      #include <stddef.h>
      size_t offsetof(type, member)
   to calculate these during compile time (macro yields global offsets, global
-  offset - global offset of member 'Unknown' == relative offset).
+  offset - global offset of member 'RelOfsBase' == relative offset).
   (https://stackoverflow.com/a/7180389/1976617)
 
   Also consider/look at 'member_size' macro:
@@ -48,6 +46,29 @@
      multidimensional array must have bounds for all dimensions except the
      first), so might not be desirable after all
   -> Investigate
+
+- Add convenient functions for managing things:
+  Person*  add_person(...)
+  Vehicle* add_vehicle(...)
+  ...
+  void add_weapon_to_person(Weapon *weapon, Person *person)
+  void remove_weapon_from_person(Weapon *weapon, Person *person)
+  ...
+  void add_person_to_vehicle(Person *person, Vehicle *vehicle)
+  void remove_person_from_vehicle(Person *person, Vehicle *vehicle)
+  ...
+  -> Add functions should have arguments for ALL RELEVANT attributes
+  -> Add functions should find the first unused spot in their respective array
+     on their own (by iterating + comparing array entries to zerod struct);
+     return NULL if NO unused spot was found
+
+- Implement game data sanitizing function:
+  - Erase things that are not on the map (i.e. flag TS_MAPWHO is not set)
+    NOTE: people in a car have status == TS_MAPWHO | TS_NODRAW
+    NOTE: weapons assigned to people have status == TS_MAPWHO | TS_NODRAW
+  - Erase commands that are not assigned to a person (CAUTION: linked lists,
+    i.e. only head of list of commands is assigned to a person)
+  - ... (not sure yet about CPObjectives)
 
 - Fix compiler warnings reported by Windows CL (differ from GCC)
 

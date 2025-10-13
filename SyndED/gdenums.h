@@ -9,11 +9,12 @@
  *  https://stackoverflow.com/a/10966395/1976617                               *
  *                                                                             *
  *  Usage:                                                                     *
- *  1) Copy entire commented block from '#define' until '#undef'               *
- *  2) Replace 'STRUCT_MEMBER' with '<STRUCT-NAME>_<MEMBER-NAME>'              *
- *  3) Replace 'StructMember'  with '<Struct-Name><Member-Name>'               *
- *  4) Replace 'struct_member' with '<struct-name>_<member-name>'              *
- *  5) Replace value list below '#define STRUCT_MEMBER(GENERATOR_FUNC)'        *
+ *  1) Determine if enum should be values-based or bitmask-based               *
+ *  2) Copy corresponding commented block from '#define' until '#undef'        *
+ *  3) Replace 'STRUCT_MEMBER' with '<STRUCT-NAME>_<MEMBER-NAME>'              *
+ *  4) Replace 'StructMember'  with '<Struct-Name><Member-Name>'               *
+ *  5) Replace 'struct_member' with '<struct-name>_<member-name>'              *
+ *  6) Replace value list below '#define STRUCT_MEMBER(GENERATOR_FUNC)'        *
  *     using format 'GENERATOR_FUNC( <PREFIX>_NAME, <VALUE> )', with           *
  *     <PREFIX> being a unique identifier (e.g. first letter of struct         *
  *     name + first letter of member name)                                     *
@@ -22,30 +23,69 @@
 
 #define GENERATE_ENUM_LINES(NAME, VALUE) NAME = VALUE,
 
-#define GENERATE_SWITCH_CASE(ENUM_MACRO)  \
-	switch (value) {                      \
-		ENUM_MACRO(GENERATE_CASE_LINES)   \
-		default: return "UNDEFINED";      \
+#define GENERATE_TOSTR_VALUES(ENUM_MACRO)              \
+	switch (value) {                                   \
+		ENUM_MACRO(GENERATE_VALUES_LINES)              \
+		default: return "UNDEFINED";                   \
 	}
 
-#define GENERATE_CASE_LINES(STRING, VALUE)  \
-	case VALUE: return #STRING;
+#define GENERATE_VALUES_LINES(NAME, VALUE)             \
+	case VALUE: return #NAME;
+
+#define GENERATE_TOSTR_BITMASK(ENUM_MACRO, NAME_NONE)  \
+	static char buffer[512];                           \
+	                                                   \
+	if (value == NAME_NONE)                            \
+		return #NAME_NONE;                             \
+	                                                   \
+	buffer[0] = '\0';                                  \
+	                                                   \
+	ENUM_MACRO(GENERATE_BITMASK_LINES)                 \
+	                                                   \
+	size_t len = strlen(buffer);                       \
+	if (len > 3)                                       \
+		buffer[len - 3] = '\0';                        \
+	                                                   \
+	return buffer;
+
+#define GENERATE_BITMASK_LINES(NAME, VALUE)            \
+	if (value & NAME)                                  \
+		strlcat(buffer, #NAME " | ", sizeof(buffer));
 
 
 /*
 #define STRUCT_MEMBER(GENERATOR_FUNC)   \
-	GENERATOR_FUNC(SM_NONE,      0x00)  \
-	GENERATOR_FUNC(SM_SOMETHING, 0x01)  \
-	GENERATOR_FUNC(SM_SOMETHING, 0x02)  \
-	GENERATOR_FUNC(SM_SOMETHING, 0x04)  \
-	GENERATOR_FUNC(SM_SOMETHING, 0x10)
+	GENERATOR_FUNC(SM_VALUE_03, 0x03)   \
+	GENERATOR_FUNC(SM_VALUE_05, 0x05)   \
+	GENERATOR_FUNC(SM_VALUE_99, 0x99)   \
+	GENERATOR_FUNC(SM_VALUE_C0, 0xC0)   \
+	GENERATOR_FUNC(SM_VALUE_FB, 0xFB)
 
 typedef enum {
 	STRUCT_MEMBER(GENERATE_ENUM_LINES)
 } StructMember;
 
 static const char* struct_member_to_str(const StructMember value) {
-	GENERATE_SWITCH_CASE(STRUCT_MEMBER)
+	GENERATE_TOSTR_VALUES(STRUCT_MEMBER)
+}
+#undef STRUCT_MEMBER
+*/
+
+/*
+#define STRUCT_MEMBER(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(SM_NONE,    0x00)   \
+	GENERATOR_FUNC(SM_FLAG_01, 0x01)   \
+	GENERATOR_FUNC(SM_FLAG_02, 0x02)   \
+	GENERATOR_FUNC(SM_FLAG_04, 0x04)   \
+	GENERATOR_FUNC(SM_FLAG_08, 0x08)   \
+	GENERATOR_FUNC(SM_FLAG_10, 0x10)
+
+typedef enum {
+	STRUCT_MEMBER(GENERATE_ENUM_LINES)
+} StructMember;
+
+static const char* struct_member_to_str(const StructMember value) {
+	GENERATE_TOSTR_BITMASK(STRUCT_MEMBER, SM_NONE)
 }
 #undef STRUCT_MEMBER
 */
@@ -57,9 +97,8 @@ static const char* struct_member_to_str(const StructMember value) {
  *                                                                             *
  ******************************************************************************/
 
-// CAUTION:
-// This is bitmask/flag-based (see 'STATUS_*' in RGAME.C), needs to be revised
 #define THING_STATUS(GENERATOR_FUNC)         \
+	GENERATOR_FUNC(TS_NONE,            0x0)  \
 	GENERATOR_FUNC(TS_NODRAW,          0x1)  \
 	GENERATOR_FUNC(TS_UNKNOWN_2,       0x2)  \
 	GENERATOR_FUNC(TS_MAPWHO,          0x4)  \
@@ -82,7 +121,7 @@ typedef enum {
 } ThingStatus;
 
 static const char* thing_status_to_str(const ThingStatus value) {
-	GENERATE_SWITCH_CASE(THING_STATUS)
+	GENERATE_TOSTR_BITMASK(THING_STATUS, TS_NONE)
 }
 #undef THING_STATUS
 
@@ -100,7 +139,7 @@ typedef enum {
 } ThingModel;
 
 static const char* thing_model_to_str(const ThingModel value) {
-	GENERATE_SWITCH_CASE(THING_MODEL)
+	GENERATE_TOSTR_VALUES(THING_MODEL)
 }
 #undef THING_MODEL
 
@@ -120,7 +159,7 @@ typedef enum {
 } ThingAngle;
 
 static const char* thing_angle_to_str(const ThingAngle value) {
-	//GENERATE_SWITCH_CASE(THING_ANGLE)
+	//GENERATE_TOSTR_VALUES(THING_ANGLE)
 	if (value >= 0xF0 || value <= 0x0F)
 		return "TA_SOUTHWEST";
 	else if (value >= 0x10 && value <= 0x2F)
@@ -148,9 +187,6 @@ static const char* thing_angle_to_str(const ThingAngle value) {
  *                                                                             *
  ******************************************************************************/
 
-// CAUTION:
-// This is bitmask/flag-based (e.g. Person can be persuaded AND hit by a vehicle
-// will persuading animation still rolls), needs to be revised
 #define PERSON_AFFECT(GENERATOR_FUNC)           \
 	GENERATOR_FUNC(PA_NONE,               0x0)  \
 	GENERATOR_FUNC(PA_HIT_BY_VEHICLE,     0x1)  \
@@ -170,7 +206,7 @@ typedef enum {
 } PersonAffect;
 
 static const char* person_affect_to_str(const PersonAffect value) {
-	GENERATE_SWITCH_CASE(PERSON_AFFECT)
+	GENERATE_TOSTR_BITMASK(PERSON_AFFECT, PA_NONE)
 }
 #undef PERSON_AFFECT
 
@@ -190,7 +226,7 @@ typedef enum {
 } PersonBaseframe;
 
 static const char* person_baseframe_to_str(const PersonBaseframe value) {
-	GENERATE_SWITCH_CASE(PERSON_BASEFRAME)
+	GENERATE_TOSTR_VALUES(PERSON_BASEFRAME)
 }
 #undef PERSON_BASEFRAME
 
@@ -248,12 +284,10 @@ typedef enum {
 } PersonState;
 
 static const char* person_state_to_str(const PersonState value) {
-	GENERATE_SWITCH_CASE(PERSON_STATE)
+	GENERATE_TOSTR_VALUES(PERSON_STATE)
 }
 #undef PERSON_STATE
 
-// CAUTION:
-// Looks like being bitmask/flag-based; investigate
 #define PERSON_UNIQUE(GENERATOR_FUNC)  \
 	GENERATOR_FUNC(PU_NONE,     0x00)  \
 	GENERATOR_FUNC(PU_CIVILIAN, 0x01)  \
@@ -267,7 +301,7 @@ typedef enum {
 } PersonUnique;
 
 static const char* person_unique_to_str(const PersonUnique value) {
-	GENERATE_SWITCH_CASE(PERSON_UNIQUE)
+	GENERATE_TOSTR_BITMASK(PERSON_UNIQUE, PU_NONE)
 }
 #undef PERSON_UNIQUE
 
@@ -305,8 +339,8 @@ static const char* person_unique_to_str(const PersonUnique value) {
 	GENERATOR_FUNC(VS_UNKNOWN_17,           0x17)  \
 	GENERATOR_FUNC(VS_UNKNOWN_18,           0x18)  \
 	GENERATOR_FUNC(VS_UNKNOWN_19,           0x19)  \
-	GENERATOR_FUNC(VS_UNKNOWN_1a,           0x1A)  \
-	GENERATOR_FUNC(VS_UNKNOWN_1b,           0x1B)  \
+	GENERATOR_FUNC(VS_UNKNOWN_1A,           0x1A)  \
+	GENERATOR_FUNC(VS_UNKNOWN_1B,           0x1B)  \
 	GENERATOR_FUNC(VS_INDUSTRIAL,           0x1C)  \
 	GENERATOR_FUNC(VS_INDUSTRIAL_MOVING,    0x1D)  \
 	GENERATOR_FUNC(VS_INDUSTRIAL_ON_FIRE,   0x1E)  \
@@ -330,7 +364,7 @@ typedef enum {
 } VehicleState;
 
 static const char* vehicle_state_to_str(const VehicleState value) {
-	GENERATE_SWITCH_CASE(VEHICLE_STATE)
+	GENERATE_TOSTR_VALUES(VEHICLE_STATE)
 }
 #undef VEHICLE_STATE
 
@@ -368,7 +402,7 @@ typedef enum {
 } WeaponState;
 
 static const char* weapon_state_to_str(const WeaponState value) {
-	GENERATE_SWITCH_CASE(WEAPON_STATE)
+	GENERATE_TOSTR_VALUES(WEAPON_STATE)
 }
 #undef WEAPON_STATE
 
@@ -399,7 +433,7 @@ typedef enum {
 } CommandState;
 
 static const char* command_state_to_str(const CommandState value) {
-	GENERATE_SWITCH_CASE(COMMAND_STATE)
+	GENERATE_TOSTR_VALUES(COMMAND_STATE)
 }
 #undef COMMAND_STATE
 
