@@ -1,0 +1,288 @@
+# kate: syntax notes; replace-tabs on; indent-width 2; word-wrap on; word-wrap-column 80;
+
+--------------------------------------------------------------------------------
+- WORK IN PROGRESS                                                             -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- TODO (FURTHER DEVELOPMENT)                                                   -
+--------------------------------------------------------------------------------
+
+- Add convenient functions for managing things:
+  Person*  add_person(...)
+  Vehicle* add_vehicle(...)
+  ...
+  void add_weapon_to_person(Weapon *weapon, Person *person)
+  void remove_weapon_from_person(Weapon *weapon, Person *person)
+  ...
+  void add_person_to_vehicle(Person *person, Vehicle *vehicle)
+  void remove_person_from_vehicle(Person *person, Vehicle *vehicle)
+  ...
+  -> Add functions should have arguments for ALL RELEVANT attributes
+  -> Add functions should find the first unused spot in their respective array
+     on their own (by iterating + comparing array entries to zerod struct);
+     return NULL if NO unused spot was found
+
+- Implement MapWho management function 'verify_mapwho' (refer to comment in
+  'mapwho.c' for algorithm description)
+
+- Implement game data sanitizing function:
+  - Erase things that are not on the map (i.e. flag TS_MAPWHO is not set)
+    NOTE: people in a car have status == TS_MAPWHO | TS_NODRAW
+    NOTE: weapons assigned to people have status == TS_MAPWHO | TS_NODRAW
+  - Erase commands that are not assigned to a person (CAUTION: linked lists,
+    i.e. only head of list of commands is assigned to a person)
+  - ... (not sure yet about other stuff like CPObjectives)
+
+- Think about changing MapWho from:
+  uint16_t MapWho[TILES_COUNT_X * TILES_COUNT_Y];
+    -to-
+  uint16_t MapWho[TILES_COUNT_Y][TILES_COUNT_X];
+  -> Seems more natural, but introduces issues regarding multidimensional array
+     as arguments to functions (briefly tested: "declaration of ‘mapwho’ as
+     multidimensional array must have bounds for all dimensions except the
+     first"), so might not be desirable after all
+  -> Investigate
+
+- Implement handling of RNCed files (currently using simple file size check to
+  rule out RNCed files as valid input files, works well, thus low priority)
+
+- Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
+  investigate the differences and check if other versions have discrepancies
+  as well in that regard
+
+- Further refine game data structs
+  -> ONGOING, will take some time + input from Mefistotelis as disassembly
+     progresses
+
+- Implement basic user menu for viewing/editing:
+  1 - Print People
+  2 - Print Vehicles
+  3 - Print Objects
+  4 - Print ...
+  ...
+  Choice >
+  -> Not in the near future, editing via code is perfectly fine for now
+
+
+--------------------------------------------------------------------------------
+- TODO (CODE MAINTENANCE)                                                      -
+--------------------------------------------------------------------------------
+
+- Split 'gdenums.h' into .h + .c to get rid of those unused function warnings
+
+- Generator macros for bitmask enums in 'gdenums.h' currently use 'strlcat',
+  which is not portable
+  -> Implement and use 'strecpy'/'strtcpy' instead (see 'man string_copying'
+     for examples AND reference implementations
+
+- Convert all hard-coded position conversions '(pos >> 8)' to newly introduced
+  macros 'POS_TO_TILE'/'POS_TO_CMDGOTO'
+
+- Instead of using FIXED values for OFFSET defines in 'gamedata.h', use macro
+     #include <stddef.h>
+     size_t offsetof(type, member)
+  to calculate these during compile time (macro yields global offsets, global
+  offset - global offset of member 'RelOfsBase' == relative offset).
+  (https://stackoverflow.com/a/7180389/1976617)
+
+  Also consider/look at 'member_size' macro:
+     #define member_size(type, member) (sizeof( ((type *)0)->member ))
+  (https://stackoverflow.com/a/3553321/1976617)
+
+- Fix compiler warnings reported by Windows CL (differ from GCC)
+
+- Test compiling on Windows regularly (alternative: use GitHub CI)
+
+
+--------------------------------------------------------------------------------
+- DONE (CHANGELOG)                                                             -
+--------------------------------------------------------------------------------
+
+- Migrate SyndED to a _real_ project:
+  - Migrate sources to C project template
+  - Establish Git repo for version control
+  - Import project into proper IDE
+
+- Add both Syndicate and Syndicate: American Revolt GAMExx.DAT files to be
+  processed, alter processing script accordingly
+
+- Use name of OUTPUT file to derive CSV file names, as CSV contents represent
+  MODIFIED output file (if editor actually applied editing/modifications)
+
+- Several enums are BITMASKS / FLAG-BASED (see enums in Mefistotelis .xml);
+  implement generator macros for _to_str() functions for bitmask enums, then
+  revise existing enums
+  -> DONE, but currently used 'strlcat' is not portable
+
+- Update editing/modification examples in 'synded.c' to make use of newly
+  introduced MapWho management functions (especially 'rebuild_mapwho')
+
+- Add 'mapwho.h' + 'mapwho.c' with MapWho management functions:
+  add_thing_to_mapwho       -> see move_mapwho() in RGAME.C
+  remove_thing_from_mapwho  -> see move_off_mapwho() in RGAME.C
+  move_thing_within_mapwho  -> see move_mapwho() in RGAME.C
+  verify_mapwho             -> check if mapwho contents are sane/valid
+  rebuild_mapwho            -> rebuild mapwho from scratch
+  -> All done EXCEPT for verify_mapwho()
+
+- Positions and tile references are all SWORD (== int16_t) in RGAME.C; until
+  now, UWORD (== uint16_t) was used; change ALL associated members in structs
+  to int16_t: ?pos, Goto?, Last?Pos, Link?, etc.
+
+- Use macro 'offsetof' for GameData offsets printing in 'synded.c'
+
+- Add macros 'GET_THING_FOR_RELOFS' and 'GET_RELOFS_FOR_THING' based on macros
+  'GET_GLOBAL_PTR' and 'GET_MODEL_OFFSET' in RGAME.C (which are only used, but
+  not actually defined in that source file)
+
+- Detect and print proper errors for file operations 'fread'/'fwrite' as
+  'strerror(errno)' does NOT work for these (prints 'Success' on failure)
+-> FIXED by switching 'size' and 'n' parameters + evaluating returned 'read_
+   count'/'write_count' properly
+
+- Add struct for Thing which serves as a 'base class' for Person, Vehicle,
+  Object, Weapon, Effect (required for casting, e.g. when filling MapWho;
+  this struct is named 'Global' in RGAME.C)
+
+- Split 'fprintf(file, "%zu,%zu,...)" lines in 'csvoutput.c' into SEPARATE
+  lines paired with member to output, e.g.:
+  fprintf("%s,", thing_status_to_str(people[i].Status));
+  -> A bit slower on execution, but WAY easier to maintain/extend (!)
+
+- Add enum + _to_str() function for Thing.Angle to 'gdenums.h' + integrate into
+  CSV output:
+
+  Angle ranges (from testing, as it appears on-screen):
+  0xF0 - 0x0F: South-West
+  0x10 - 0x2F: South
+  0x30 - 0x4F: South-East
+  0x50 - 0x6F: East
+  0x70 - 0x8F: North-East
+  0x90 - 0xAF: North
+  0xB0 - 0xCF: North-West
+  0xD0 - 0xEF: West
+
+-> Might get revised later if it should turn out that ACTUAL world orientation
+   (i.e. considering the isometric perspective) is better suited
+
+- Make compiler warning visible and fix as many as possible
+  (https://stackoverflow.com/q/11714827/1976617)
+
+- Implement file size check for input file (to detect and deny incompatible
+  files, e.g. RNCed or from beta version)
+
+- Use comment blocks from 'gdenums.s' for separation of structs in 'gamedata.h'
+  as well; add brief description to each struct regarding its use
+
+- Add defines for all currently hard-coded parameters in 'gamedata.h':
+  TILES_COUNT_X
+  TILES_COUNT_Y
+  PEOPLE_COUNT
+  VEHICLES_COUNT
+  ...
+  PEOPLE_GLOBAL_OFFSET
+  VEHICLES_GLOBAL_OFFSET
+  ...
+  PEOPLE_RELATIVE_OFFSET
+  VEHICLES_RELATIVE_OFFSET
+  ...
+  -> GLOBAL offsets are useful to identify items within GAMExx.DAT directly
+  -> RELATIVE offsets are important for game data, as all references use these
+     (e.g. Person holding a Weapon via Person.ChildWeapon)
+  -> Move OFFSET_GLOBAL_TO_RELATIVE from 'csvoutput.c' to 'gamedata.h', then
+     add OFFSET_RELATIVE_TO_GLOBAL macro
+  -> Use these new defines and macros throughout SyndED instead of previously
+     hard-coded values (affects mostly 'synded.c')
+-> DONE; CAUTION: this required MASSIVE code changes, thus there might be
+   regressions (!)
+
+- In 'csvoutput.h'/'csvoutput.c', set 'size_t offset_global' and 'size_t offset_
+  relative' to CONST and then calculate offsets using index for CSV output in-
+  stead of using 'offset_global += sizeof(Command); offset_relative += sizeof(
+  Command);':
+  offset_global + i * sizeof(Struct),
+  offset_relative + i * sizeof(Struct),
+- Set all other arguments in functions of 'csvoutput.h'/'csvoutput.c' to const
+  as well, just for good measure
+
+- Modify editing example for GAME01.DAT to make use of deciphered Vehicle.State
+  (i.e. place APC + Soldier, Police Car + Police Man, Normal Car + Criminal)
+  and newly introduced defines for relative offsets
+
+- Add macro to 'gamedata.h' to calculate MapWho offset from Xpos/Ypos:
+  #define POSITION_TO_MAPWHO_OFFSET(xpos, ypos) \
+      (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)
+
+- Add enum for Vehicle.State to 'gdenums.h' + integrate into CSV output
+
+- Changes enums in 'gdenums.h' to typedefs, then change _to_str() functions
+  from '(const enum PersonState value)' to '(const PersonState value)' (enum
+  keyword no longer necessary when using typedefs)
+  (https://stackoverflow.com/a/1102556/1976617)
+
+- Deconstruct struct MapWho into struct GameData:
+  /*      6 0x00006 */  MapWho       MapWho;
+  becomes:
+  /*      6 0x00006 */  uint16_t     MapWho[128*128];
+  -> There is no real benefit in having a struct with just a single member
+
+- Calculate Xtile + Ytile for things that can appear on map:
+  uint16_t XPos/YPos -> higher 8 bits = tile, lower 8 bits = offset within tile
+  (according to FreeSynd)
+
+- Translate known values into human-readable strings for CSV output
+  (e.g. Person.Unique, Person.Status, Weapon.State, etc.)
+
+- Change Unique in struct Person to uint16_t, eliminate following HugDistance1,
+  rename Hugdistance2 to just HugDistance
+
+- Add local offset to CSV output of Commands (to make reference via Command.Next
+  visible/readable)
+
+- Revise comments in 'gamedata.h'
+
+- Write MapWho struct to CSV file (128 columns, 128 rows)
+
+- Apply fixes + test compiling on Windows -> WORKS
+- Add asprintf library (to allow compiling on Windows)
+
+- Verify and fix CSV output
+
+- Output ALL contents of GameData struct to CSV files
+
+- Deconstruct struct MapInfo into separate members (like in RGAME.C)
+
+- Change command line:
+  $ synded INFILE OUTFILE
+- Read entire input file into structure GameData
+- Write entire output file from structure GameData
+
+- Verify structs (together with Moburma and Mefistotelis)
+  -> DONE for now, but will be ongoing (still stuff to figure out / correct)
+
+- Add prints for struct sizes
+- Add prints for struct member offsets
+
+- Fill structs MapInfo, Objective, CPObjective
+
+- Restructure GitHub repo
+
+- Move structs to separate header file 'gamedata.h'
+
+- Create base structure as a starting point
+
+
+--------------------------------------------------------------------------------
+- PLANNED BUT LATER CANCELED                                                   -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- Date: 10/07/25 - 10/14/25                                                    -
+--------------------------------------------------------------------------------
