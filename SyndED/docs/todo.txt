@@ -22,8 +22,8 @@
   ...
   -> Add functions should have arguments for ALL RELEVANT attributes
   -> Add functions should find the first unused spot in their respective array
-     on their own (by iterating + comparing array entries to zerod struct);
-     return NULL if NO unused spot was found
+     on their own (by iterating + comparing array entries to zeroed struct)
+     and return NULL if NO unused spot could be found
 
 - Implement MapWho management function 'verify_mapwho' (refer to comment in
   'mapwho.c' for algorithm description)
@@ -57,38 +57,32 @@
   -> ONGOING, will take some time + input from Mefistotelis as disassembly
      progresses
 
-- Implement basic user menu for viewing/editing:
-  1 - Print People
-  2 - Print Vehicles
-  3 - Print Objects
-  4 - Print ...
-  ...
-  Choice >
-  -> Not in the near future, editing via code is perfectly fine for now
-
 
 --------------------------------------------------------------------------------
 - TODO (CODE MAINTENANCE)                                                      -
 --------------------------------------------------------------------------------
 
-- Convert all hard-coded position conversions '(pos >> 8)' to newly introduced
-  macros 'POS_TO_TILE'/'POS_TO_CMDGOTO'
-
-- Instead of using FIXED values for OFFSET defines in 'gamedata.h', use macro
-     #include <stddef.h>
-     size_t offsetof(type, member)
-  to calculate these during compile time (macro yields global offsets, global
-  offset - global offset of member 'RelOfsBase' == relative offset).
-  (https://stackoverflow.com/a/7180389/1976617)
-
-  Also consider/look at 'member_size' macro:
-     #define member_size(type, member) (sizeof( ((type *)0)->member ))
-  (https://stackoverflow.com/a/3553321/1976617)
+- Nothing atm
 
 
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Use macro 'offsetof' to calculate global/relative offsets of GameData members
+  at compile time instead of using fixed values for defines in 'gamedata.h':
+     #include <stddef.h>
+     size_t offsetof(type, member)
+  Macro yields GLOBAL offsets, global offset member - global offset 'RelOfs
+  Base' == relative offset.
+  (https://stackoverflow.com/a/7180389/1976617)
+
+  Also considered/looked at 'member_size' macro:
+     #define member_size(type, member) (sizeof( ((type *)0)->member ))
+  (https://stackoverflow.com/a/3553321/1976617)
+
+- Convert all hard-coded position to tile conversions '(pos >> 8)' to newly
+  introduced macros 'POS_TO_TILE'/'POS_TO_CMDGOTO'
 
 - Split 'gdenums.h' into .h + .c to get rid of those pesky unused function
   warnings (also seems cleaner that way)
@@ -286,6 +280,17 @@
 -> Building on Windows is out-of-scope for now (quite time-consuming to keep
    code compilable on both platforms); Revisit this and re-add Windows support
    when editor has matured enough / is feature-complete
+
+- Implement basic user menu for viewing/editing:
+  1 - Print People
+  2 - Print Vehicles
+  3 - Print Objects
+  4 - Print ...
+  ...
+  Choice >
+-> Not in the near future, editing via code is perfectly fine for now;
+   it might be best to skip a text-based UI in favor of a fully-fledged
+   graphical one
 
 
 --------------------------------------------------------------------------------

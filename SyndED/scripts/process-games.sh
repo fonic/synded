@@ -28,11 +28,14 @@ fi
 
 # Process games
 for game in "${games[@]}"; do
-	echo "Running SyndED for '${game}'..."
-	rm -f -- "${game}_mod"*
 	if ${VERBOSE_OUTPUT}; then
+		echo -e "\e[1mRunning SyndED for '${game}':\e[0m"; echo
+		rm -f -- "${game}_mod"*
 		"${SYNDED_EXE}" "${game}" "${game}_mod" |& tee -- "${game}_mod_log.txt"
 	else
+		echo -n "Running SyndED for '${game}'... "
+		rm -f -- "${game}_mod"*
 		"${SYNDED_EXE}" "${game}" "${game}_mod" &> "${game}_mod_log.txt"
+		(( $? == 0 )) && echo -e "\e[1;32msuccess\e[0m" || echo -e "\e[1;31mfailed\e[0m"
 	fi
 done

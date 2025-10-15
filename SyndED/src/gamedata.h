@@ -30,7 +30,7 @@
 #define MAX_TILE_Y                        126
 
 #define POS_PER_TILE                      256    // Each tile consists of 256 sub-positions
-                                                 // (positions are 16 bit -> highest 8 bit == tile, lowest 8 bit == subpos)
+                                                 // (positions are 16 bit -> highest 8 bit == tile, lowest 8 bit == sub-pos)
 
 #define MAX_ZPOS                         4095    // Highest possible Z position (see function move_mapwho in RGAME.C)
 
@@ -44,11 +44,12 @@
 #define OBJECTIVES_COUNT                    8
 #define CPOBJECTIVES_COUNT                128
 
+/*
 #define RELATIVE_OFFSET_BASE          0x08006    // Location of 'RelOfsBase' member in GameData struct (right above
                                                  // People array); relative offsets are relative to THIS global offset
 
-#define PEOPLE_GLOBAL_OFFSET          0x08008    // 0x00000 == start of GameData struct = start of GAMExx.DAT contents
-#define VEHICLES_GLOBAL_OFFSET        0x0dc08
+#define PEOPLE_GLOBAL_OFFSET          0x08008    // Global offset 0x00000 == start of GameData struct = start of GAMExx.DAT
+#define VEHICLES_GLOBAL_OFFSET        0x0dc08    // contents
 #define OBJECTS_GLOBAL_OFFSET         0x0e688
 #define WEAPONS_GLOBAL_OFFSET         0x11568
 #define EFFECTS_GLOBAL_OFFSET         0x15d68
@@ -57,15 +58,39 @@
 #define OBJECTIVES_GLOBAL_OFFSET      0x1bd32
 #define CPOBJECTIVES_GLOBAL_OFFSET    0x1bdaa
 
-#define PEOPLE_RELATIVE_OFFSET        0x00002    // 0x00000 == location of 'RelOfsBase' member in GameData struct (right
-#define VEHICLES_RELATIVE_OFFSET      0x05c02    // above People array); relative offsets are important as THESE are
-#define OBJECTS_RELATIVE_OFFSET       0x06682    // used within game data to reference other things, e.g. to associate
+#define PEOPLE_RELATIVE_OFFSET        0x00002    // Relative offset 0x00000 == location of 'RelOfsBase' member in GameData
+#define VEHICLES_RELATIVE_OFFSET      0x05c02    // struct (right above People array); relative offsets are important due to
+#define OBJECTS_RELATIVE_OFFSET       0x06682    // being used within game data to reference other things, e.g. to associate
 #define WEAPONS_RELATIVE_OFFSET       0x09562    // a Weapon with a Person (via Person.ChildWeapon)
 #define EFFECTS_RELATIVE_OFFSET       0x0dd62
 #define COMMANDS_RELATIVE_OFFSET      0x0fb62
 #define WORLDS_RELATIVE_OFFSET        0x13b62
 #define OBJECTIVES_RELATIVE_OFFSET    0x13d2c
 #define CPOBJECTIVES_RELATIVE_OFFSET  0x13da4
+*/
+
+#define RELATIVE_OFFSET_BASE          offsetof(GameData, RelOfsBase)                                       // Location of 'RelOfsBase' member in GameData struct (right above
+                                                                                                           // People array); relative offsets are relative to THIS global offset
+
+#define PEOPLE_GLOBAL_OFFSET          offsetof(GameData, People)                                           // Global offset 0x00000 == start of GameData struct = start of GAMExx.DAT
+#define VEHICLES_GLOBAL_OFFSET        offsetof(GameData, Vehicles)                                         // contents
+#define OBJECTS_GLOBAL_OFFSET         offsetof(GameData, Objects)
+#define WEAPONS_GLOBAL_OFFSET         offsetof(GameData, Weapons)
+#define EFFECTS_GLOBAL_OFFSET         offsetof(GameData, Effects)
+#define COMMANDS_GLOBAL_OFFSET        offsetof(GameData, Commands)
+#define WORLDS_GLOBAL_OFFSET          offsetof(GameData, Worlds)
+#define OBJECTIVES_GLOBAL_OFFSET      offsetof(GameData, Objectives)
+#define CPOBJECTIVES_GLOBAL_OFFSET    offsetof(GameData, CPObjectives)
+
+#define PEOPLE_RELATIVE_OFFSET        offsetof(GameData, People) - offsetof(GameData, RelOfsBase)          // Relative offset 0x00000 == location of 'RelOfsBase' member in GameData
+#define VEHICLES_RELATIVE_OFFSET      offsetof(GameData, Vehicles) - offsetof(GameData, RelOfsBase)        // struct (right above People array); relative offsets are important due to
+#define OBJECTS_RELATIVE_OFFSET       offsetof(GameData, Objects) - offsetof(GameData, RelOfsBase)         // being used within game data to reference other things, e.g. to associate
+#define WEAPONS_RELATIVE_OFFSET       offsetof(GameData, Weapons) - offsetof(GameData, RelOfsBase)         // a Weapon with a Person (via Person.ChildWeapon)
+#define EFFECTS_RELATIVE_OFFSET       offsetof(GameData, Effects) - offsetof(GameData, RelOfsBase)
+#define COMMANDS_RELATIVE_OFFSET      offsetof(GameData, Commands) - offsetof(GameData, RelOfsBase)
+#define WORLDS_RELATIVE_OFFSET        offsetof(GameData, Worlds) - offsetof(GameData, RelOfsBase)
+#define OBJECTIVES_RELATIVE_OFFSET    offsetof(GameData, Objectives) - offsetof(GameData, RelOfsBase)
+#define CPOBJECTIVES_RELATIVE_OFFSET  offsetof(GameData, CPObjectives) - offsetof(GameData, RelOfsBase)
 
 
 /******************************************************************************
@@ -74,17 +99,17 @@
  *                                                                            *
  ******************************************************************************/
 
-//#define POS_TO_TILE(pos) (pos >> 8)                                                                  // Position to tile conversion
-#define POS_TO_TILE(pos) (pos / POS_PER_TILE)                                                          // Position to tile conversion
+//#define POS_TO_TILE(pos) (pos >> 8)                                                                      // Position to tile conversion
+#define POS_TO_TILE(pos) (pos / POS_PER_TILE)                                                              // Position to tile conversion
 
-//#define POS_TO_CMDGOTO(pos) ((pos >> 8) * 2)                                                         // Position to Command goto conversion
-#define POS_TO_CMDGOTO(pos) ((pos / POS_PER_TILE) * 2)                                                 // Position to Command goto conversion
+//#define POS_TO_CMDGOTO(pos) ((pos >> 8) * 2)                                                             // Position to Command goto conversion
+#define POS_TO_CMDGOTO(pos) ((pos / POS_PER_TILE) * 2)                                                     // Position to Command goto conversion
 
-//#define POS_TO_MAPWHO_OFS(xpos, ypos) (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)                      // Position to offset within MapWho array conversion
-#define POS_TO_MAPWHO_OFS(xpos, ypos) (ypos / POS_PER_TILE) * TILES_COUNT_X + (xpos / POS_PER_TILE)    // Position to offset within MapWho array conversion
+//#define POS_TO_MAPWHO_OFS(xpos, ypos) (ypos >> 8) * TILES_COUNT_X + (xpos >> 8)                          // Position to offset within MapWho array conversion
+#define POS_TO_MAPWHO_OFS(xpos, ypos) (ypos / POS_PER_TILE) * TILES_COUNT_X + (xpos / POS_PER_TILE)        // Position to offset within MapWho array conversion
 
-#define OFS_GLOBAL_TO_RELATIVE(offset_global) offset_global - RELATIVE_OFFSET_BASE                     // Offset global to relative conversion
-#define OFS_RELATIVE_TO_GLOBAL(offset_relative) RELATIVE_OFFSET_BASE + offset_relative                 // Offset relative to global conversion
+#define OFS_GLOBAL_TO_RELATIVE(offset_global) (offset_global - RELATIVE_OFFSET_BASE)                       // Offset global to relative conversion
+#define OFS_RELATIVE_TO_GLOBAL(offset_relative) (RELATIVE_OFFSET_BASE + offset_relative)                   // Offset relative to global conversion
 
 #define GET_THING_FOR_RELOFS(gamedata, relofs) (Thing*)((size_t)(gamedata) + offsetof(GameData, RelOfsBase) + relofs)               // Get Thing from GameData struct based on relative offset
 #define GET_RELOFS_FOR_THING(gamedata, thing)  (uint16_t)((size_t)(thing) - (size_t)(gamedata) - offsetof(GameData, RelOfsBase))    // Get relative offset of Thing in GameData struct (CAUTION:
@@ -362,8 +387,8 @@ typedef struct {
 	//int16_t   GotoY;
 	//int16_t   GotoZ;
 	uint8_t   GotoX;                   // These reference TILES of HALF SIZE, i.e. to convert
-	uint8_t   GotoY;                   // a position to this use: GotoX = (Xpos >> 8) * 2
-	uint8_t   GotoZ;
+	uint8_t   GotoY;                   // a position to this use: GotoX = (Xpos >> 8) * 2 or
+	uint8_t   GotoZ;                   // GotoX = POS_TO_CMDGOTO(Xpos)
 	uint8_t   State;
 } Command;
 #pragma pack(pop)

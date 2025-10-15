@@ -10,11 +10,12 @@
 #include "asprintf.h"   // asprintf; needs to be on top, modifies '#include <stdio.h>'
 //#include "stpecpy.h"  // stpecpy; needs to be on top, modifies '#include <string.h>'
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <stdio.h>      // printf, fprintf, fopen, fclose, fread, fwrite, ftell, fseek, stderr, FILE
+#include <stdint.h>     // int16_t, uint16_t, ...
+#include <stdlib.h>     // free, rand
+#include <string.h>     // strerror, strstr
+#include <errno.h>      // errno
+#include <stddef.h>     // size_t, offsetof
 
 #include "gamedata.h"
 #include "gdenums.h"
@@ -126,7 +127,7 @@ int main(int argc, char *argv[]) {
 		rebuild_mapwho(&gamedata);
 
 #ifdef DEBUG
-		// TESTING: Command your own agents to be useful on their own
+		// [TESTING] Command your own agents to be useful on their own
 		gamedata.LoBoundaryx = 0;
 		gamedata.LoBoundaryy = 0;
 		gamedata.HiBoundaryx = 255;
@@ -137,27 +138,27 @@ int main(int argc, char *argv[]) {
 			gamedata.People[i].StartCommand = gamedata.People[i].Command = sizeof(Command) * command_slot;
 		}
 		command.Next = sizeof(Command) * (command_slot+1);
-		command.GotoX = ((gamedata.People[0].Xpos >> 8) - 14) * 2;  // Goto 14 tiles north-west of starting point
-		command.GotoY = (gamedata.People[0].Ypos >> 8) * 2;         // (more or less central court after bridge)
+		command.GotoX = POS_TO_CMDGOTO(gamedata.People[0].Xpos) - 28;  // Go to 28 half-sized tiles north-west of starting point
+		command.GotoY = POS_TO_CMDGOTO(gamedata.People[0].Ypos);       // (more or less the center of the court after bridge)
 		command.State = CS_GOTO_POINT;
 		gamedata.Commands[command_slot++] = command;
 		for (size_t i = 0; i < PEOPLE_COUNT; i++) {
 			if (gamedata.People[i].Unique != PU_GUARD)
 				continue;
 			command.Next = sizeof(Command) * (command_slot+1);
-			command.GotoX = (gamedata.People[i].Xpos >> 8) * 2;     // Hunt down guards
-			command.GotoY = (gamedata.People[i].Ypos >> 8) * 2;
+			command.GotoX = POS_TO_CMDGOTO(gamedata.People[i].Xpos);   // Hunt down guards
+			command.GotoY = POS_TO_CMDGOTO(gamedata.People[i].Ypos);
 			command.State = CS_GOTO_POINT;
 			gamedata.Commands[command_slot++] = command;
 		}
-		/*memset(&command, 0, sizeof(Command));                     // End of command list
+		/*memset(&command, 0, sizeof(Command));                        // End of command list
 		command.State = CS_END_COMMANDS;
 		gamedata.Commands[command_slot++] = command;*/
-		gamedata.Commands[command_slot-1].Next = 456;               // Let's get that shiny black car (pre-existing command)
+		gamedata.Commands[command_slot-1].Next = 456;                  // Let's get that shiny black car (pre-existing command)
 #endif
 
 #ifdef DEBUG
-		// TESTING: Macros GET_RELOFS_FOR_THING + GET_THING_FOR_RELOFS
+		// [TESTING] Macros GET_RELOFS_FOR_THING + GET_THING_FOR_RELOFS
 		printf("Relative offset of gamedata.People[12]:   %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.People[12]));
 		printf("Relative offset of gamedata.Vehicles[20]: %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.Vehicles[20]));
 		Thing *t = GET_THING_FOR_RELOFS(&gamedata, 1106);   // Retrieved thing must match gamedata.People[12]

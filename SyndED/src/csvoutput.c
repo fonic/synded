@@ -71,8 +71,8 @@ int write_people_to_csv(const char *file_name, const Person people[], const size
 		fprintf(file, "%i,",  people[i].Xpos);
 		fprintf(file, "%i,",  people[i].Ypos);
 		fprintf(file, "%i,",  people[i].Zpos);
-		fprintf(file, "%i,",  people[i].Xpos >> 8);
-		fprintf(file, "%i,",  people[i].Ypos >> 8);
+		fprintf(file, "%i,",  POS_TO_TILE(people[i].Xpos));
+		fprintf(file, "%i,",  POS_TO_TILE(people[i].Ypos));
 		fprintf(file, "%u,",  people[i].Status);
 		fprintf(file, "%s,",  thing_status_to_str(people[i].Status));
 		fprintf(file, "%u,",  people[i].Affect);
@@ -171,8 +171,8 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 		fprintf(file, "%i,",  vehicles[i].Xpos);
 		fprintf(file, "%i,",  vehicles[i].Ypos);
 		fprintf(file, "%i,",  vehicles[i].Zpos);
-		fprintf(file, "%i,",  vehicles[i].Xpos >> 8);
-		fprintf(file, "%i,",  vehicles[i].Ypos >> 8);
+		fprintf(file, "%i,",  POS_TO_TILE(vehicles[i].Xpos));
+		fprintf(file, "%i,",  POS_TO_TILE(vehicles[i].Ypos));
 		fprintf(file, "%u,",  vehicles[i].Status);
 		fprintf(file, "%s,",  thing_status_to_str(vehicles[i].Status));
 		fprintf(file, "%u,",  vehicles[i].Affect);
@@ -231,8 +231,8 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 		fprintf(file, "%i,",  objects[i].Xpos);
 		fprintf(file, "%i,",  objects[i].Ypos);
 		fprintf(file, "%i,",  objects[i].Zpos);
-		fprintf(file, "%i,",  objects[i].Xpos >> 8);
-		fprintf(file, "%i,",  objects[i].Ypos >> 8);
+		fprintf(file, "%i,",  POS_TO_TILE(objects[i].Xpos));
+		fprintf(file, "%i,",  POS_TO_TILE(objects[i].Ypos));
 		fprintf(file, "%u,",  objects[i].Status);
 		fprintf(file, "%s,",  thing_status_to_str(objects[i].Status));
 		fprintf(file, "%u,",  objects[i].Affect);
@@ -284,8 +284,8 @@ int write_weapons_to_csv(const char *file_name, const Weapon weapons[], const si
 		fprintf(file, "%i,",  weapons[i].Xpos);
 		fprintf(file, "%i,",  weapons[i].Ypos);
 		fprintf(file, "%i,",  weapons[i].Zpos);
-		fprintf(file, "%i,",  weapons[i].Xpos >> 8);
-		fprintf(file, "%i,",  weapons[i].Ypos >> 8);
+		fprintf(file, "%i,",  POS_TO_TILE(weapons[i].Xpos));
+		fprintf(file, "%i,",  POS_TO_TILE(weapons[i].Ypos));
 		fprintf(file, "%u,",  weapons[i].Status);
 		fprintf(file, "%s,",  thing_status_to_str(weapons[i].Status));
 		fprintf(file, "%u,",  weapons[i].Affect);
@@ -340,8 +340,8 @@ int write_effects_to_csv(const char *file_name, const Effect effects[], const si
 		fprintf(file, "%i,",  effects[i].Xpos);
 		fprintf(file, "%i,",  effects[i].Ypos);
 		fprintf(file, "%i,",  effects[i].Zpos);
-		fprintf(file, "%i,",  effects[i].Xpos >> 8);
-		fprintf(file, "%i,",  effects[i].Ypos >> 8);
+		fprintf(file, "%i,",  POS_TO_TILE(effects[i].Xpos));
+		fprintf(file, "%i,",  POS_TO_TILE(effects[i].Ypos));
 		fprintf(file, "%u,",  effects[i].Status);
 		fprintf(file, "%s,",  thing_status_to_str(effects[i].Status));
 		fprintf(file, "%u,",  effects[i].Affect);
@@ -472,8 +472,8 @@ int write_objectives_to_csv(const char *file_name, const Objective objectives[],
 		fprintf(file, "%i,",  objectives[i].Xpos);
 		fprintf(file, "%i,",  objectives[i].Ypos);
 		fprintf(file, "%i,",  objectives[i].Zpos);
-		fprintf(file, "%i,",  objectives[i].Xpos >> 8);
-		fprintf(file, "%i",   objectives[i].Ypos >> 8);
+		fprintf(file, "%i,",  POS_TO_TILE(objectives[i].Xpos));
+		fprintf(file, "%i",   POS_TO_TILE(objectives[i].Ypos));
 		fprintf(file, "\n");
 	}
 

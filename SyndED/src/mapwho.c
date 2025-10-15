@@ -24,8 +24,8 @@ bool add_thing_to_mapwho(GameData *gamedata, Thing *thing) {
 		return false;                                             // thing_within_mapwho must be used instead to move thing within mapwho)
 	}
 
-	xtile = (thing->Xpos >> 8);                                   // Position to tile (positions are 16 bit -> highest 8 bit == tile,
-	ytile = (thing->Ypos >> 8);                                   // lowest 8 bit == sub-position within tile)
+	xtile = POS_TO_TILE(thing->Xpos);                             // Position to tile conversion (positions are 16 bit -> highest 8 bit == tile,
+	ytile = POS_TO_TILE(thing->Ypos);                             // lowest 8 bit == sub-position within tile)
 
 	/*                                                            // Original from RGAME.C, replaced by modified variant below
 	if (xtile < MIN_TILE_X)                                       // Below lowest possible tile? -> wrap position around to highest possible tile
@@ -106,8 +106,8 @@ bool move_thing_within_mapwho(GameData *gamedata, Thing *thing, int16_t new_xpos
 		return false;                                             // add_thing_to_mapwho must be used instead to add thing to mapwho)
 	}
 
-	xtile = (new_xpos >> 8);                                      // Position to tile (positions are 16 bit -> highest 8 bit == tile,
-	ytile = (new_ypos >> 8);                                      // lowest 8 bit == sub-position within tile)
+	xtile = POS_TO_TILE(new_xpos);                                // Position to tile conversion (positions are 16 bit -> highest 8 bit == tile,
+	ytile = POS_TO_TILE(new_ypos);                                // lowest 8 bit == sub-position within tile)
 
 	/*                                                            // Original from RGAME.C, replaced by modified variant below
 	if (xtile < MIN_TILE_X)                                       // Below lowest possible tile? -> wrap position around to highest possible tile
