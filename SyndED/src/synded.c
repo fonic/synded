@@ -7,13 +7,15 @@
  *                                                                            *
  ******************************************************************************/
 
+#include "asprintf.h"   // asprintf; needs to be on top, modifies '#include <stdio.h>'
+//#include "stpecpy.h"  // stpecpy; needs to be on top, modifies '#include <string.h>'
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-#include "asprintf.h"
 #include "gamedata.h"
 #include "gdenums.h"
 #include "csvoutput.h"

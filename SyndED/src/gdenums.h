@@ -10,96 +10,113 @@
 #ifndef GDENUMS_H
 #define GDENUMS_H
 
-#include <string.h>
+#include "stpecpy.h"  // stpecpy; needs to be on top, modifies '#include <string.h>'
+
+#include <string.h>   // strlen, strlcat
 
 
 /******************************************************************************
  *                                                                            *
- *  Enum generator macros are based on this approach                          *
- *  (but customized to support non-consecutive enums and bitmasks):           *
+ *  Enum generator macros are based on this approach:                         *
  *  https://stackoverflow.com/a/10966395/1976617                              *
+ *  (customized/extended to support flags and non-consecutive values)         *
  *                                                                            *
  *  Usage:                                                                    *
- *  1) Determine if enum should be value-based or bitmask-based               *
- *  2) Copy corresponding commented block from '#define' until '#undef'       *
+ *  1) Determine if enum should be VALUE-based or FLAG-based (bitmask)        *
+ *  2) Copy&paste code from corresponding commented block (see below)         *
  *  3) Replace 'STRUCT_MEMBER' with '<STRUCT-NAME>_<MEMBER-NAME>'             *
  *  4) Replace 'StructMember'  with '<Struct-Name><Member-Name>'              *
  *  5) Replace 'struct_member' with '<struct-name>_<member-name>'             *
- *  6) Replace value/flag list below line                                     *
- *       '#define STRUCT_MEMBER(GENERATOR_FUNC)'                              *
+ *  6) Replace values/flags list below line                                   *
+ *       '#define STRUCT_MEMBER_...(GENERATOR_FUNC)'                          *
  *     using format                                                           *
  *       'GENERATOR_FUNC(<PREFIX>_NAME, <VALUE>)'                             *
- *     with <PREFIX> being a unique identifier (e.g. first letter of          *
+ *     with '<PREFIX>' being a unique identifier (e.g. first letter of        *
  *     struct name + first letter of member name)                             *
+ *  7) Cut&paste _to_str function implementation from end of block to         *
+ *     'gdenums.c'                                                            *
  *                                                                            *
  ******************************************************************************/
 
 #define GENERATE_ENUM_LINES(NAME, VALUE) NAME = VALUE,
 
-#define GENERATE_TOSTR_VALUES(ENUM_MACRO)              \
-	switch (value) {                                   \
-		ENUM_MACRO(GENERATE_VALUES_LINES)              \
-		default: return "UNDEFINED";                   \
+#define GENERATE_TOSTR_VALUES(ENUM_MACRO)            \
+	switch (value) {                                 \
+		ENUM_MACRO(GENERATE_VALUES_LINES)            \
+		default: return "VALUE_UNDEFINED";           \
 	}
 
-#define GENERATE_VALUES_LINES(NAME, VALUE)             \
+#define GENERATE_VALUES_LINES(NAME, VALUE)           \
 	case VALUE: return #NAME;
 
-#define GENERATE_TOSTR_BITMASK(ENUM_MACRO, NAME_NONE)  \
-	static char buffer[1024];                          \
-	                                                   \
-	if (value == NAME_NONE)                            \
-		return #NAME_NONE;                             \
-	                                                   \
-	buffer[0] = '\0';                                  \
-	                                                   \
-	ENUM_MACRO(GENERATE_BITMASK_LINES)                 \
-	                                                   \
-	size_t len = strlen(buffer);                       \
-	if (len > 3)                                       \
-		buffer[len - 3] = '\0';                        \
-	                                                   \
+#define GENERATE_TOSTR_FLAGS(ENUM_MACRO, NAME_NONE)  \
+	static char buffer[1024];                        \
+	                                                 \
+	if (value == NAME_NONE)                          \
+		return #NAME_NONE;                           \
+	                                                 \
+	char *pcur = buffer;                             \
+	char *pend = buffer + sizeof(buffer);            \
+	buffer[0] = '\0';                                \
+	                                                 \
+	ENUM_MACRO(GENERATE_FLAGS_LINES)                 \
+	                                                 \
+	if (pcur == NULL)                                \
+		return "STR_TOO_LONG";                       \
+	                                                 \
+	size_t len = strlen(buffer);                     \
+	if (len > 3)                                     \
+		buffer[len - 3] = '\0';                      \
+	                                                 \
 	return buffer;
 
-#define GENERATE_BITMASK_LINES(NAME, VALUE)            \
-	if (value & NAME)                                  \
-		strlcat(buffer, #NAME " | ", sizeof(buffer));
+#define GENERATE_FLAGS_LINES(NAME, VALUE)            \
+	if (value & NAME)                                \
+		pcur = stpecpy(pcur, pend, #NAME " | ");
 
-/*
-#define STRUCT_MEMBER(GENERATOR_FUNC)   \
-	GENERATOR_FUNC(SM_VALUE_03, 0x03)   \
-	GENERATOR_FUNC(SM_VALUE_05, 0x05)   \
-	GENERATOR_FUNC(SM_VALUE_99, 0x99)   \
-	GENERATOR_FUNC(SM_VALUE_C0, 0xC0)   \
+
+/* ----------- For VALUE-based enum -----------
+
+#define STRUCT_MEMBER_VALUES(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(SM_VALUE_03, 0x03)         \
+	GENERATOR_FUNC(SM_VALUE_05, 0x05)         \
+	GENERATOR_FUNC(SM_VALUE_99, 0x99)         \
+	GENERATOR_FUNC(SM_VALUE_C0, 0xC0)         \
 	GENERATOR_FUNC(SM_VALUE_FB, 0xFB)
 
 typedef enum {
-	STRUCT_MEMBER(GENERATE_ENUM_LINES)
+	STRUCT_MEMBER_VALUES(GENERATE_ENUM_LINES)
 } StructMember;
 
-static const char* struct_member_to_str(const StructMember value) {
-	GENERATE_TOSTR_VALUES(STRUCT_MEMBER)
+const char* struct_member_to_str(const StructMember value);
+
+const char* struct_member_to_str(const StructMember value) {
+	GENERATE_TOSTR_VALUES(STRUCT_MEMBER_VALUES)
 }
-#undef STRUCT_MEMBER
+
 */
 
-/*
-#define STRUCT_MEMBER(GENERATOR_FUNC)  \
-	GENERATOR_FUNC(SM_NONE,    0x00)   \
-	GENERATOR_FUNC(SM_FLAG_01, 0x01)   \
-	GENERATOR_FUNC(SM_FLAG_02, 0x02)   \
-	GENERATOR_FUNC(SM_FLAG_04, 0x04)   \
-	GENERATOR_FUNC(SM_FLAG_08, 0x08)   \
+
+/* ------ For FLAG-based (bitmask) enum ------
+
+#define STRUCT_MEMBER_FLAGS(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(SM_NONE,    0x00)         \
+	GENERATOR_FUNC(SM_FLAG_01, 0x01)         \
+	GENERATOR_FUNC(SM_FLAG_02, 0x02)         \
+	GENERATOR_FUNC(SM_FLAG_04, 0x04)         \
+	GENERATOR_FUNC(SM_FLAG_08, 0x08)         \
 	GENERATOR_FUNC(SM_FLAG_10, 0x10)
 
 typedef enum {
-	STRUCT_MEMBER(GENERATE_ENUM_LINES)
+	STRUCT_MEMBER_FLAGS(GENERATE_ENUM_LINES)
 } StructMember;
 
-static const char* struct_member_to_str(const StructMember value) {
-	GENERATE_TOSTR_BITMASK(STRUCT_MEMBER, SM_NONE)
+const char* struct_member_to_str(const StructMember value);
+
+const char* struct_member_to_str(const StructMember value) {
+	GENERATE_TOSTR_FLAGS(STRUCT_MEMBER_FLAGS, SM_NONE)
 }
-#undef STRUCT_MEMBER
+
 */
 
 
@@ -109,7 +126,7 @@ static const char* struct_member_to_str(const StructMember value) {
  *                                                                            *
  ******************************************************************************/
 
-#define THING_STATUS(GENERATOR_FUNC)         \
+#define THING_STATUS_FLAGS(GENERATOR_FUNC)   \
 	GENERATOR_FUNC(TS_NONE,            0x0)  \
 	GENERATOR_FUNC(TS_NODRAW,          0x1)  \
 	GENERATOR_FUNC(TS_UNKNOWN_2,       0x2)  \
@@ -129,68 +146,42 @@ static const char* struct_member_to_str(const StructMember value) {
 	GENERATOR_FUNC(TS_UNKNOWN_8000, 0x8000)
 
 typedef enum {
-	THING_STATUS(GENERATE_ENUM_LINES)
+	THING_STATUS_FLAGS(GENERATE_ENUM_LINES)
 } ThingStatus;
 
-static const char* thing_status_to_str(const ThingStatus value) {
-	GENERATE_TOSTR_BITMASK(THING_STATUS, TS_NONE)
-}
-#undef THING_STATUS
+const char* thing_status_to_str(const ThingStatus value);
 
 
-#define THING_MODEL(GENERATOR_FUNC)   \
-	GENERATOR_FUNC(TM_NONE,    0x00)  \
-	GENERATOR_FUNC(TM_PERSON,  0x01)  \
-	GENERATOR_FUNC(TM_VEHICLE, 0x02)  \
-	GENERATOR_FUNC(TM_EFFECT,  0x03)  \
-	GENERATOR_FUNC(TM_WEAPON,  0x04)  \
+#define THING_MODEL_VALUES(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(TM_NONE,    0x00)        \
+	GENERATOR_FUNC(TM_PERSON,  0x01)        \
+	GENERATOR_FUNC(TM_VEHICLE, 0x02)        \
+	GENERATOR_FUNC(TM_EFFECT,  0x03)        \
+	GENERATOR_FUNC(TM_WEAPON,  0x04)        \
 	GENERATOR_FUNC(TM_OBJECT,  0x05)
 
 typedef enum {
-	THING_MODEL(GENERATE_ENUM_LINES)
+	THING_MODEL_VALUES(GENERATE_ENUM_LINES)
 } ThingModel;
 
-static const char* thing_model_to_str(const ThingModel value) {
-	GENERATE_TOSTR_VALUES(THING_MODEL)
-}
-#undef THING_MODEL
+const char* thing_model_to_str(const ThingModel value);
 
 
-#define THING_ANGLE(GENERATOR_FUNC)     \
-	GENERATOR_FUNC(TA_SOUTHWEST, 0x00)  \
-	GENERATOR_FUNC(TA_SOUTH,     0x20)  \
-	GENERATOR_FUNC(TA_SOUTHEAST, 0x40)  \
-	GENERATOR_FUNC(TA_EAST,      0x60)  \
-	GENERATOR_FUNC(TA_NORTHEAST, 0x80)  \
-	GENERATOR_FUNC(TA_NORTH,     0xA0)  \
-	GENERATOR_FUNC(TA_NORTHWEST, 0xC0)  \
+#define THING_ANGLE_VALUES(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(TA_SOUTHWEST, 0x00)      \
+	GENERATOR_FUNC(TA_SOUTH,     0x20)      \
+	GENERATOR_FUNC(TA_SOUTHEAST, 0x40)      \
+	GENERATOR_FUNC(TA_EAST,      0x60)      \
+	GENERATOR_FUNC(TA_NORTHEAST, 0x80)      \
+	GENERATOR_FUNC(TA_NORTH,     0xA0)      \
+	GENERATOR_FUNC(TA_NORTHWEST, 0xC0)      \
 	GENERATOR_FUNC(TA_WEST,      0xE0)
 
 typedef enum {
-	THING_ANGLE(GENERATE_ENUM_LINES)
+	THING_ANGLE_VALUES(GENERATE_ENUM_LINES)
 } ThingAngle;
 
-static const char* thing_angle_to_str(const ThingAngle value) {
-	//GENERATE_TOSTR_VALUES(THING_ANGLE)
-	if (value >= 0xF0 || value <= 0x0F)
-		return "TA_SOUTHWEST";
-	else if (value >= 0x10 && value <= 0x2F)
-		return "TA_SOUTH";
-	else if (value >= 0x30 && value <= 0x4F)
-		return "TA_SOUTHEAST";
-	else if (value >= 0x50 && value <= 0x6F)
-		return "TA_EAST";
-	else if (value >= 0x70 && value <= 0x8F)
-		return "TA_NORTHEAST";
-	else if (value >= 0x90 && value <= 0xAF)
-		return "TA_NORTH";
-	else if (value >= 0xB0 && value <= 0xCF)
-		return "TA_NORTHWEST";
-	//else if (value >= 0xD0 && value <= 0xEF)
-	else
-		return "TA_WEST";
-}
-#undef THING_ANGLE
+const char* thing_angle_to_str(const ThingAngle value);
 
 
 /******************************************************************************
@@ -199,7 +190,7 @@ static const char* thing_angle_to_str(const ThingAngle value) {
  *                                                                            *
  ******************************************************************************/
 
-#define PERSON_AFFECT(GENERATOR_FUNC)           \
+#define PERSON_AFFECT_FLAGS(GENERATOR_FUNC)     \
 	GENERATOR_FUNC(PA_NONE,               0x0)  \
 	GENERATOR_FUNC(PA_HIT_BY_VEHICLE,     0x1)  \
 	GENERATOR_FUNC(PA_UNKNOWN_2,          0x2)  \
@@ -214,36 +205,30 @@ static const char* thing_angle_to_str(const ThingAngle value) {
 	GENERATOR_FUNC(PA_HIT_BY_PERSUADER, 0x400)
 
 typedef enum {
-	PERSON_AFFECT(GENERATE_ENUM_LINES)
+	PERSON_AFFECT_FLAGS(GENERATE_ENUM_LINES)
 } PersonAffect;
 
-static const char* person_affect_to_str(const PersonAffect value) {
-	GENERATE_TOSTR_BITMASK(PERSON_AFFECT, PA_NONE)
-}
-#undef PERSON_AFFECT
+const char* person_affect_to_str(const PersonAffect value);
 
 
-#define PERSON_BASEFRAME(GENERATOR_FUNC)    \
-	GENERATOR_FUNC(PB_NONE,             0)  \
-	GENERATOR_FUNC(PB_AGENT,            1)  \
-	GENERATOR_FUNC(PB_WOMAN_BLONDE,   626)  \
-	GENERATOR_FUNC(PB_POLICE,         833)  \
-	GENERATOR_FUNC(PB_WOMAN_REDHEAD, 1123)  \
-	GENERATOR_FUNC(PB_MAN_SUIT,      1330)  \
-	GENERATOR_FUNC(PB_SOLDIER,       1537)  \
+#define PERSON_BASEFRAME_VALUES(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(PB_NONE,             0)       \
+	GENERATOR_FUNC(PB_AGENT,            1)       \
+	GENERATOR_FUNC(PB_WOMAN_BLONDE,   626)       \
+	GENERATOR_FUNC(PB_POLICE,         833)       \
+	GENERATOR_FUNC(PB_WOMAN_REDHEAD, 1123)       \
+	GENERATOR_FUNC(PB_MAN_SUIT,      1330)       \
+	GENERATOR_FUNC(PB_SOLDIER,       1537)       \
 	GENERATOR_FUNC(PB_MAN_JACKET,    1744)
 
 typedef enum {
-	PERSON_BASEFRAME(GENERATE_ENUM_LINES)
+	PERSON_BASEFRAME_VALUES(GENERATE_ENUM_LINES)
 } PersonBaseframe;
 
-static const char* person_baseframe_to_str(const PersonBaseframe value) {
-	GENERATE_TOSTR_VALUES(PERSON_BASEFRAME)
-}
-#undef PERSON_BASEFRAME
+const char* person_baseframe_to_str(const PersonBaseframe value);
 
 
-#define PERSON_STATE(GENERATOR_FUNC)              \
+#define PERSON_STATE_VALUES(GENERATOR_FUNC)       \
 	GENERATOR_FUNC(PS_NONE,                 0x0)  \
 	GENERATOR_FUNC(PS_NEXT_COMMAND,         0x1)  \
 	GENERATOR_FUNC(PS_GOTO_POINT2,          0x2)  \
@@ -292,30 +277,25 @@ static const char* person_baseframe_to_str(const PersonBaseframe value) {
 	GENERATOR_FUNC(PS_TOTAL_STATES,        0x2D)
 
 typedef enum {
-	PERSON_STATE(GENERATE_ENUM_LINES)
+	PERSON_STATE_VALUES(GENERATE_ENUM_LINES)
 } PersonState;
 
-static const char* person_state_to_str(const PersonState value) {
-	GENERATE_TOSTR_VALUES(PERSON_STATE)
-}
-#undef PERSON_STATE
+const char* person_state_to_str(const PersonState value);
 
-#define PERSON_UNIQUE(GENERATOR_FUNC)  \
-	GENERATOR_FUNC(PU_NONE,     0x00)  \
-	GENERATOR_FUNC(PU_CIVILIAN, 0x01)  \
-	GENERATOR_FUNC(PU_AGENT,    0x02)  \
-	GENERATOR_FUNC(PU_POLICE,   0x04)  \
-	GENERATOR_FUNC(PU_GUARD,    0x08)  \
+
+#define PERSON_UNIQUE_FLAGS(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(PU_NONE,     0x00)        \
+	GENERATOR_FUNC(PU_CIVILIAN, 0x01)        \
+	GENERATOR_FUNC(PU_AGENT,    0x02)        \
+	GENERATOR_FUNC(PU_POLICE,   0x04)        \
+	GENERATOR_FUNC(PU_GUARD,    0x08)        \
 	GENERATOR_FUNC(PU_CRIMINAL, 0x10)
 
 typedef enum {
-	PERSON_UNIQUE(GENERATE_ENUM_LINES)
+	PERSON_UNIQUE_FLAGS(GENERATE_ENUM_LINES)
 } PersonUnique;
 
-static const char* person_unique_to_str(const PersonUnique value) {
-	GENERATE_TOSTR_BITMASK(PERSON_UNIQUE, PU_NONE)
-}
-#undef PERSON_UNIQUE
+const char* person_unique_to_str(const PersonUnique value);
 
 
 /******************************************************************************
@@ -324,7 +304,7 @@ static const char* person_unique_to_str(const PersonUnique value) {
  *                                                                            *
  ******************************************************************************/
 
-#define VEHICLE_STATE(GENERATOR_FUNC)              \
+#define VEHICLE_STATE_VALUES(GENERATOR_FUNC)       \
 	GENERATOR_FUNC(VS_NONE,                  0x0)  \
 	GENERATOR_FUNC(VS_APC,                   0x1)  \
 	GENERATOR_FUNC(VS_APC_MOVING,            0x2)  \
@@ -372,13 +352,10 @@ static const char* person_unique_to_str(const PersonUnique value) {
 	GENERATOR_FUNC(VS_STATES_COUNT,         0x2C)
 
 typedef enum {
-	VEHICLE_STATE(GENERATE_ENUM_LINES)
+	VEHICLE_STATE_VALUES(GENERATE_ENUM_LINES)
 } VehicleState;
 
-static const char* vehicle_state_to_str(const VehicleState value) {
-	GENERATE_TOSTR_VALUES(VEHICLE_STATE)
-}
-#undef VEHICLE_STATE
+const char* vehicle_state_to_str(const VehicleState value);
 
 
 /******************************************************************************
@@ -387,36 +364,33 @@ static const char* vehicle_state_to_str(const VehicleState value) {
  *                                                                            *
  ******************************************************************************/
 
-#define WEAPON_STATE(GENERATOR_FUNC)        \
-	GENERATOR_FUNC(WS_NONE,          0x00)  \
-	GENERATOR_FUNC(WS_PERSUADERTRON, 0x01)  \
-	GENERATOR_FUNC(WS_PISTOL,        0x02)  \
-	GENERATOR_FUNC(WS_GAUSS_GUN,     0x03)  \
-	GENERATOR_FUNC(WS_SHOTGUN,       0x04)  \
-	GENERATOR_FUNC(WS_UZI,           0x05)  \
-	GENERATOR_FUNC(WS_MINIGUN,       0x06)  \
-	GENERATOR_FUNC(WS_LASER,         0x07)  \
-	GENERATOR_FUNC(WS_FLAMER,        0x08)  \
-	GENERATOR_FUNC(WS_LONG_RANGE,    0x09)  \
-	GENERATOR_FUNC(WS_SCANNER,       0x0A)  \
-	GENERATOR_FUNC(WS_MEDIKIT,       0x0B)  \
-	GENERATOR_FUNC(WS_TIME_BOMB,     0x0C)  \
-	GENERATOR_FUNC(WS_ACCESS_CARD,   0x0D)  \
-	GENERATOR_FUNC(WS_UNUSED_14,     0x0E)  \
-	GENERATOR_FUNC(WS_UNUSED_15,     0x0F)  \
-	GENERATOR_FUNC(WS_AUTO_MAPPER,   0x10)  \
-	GENERATOR_FUNC(WS_ENERGY_SHIELD, 0x11)  \
-	GENERATOR_FUNC(WS_UNUSED_18,     0x12)  \
+#define WEAPON_STATE_VALUES(GENERATOR_FUNC)  \
+	GENERATOR_FUNC(WS_NONE,          0x00)   \
+	GENERATOR_FUNC(WS_PERSUADERTRON, 0x01)   \
+	GENERATOR_FUNC(WS_PISTOL,        0x02)   \
+	GENERATOR_FUNC(WS_GAUSS_GUN,     0x03)   \
+	GENERATOR_FUNC(WS_SHOTGUN,       0x04)   \
+	GENERATOR_FUNC(WS_UZI,           0x05)   \
+	GENERATOR_FUNC(WS_MINIGUN,       0x06)   \
+	GENERATOR_FUNC(WS_LASER,         0x07)   \
+	GENERATOR_FUNC(WS_FLAMER,        0x08)   \
+	GENERATOR_FUNC(WS_LONG_RANGE,    0x09)   \
+	GENERATOR_FUNC(WS_SCANNER,       0x0A)   \
+	GENERATOR_FUNC(WS_MEDIKIT,       0x0B)   \
+	GENERATOR_FUNC(WS_TIME_BOMB,     0x0C)   \
+	GENERATOR_FUNC(WS_ACCESS_CARD,   0x0D)   \
+	GENERATOR_FUNC(WS_UNUSED_14,     0x0E)   \
+	GENERATOR_FUNC(WS_UNUSED_15,     0x0F)   \
+	GENERATOR_FUNC(WS_AUTO_MAPPER,   0x10)   \
+	GENERATOR_FUNC(WS_ENERGY_SHIELD, 0x11)   \
+	GENERATOR_FUNC(WS_UNUSED_18,     0x12)   \
 	GENERATOR_FUNC(WS_UNUSED_19,     0x13)
 
 typedef enum {
-	WEAPON_STATE(GENERATE_ENUM_LINES)
+	WEAPON_STATE_VALUES(GENERATE_ENUM_LINES)
 } WeaponState;
 
-static const char* weapon_state_to_str(const WeaponState value) {
-	GENERATE_TOSTR_VALUES(WEAPON_STATE)
-}
-#undef WEAPON_STATE
+const char* weapon_state_to_str(const WeaponState value);
 
 
 /******************************************************************************
@@ -425,7 +399,7 @@ static const char* weapon_state_to_str(const WeaponState value) {
  *                                                                            *
  ******************************************************************************/
 
-#define COMMAND_STATE(GENERATOR_FUNC)          \
+#define COMMAND_STATE_VALUES(GENERATOR_FUNC)   \
 	GENERATOR_FUNC(CS_NONE,             0x00)  \
 	GENERATOR_FUNC(CS_GOTO_POINT,       0x01)  \
 	GENERATOR_FUNC(CS_USE_VEHICLE,      0x02)  \
@@ -441,13 +415,10 @@ static const char* weapon_state_to_str(const WeaponState value) {
 	GENERATOR_FUNC(CS_TOTAL_COMMANDS,   0x0C)
 
 typedef enum {
-	COMMAND_STATE(GENERATE_ENUM_LINES)
+	COMMAND_STATE_VALUES(GENERATE_ENUM_LINES)
 } CommandState;
 
-static const char* command_state_to_str(const CommandState value) {
-	GENERATE_TOSTR_VALUES(COMMAND_STATE)
-}
-#undef COMMAND_STATE
+const char* command_state_to_str(const CommandState value);
 
 
 #endif // GDENUMS_H

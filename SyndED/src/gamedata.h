@@ -10,8 +10,8 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
-#include <stdint.h>
-#include <stddef.h>
+#include <stdint.h>  // int16_t, uint16_t, ...
+#include <stddef.h>  // size_t
 
 
 /******************************************************************************

@@ -7,13 +7,13 @@
  *                                                                            *
  ******************************************************************************/
 
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <errno.h>
+#include "csvoutput.h"  // related header
 
-#include "gamedata.h"
-#include "gdenums.h"
+#include <stdio.h>      // printf, fprintf, fopen, fclose, stderr, FILE
+#include <string.h>     // strerror
+#include <errno.h>      // errno
+
+#include "gdenums.h"    // <struct>_<member>_to_str
 
 int write_mapwho_to_csv(const char *file_name, const uint16_t mapwho[], const size_t count_x, const size_t count_y) {
 

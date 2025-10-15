@@ -7,12 +7,11 @@
  *                                                                            *
  ******************************************************************************/
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#include "mapwho.h"   // related header
 
-#include "gamedata.h"
-#include "gdenums.h"
+#include <string.h>   // memset
+
+#include "gdenums.h"  // TS_MAPWHO
 
 // Based on function move_mapwho() in RGAME.C (but modified to fit our use case)
 bool add_thing_to_mapwho(GameData *gamedata, Thing *thing) {

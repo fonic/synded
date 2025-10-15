@@ -14,10 +14,10 @@
  *                                    *
  **************************************/
 
-#include "asprintf.h"
+#include "asprintf.h"  // related header
 
-#include <stdlib.h>		// malloc, free
-#include <errno.h>		// errno, EINVAL
+#include <stdlib.h>    // malloc, free
+#include <errno.h>     // errno, EINVAL
 
 
 /**************************************

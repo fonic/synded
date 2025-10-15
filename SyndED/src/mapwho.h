@@ -10,10 +10,10 @@
 #ifndef MAPWHO_H
 #define MAPWHO_H
 
-#include <stdint.h>
-#include <stdbool.h>
+#include <stdint.h>    // int16_t
+#include <stdbool.h>   // bool
 
-#include "gamedata.h"
+#include "gamedata.h"  // GameData, Thing
 
 bool add_thing_to_mapwho(GameData *gamedata, Thing *thing); // Thing is not const here as position might be corrected
 void remove_thing_from_mapwho(GameData *gamedata, Thing *thing);

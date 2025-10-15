@@ -10,9 +10,10 @@
 #ifndef CSVOUTPUT_H
 #define CSVOUTPUT_H
 
-#include <stddef.h>
+#include <stdint.h>    // int16_t, uint16_t, ...
+#include <stddef.h>    // size_t
 
-#include "gamedata.h"
+#include "gamedata.h"  // GameData, Person, Vehicle, ...
 
 int write_mapwho_to_csv(const char *file_name, const uint16_t mapwho[], const size_t count_x, const size_t count_y);
 int write_people_to_csv(const char *file_name, const Person people[], const size_t count, const size_t offset_global, const size_t offset_relative);

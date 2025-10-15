@@ -52,7 +52,7 @@ OBJFIL_ASANDYN_DEBUG     :=  $(SOURCE_FILES:$(SOURCE_DIR)/%.c=$(OBJDIR_ASANDYN_D
 
 CC                       :=  gcc
 
-CFLAGS_COMMON            :=  -g -Wall -Wextra -O2 -I.
+CFLAGS_COMMON            :=  -std=c23 -g -Wall -Wextra -O2 -I.
 CFLAGS_STATIC_RELEASE    :=  $(CFLAGS_COMMON) -DRELEASE
 CFLAGS_STATIC_DEBUG      :=  $(CFLAGS_COMMON) -DDEBUG
 CFLAGS_DYNAMIC_RELEASE   :=  $(CFLAGS_COMMON) -DRELEASE

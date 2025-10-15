@@ -15,8 +15,8 @@
 #define _GNU_SOURCE
 #endif
 
-#include <stdio.h>		// asprintf (GNU only), vasprintf (GNU only), _vscprintf (MSVC only), vsnprintf
-#include <stdarg.h>		// va_list, va_copy, va_end
+#include <stdio.h>   // asprintf (GNU only), vasprintf (GNU only), _vscprintf (MSVC only), vsnprintf
+#include <stdarg.h>  // va_list, va_copy, va_end
 
 /*
  * vscprintf - determine number of characters in resulting formatted string
