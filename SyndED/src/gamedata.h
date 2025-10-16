@@ -114,7 +114,6 @@
 #define GET_THING_FOR_RELOFS(gamedata, relofs) (Thing*)((size_t)(gamedata) + offsetof(GameData, RelOfsBase) + relofs)               // Get Thing from GameData struct based on relative offset
 #define GET_RELOFS_FOR_THING(gamedata, thing)  (uint16_t)((size_t)(thing) - (size_t)(gamedata) - offsetof(GameData, RelOfsBase))    // Get relative offset of Thing in GameData struct (CAUTION:
                                                                                                                                     // only valid for Things that are actually part of the specified
-                                                                                                                                    // struct)
 
 
 /******************************************************************************
@@ -448,7 +447,7 @@ typedef struct {
 #pragma pack(push,1)
 typedef struct {
 	uint32_t  Status;                  // From RGAME.C (unverified); sizes from FreeSynd leveldata.h + Mefistotelis .xml
-	uint16_t  Objective;
+	uint16_t  Type;
 	uint16_t  Data;
 	int16_t   Xpos;                    // Changed these from uint16_t to int16_t as well
 	int16_t   Ypos;                    // (while changing position types for Things, but not sure HERE)

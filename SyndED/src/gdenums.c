@@ -7,7 +7,9 @@
  *                                                                            *
  ******************************************************************************/
 
-#include "gdenums.h"  // related header
+#include "gdenums.h"   // related header
+
+#include "gamedata.h"  // *_RELATIVE_OFFSET
 
 const char* thing_status_to_str(const ThingStatus value) {
 	GENERATE_TOSTR_FLAGS(THING_STATUS_FLAGS, TS_NONE)
@@ -38,6 +40,23 @@ const char* thing_angle_to_str(const ThingAngle value) {
 		return "TA_WEST";
 }
 
+const char* thing_type_to_str(const uint16_t relofs) {
+	if (relofs == 0)
+		return "TT_NONE";
+	else if (relofs >= PEOPLE_RELATIVE_OFFSET && relofs < VEHICLES_RELATIVE_OFFSET)
+		return "TT_PERSON";
+	else if (relofs >= VEHICLES_RELATIVE_OFFSET && relofs < OBJECTS_RELATIVE_OFFSET)
+		return "TT_VEHICLE";
+	else if (relofs >= OBJECTS_RELATIVE_OFFSET && relofs < WEAPONS_RELATIVE_OFFSET)
+		return "TT_OBJECT";
+	else if (relofs >= WEAPONS_RELATIVE_OFFSET && relofs < EFFECTS_RELATIVE_OFFSET)
+		return "TT_WEAPON";
+	else if (relofs >= EFFECTS_RELATIVE_OFFSET && relofs < COMMANDS_RELATIVE_OFFSET)
+		return "TT_EFFECT";
+	else
+		return "TT_NOT_A_THING";
+}
+
 const char* person_affect_to_str(const PersonAffect value) {
 	GENERATE_TOSTR_FLAGS(PERSON_AFFECT_FLAGS, PA_NONE)
 }
@@ -64,4 +83,16 @@ const char* weapon_state_to_str(const WeaponState value) {
 
 const char* command_state_to_str(const CommandState value) {
 	GENERATE_TOSTR_VALUES(COMMAND_STATE_VALUES)
+}
+
+const char* objective_type_to_str(const ObjectiveType value) {
+	GENERATE_TOSTR_VALUES(OBJECTIVE_TYPE_VALUES)
+}
+
+const char* cpobjective_actiontype_to_str(const CPObjectiveActionType value) {
+	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTIONTYPE_VALUES)
+}
+
+const char* cpobjective_action_to_str(const CPObjectiveAction value) {
+	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTION_VALUES)
 }

@@ -162,7 +162,7 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkToType,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", offset_global + sizeof(Vehicle) * i);
 		fprintf(file, "%zu,", offset_relative + sizeof(Vehicle) * i);
@@ -191,6 +191,7 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 		fprintf(file, "%u,",  vehicles[i].ChildHeld);
 		fprintf(file, "%u,",  vehicles[i].ParentHeld);
 		fprintf(file, "%u,",  vehicles[i].LinkTo);
+		fprintf(file, "%s,",  thing_type_to_str(vehicles[i].LinkTo));  // Not sure yet if translation makes sense here
 		fprintf(file, "%i,",  vehicles[i].LinkX);
 		fprintf(file, "%i,",  vehicles[i].LinkY);
 		fprintf(file, "%i,",  vehicles[i].LinkZ);
@@ -357,6 +358,7 @@ int write_effects_to_csv(const char *file_name, const Effect effects[], const si
 		fprintf(file, "%s,",  thing_angle_to_str(effects[i].Angle));
 		fprintf(file, "%u,",  effects[i].ZAngle);
 		fprintf(file, "%u",   effects[i].Owner);
+		fprintf(file, "%s",   thing_type_to_str(effects[i].Owner));  // Not sure yet if translation makes sense here
 		fprintf(file, "\n");
 	}
 
@@ -383,13 +385,14 @@ int write_commands_to_csv(const char *file_name, const Command commands[], const
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,LocOfs,Next,Data,GotoX,GotoY,GotoZ,State,State_S\n");
+	fprintf(file, "GloOfs,RelOfs,LocOfs,Next,Data,DataType,GotoX,GotoY,GotoZ,State,State_S\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", offset_global + sizeof(Command) * i);
 		fprintf(file, "%zu,", offset_relative + sizeof(Command) * i);
 		fprintf(file, "%zu,", sizeof(Command) * i);
 		fprintf(file, "%u,",  commands[i].Next);
 		fprintf(file, "%u,",  commands[i].Data);
+		fprintf(file, "%s,",  thing_type_to_str(commands[i].Data));
 		fprintf(file, "%u,",  commands[i].GotoX);
 		fprintf(file, "%u,",  commands[i].GotoY);
 		fprintf(file, "%u,",  commands[i].GotoZ);
@@ -462,13 +465,15 @@ int write_objectives_to_csv(const char *file_name, const Objective objectives[],
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Status,Objective,Data,Xpos,Ypos,Zpos,Xtile,Ytile\n");
+	fprintf(file, "GloOfs,RelOfs,Status,Type,Type_S,Data,DataType,Xpos,Ypos,Zpos,Xtile,Ytile\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", offset_global + sizeof(Objective) * i);
 		fprintf(file, "%zu,", offset_relative + sizeof(Objective) * i);
 		fprintf(file, "%u,",  objectives[i].Status);
-		fprintf(file, "%u,",  objectives[i].Objective);
+		fprintf(file, "%u,",  objectives[i].Type);
+		fprintf(file, "%s,",  objective_type_to_str(objectives[i].Type));
 		fprintf(file, "%u,",  objectives[i].Data);
+		fprintf(file, "%s,",  thing_type_to_str(objectives[i].Data));
 		fprintf(file, "%i,",  objectives[i].Xpos);
 		fprintf(file, "%i,",  objectives[i].Ypos);
 		fprintf(file, "%i,",  objectives[i].Zpos);
@@ -500,17 +505,24 @@ int write_cpobjectives_to_csv(const char *file_name, const CPObjective cpobjecti
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,UseCount,Player,Flags,ActionType,Action,X,Y,Z\n");
+	//fprintf(file, "GloOfs,RelOfs,Index,Child,Parent,UseCount,Player,Flags,ActionType,ActionType_S,Action,Action_S,X,Y,Z\n");
+	//fprintf(file, "GloOfs,RelOfs,Index,Parent,Child,UseCount,Player,Flags,ActionType,ActionType_S,Action,Action_S,X,Y,Z\n");
+	fprintf(file, "GloOfs,RelOfs,Index,Prev,Next,UseCount,Player,Flags,ActionType,ActionType_S,Action,Action_S,X,Y,Z\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", offset_global + sizeof(CPObjective) * i);
 		fprintf(file, "%zu,", offset_relative + sizeof(CPObjective) * i);
-		fprintf(file, "%u,",  cpobjectives[i].Child);
+		fprintf(file, "%zu,", i);
+		//fprintf(file, "%u,",  cpobjectives[i].Child);
+		//fprintf(file, "%u,",  cpobjectives[i].Parent);
 		fprintf(file, "%u,",  cpobjectives[i].Parent);
+		fprintf(file, "%u,",  cpobjectives[i].Child);
 		fprintf(file, "%u,",  cpobjectives[i].UseCount);
 		fprintf(file, "%u,",  cpobjectives[i].Player);
 		fprintf(file, "%u,",  cpobjectives[i].Flags);
 		fprintf(file, "%u,",  cpobjectives[i].ActionType);
+		fprintf(file, "%s,",  cpobjective_actiontype_to_str(cpobjectives[i].ActionType));
 		fprintf(file, "%u,",  cpobjectives[i].Action);
+		fprintf(file, "%s,",  cpobjective_action_to_str(cpobjectives[i].Action));
 		fprintf(file, "%i,",  cpobjectives[i].X);
 		fprintf(file, "%i,",  cpobjectives[i].Y);
 		fprintf(file, "%i",   cpobjectives[i].Z);

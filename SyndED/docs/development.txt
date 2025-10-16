@@ -10,6 +10,10 @@
 - TODO (FURTHER DEVELOPMENT)                                                   -
 --------------------------------------------------------------------------------
 
+- Decode Objective.Objective (should be possible simply from mission
+  descriptions, e.g. persuade person, kill person, kill agents, evacuate,
+  etc.
+
 - Add convenient functions for managing things:
   Person*  add_person(...)
   Vehicle* add_vehicle(...)
@@ -68,6 +72,16 @@
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Add enums for Objective.Type, CPObjective.ActionType, CPObjective.Action;
+  update CSV output to take advantage of this
+
+- Add function 'thing_type_to_str' to translate relofs to Thing type, useful for
+  fields Command.Data, Objective.Data, and maybe a few more; update CSV output
+  to take advantage of this
+
+- Improve output of process-games.sh script (highlights + spacing for verbose
+  mode, success/failure indicator for non-verbose mode)
 
 - Use macro 'offsetof' to calculate global/relative offsets of GameData members
   at compile time instead of using fixed values for defines in 'gamedata.h':
