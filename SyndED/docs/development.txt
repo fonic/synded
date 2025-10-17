@@ -3,7 +3,7 @@
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
 
-- Nothing atm
+- Analyze CPObjectives (functions, parameters, execution flow, etc.)
 
 
 --------------------------------------------------------------------------------
@@ -72,6 +72,9 @@
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Update enums for CPObjective.ActionType, CPObjective.Action
+  (based on out own testing + input from Moburma)
 
 - Add enums for Objective.Type, CPObjective.ActionType, CPObjective.Action;
   update CSV output to take advantage of this

@@ -458,16 +458,17 @@ const char* objective_type_to_str(const ObjectiveType value);
  ******************************************************************************/
 
 #define CPOBJECTIVE_ACTIONTYPE_VALUES(GENERATOR_FUNC)  \
-	GENERATOR_FUNC(CPOAT_NONE,              0x00)      \
-	GENERATOR_FUNC(CPOAT_GOTO,              0x01)      \
-	GENERATOR_FUNC(CPOAT_USE_WEAPON,        0x02)      \
-	GENERATOR_FUNC(CPOAT_KILL_HUMAN_PLAYER, 0x03)      \
-	GENERATOR_FUNC(CPOAT_UNKNOWN_5,         0x05)      \
-	GENERATOR_FUNC(CPOAT_UNKNOWN_6,         0x06)      \
-	GENERATOR_FUNC(CPOAT_WAIT_TIME,         0x07)      \
-	GENERATOR_FUNC(CPOAT_KILL_PERSON,       0x08)      \
-	GENERATOR_FUNC(CPOAT_PROTECT_PERSON,    0x09)      \
-	GENERATOR_FUNC(CPOAT_DESTROY_VEHICLE,   0x0A)
+	GENERATOR_FUNC(CPOAT_NONE,               0x00)     \
+	GENERATOR_FUNC(CPOAT_MOVE,               0x01)     \
+	GENERATOR_FUNC(CPOAT_DROP_TIME_BOMB,     0x02)     \
+	GENERATOR_FUNC(CPOAT_KILL_HUMAN_PLAYER,  0x03)     \
+	GENERATOR_FUNC(CPOAT_KILL_ASSASS_TARGET, 0x04)     \
+	GENERATOR_FUNC(CPOAT_FORK_CPOBJ_FLOW,    0x05)     \
+	GENERATOR_FUNC(CPOAT_UNKNOWN_6,          0x06)     \
+	GENERATOR_FUNC(CPOAT_WAIT_TIME,          0x07)     \
+	GENERATOR_FUNC(CPOAT_KILL_PERSON,        0x08)     \
+	GENERATOR_FUNC(CPOAT_PROTECT_PERSON,     0x09)     \
+	GENERATOR_FUNC(CPOAT_DESTROY_VEHICLE,    0x0A)
 
 typedef enum {
 	CPOBJECTIVE_ACTIONTYPE_VALUES(GENERATE_ENUM_LINES)
@@ -476,13 +477,15 @@ typedef enum {
 const char* cpobjective_actiontype_to_str(const CPObjectiveActionType value);
 
 
+// CAUTION: likely only valid for ActionType == CPOAT_MOVE
+//          (assuming ActionType is acting as a category of sorts)
 #define CPOBJECTIVE_ACTION_VALUES(GENERATOR_FUNC)  \
-	GENERATOR_FUNC(CPOA_NONE,       0x00)          \
-	GENERATOR_FUNC(CPOA_POSITION,   0x03)          \
-	GENERATOR_FUNC(CPOA_PERSON,     0x04)          \
-	GENERATOR_FUNC(CPOA_VEHICLE,    0x09)          \
-	GENERATOR_FUNC(CPOA_UNKNOWN_0C, 0x0C)          \
-	GENERATOR_FUNC(CPOA_WEAPON,     0x19)
+	GENERATOR_FUNC(CPOA_NONE,          0x00)       \
+	GENERATOR_FUNC(CPOA_GOTO_POSITION, 0x03)       \
+	GENERATOR_FUNC(CPOA_GOTO_PERSON,   0x04)       \
+	GENERATOR_FUNC(CPOA_ENTER_VEHICLE, 0x09)       \
+	GENERATOR_FUNC(CPOA_UNKNOWN_0C,    0x0C)       \
+	GENERATOR_FUNC(CPOA_EXIT_VEHICLE,  0x19)
 
 typedef enum {
 	CPOBJECTIVE_ACTION_VALUES(GENERATE_ENUM_LINES)

@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	// Editing/modification examples: make GAME01.DAT and GAME10.DAT more interesting
 	if (strstr(infile_name, "GAME01.DAT") != NULL) {  // Western Europe
 
-		printf("Modifying GAME01.DAT...\n");
+		printf("Modifying GAME01.DAT (see sources)...\n");
 		/*Vehicle vehicle = gamedata.Vehicles[0];       // Existing Vehicle
 		Person person = gamedata.People[9];           // Existing Guard
 		Weapon weapon = gamedata.Weapons[0];          // Existing Uzi (belongs to last guard at road)
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 		for (int16_t shiftx = -50; shiftx <= 50; shiftx += 50) {
 			person.Xpos = vehicle.Xpos + shiftx; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_MAN_JACKET; person.Life = 8;
 			person.State = person.NewState = 0; person.Angle = TA_SOUTH; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-			weapon.State = WS_PISTOL; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
+			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}
 
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 		for (int16_t shiftx = -50; shiftx <= 50; shiftx += 50) {
 			person.Xpos = vehicle.Xpos + shiftx; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_POLICE; person.Life = 8;
 			person.State = person.NewState = 0; person.Angle = TA_SOUTHWEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-			weapon.State = WS_PISTOL; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
+			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}
 
@@ -119,35 +119,41 @@ int main(int argc, char *argv[]) {
 		for (int16_t shiftx = -50; shiftx <= 50; shiftx += 50) {
 			person.Xpos = vehicle.Xpos + shiftx; person.Ypos = vehicle.Ypos + 500; person.BaseFrame = PB_SOLDIER; person.Life = 8;
 			person.State = person.NewState = 0; person.Angle = TA_WEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-			weapon.State = WS_PISTOL; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
+			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}*/
 
-		// Rebuild MapWho to account for added things
-		rebuild_mapwho(&gamedata);
+		// Define agents for computer player right after agents for human player
+		uint16_t xpos = gamedata.People[12].Xpos + 500;  // Position of Guard near road
+		uint16_t ypos = gamedata.People[12].Ypos - 500;
+		uint16_t zpos = gamedata.People[12].Zpos;
+		for (size_t p = 8; p < 16; p++) {
+			memset(&gamedata.People[p], 0, sizeof(gamedata.People[p]));
+			gamedata.People[p].Xpos = xpos;
+			gamedata.People[p].Ypos = ypos;
+			gamedata.People[p].Zpos = zpos;
+			gamedata.People[p].Status = TS_MAPWHO;
+			gamedata.People[p].BaseFrame = PB_AGENT;
+			gamedata.People[p].Life = 8;
+			gamedata.People[p].Model = TM_PERSON;
+			gamedata.People[p].Angle = TA_SOUTHEAST;
+			gamedata.People[p].Unique = PU_AGENT;
+			gamedata.People[p].State = gamedata.People[p].OldState = gamedata.People[p].NewState = PS_NONE;
+			ypos -= 250;
+		}
 
-#ifdef DEBUG
-		// [TESTING] Modify CPObjectives
+		// CP Config
+		gamedata.CPCount      = 2;
+		gamedata.CPTeamSize   = 8;
+		gamedata.CPProcInt    = 0;
+		gamedata.CPLvlInit    = 0;
+		gamedata.CPIsBombTeam = 1;
+		gamedata.CPIsPersTeam = 1;
+		gamedata.CPFlags      = 0;
+		gamedata.CPWeapon     = 0;
 
-		gamedata.LoBoundaryx = 0;
-		gamedata.LoBoundaryy = 0;
-		gamedata.HiBoundaryx = 255;
-		gamedata.HiBoundaryy = 255;
-
-		gamedata.CPCount      = 5; // n CP players (1 is either humans player -or- CP player for Guards/Police/Civilians)
-		gamedata.CPTeamSize   = 8; // m agents per CP player
-		gamedata.CPProcInt    = 0; // Unknown
-		gamedata.CPLvlInit    = 0; // Level of body mods
-		gamedata.CPIsBombTeam = 0; // Do Agents carry Time Bombs?
-		gamedata.CPIsPersTeam = 0; // Do Agents carry Persuadertrons?
-		gamedata.CPFlags      = 0; // Unknown
-		gamedata.CPWeapon     = 0; // Likely primary weapon
-
-		/*for (size_t i = 0; i < CPOBJECTIVES_COUNT; i++) {  // not sure yet if this actually does something
-			gamedata.CPObjectives[i].Flags = 64;
-		}*/
-
-		/*gamedata.CPObjectives[0].Player = 255;
+		// CP Objectives 0-2
+		gamedata.CPObjectives[0].Player = 255;  // Hunt and kill human player (endless loop)
 		gamedata.CPObjectives[0].Parent = 0;
 		gamedata.CPObjectives[0].Child = 0;
 		gamedata.CPObjectives[0].ActionType = CPOAT_KILL_HUMAN_PLAYER;
@@ -155,231 +161,74 @@ int main(int argc, char *argv[]) {
 		gamedata.CPObjectives[0].Flags = 0;
 		gamedata.CPObjectives[0].X = 0;
 		gamedata.CPObjectives[0].Y = 0;
-		gamedata.CPObjectives[0].Z = 0;*/
+		gamedata.CPObjectives[0].Z = 0;
 
-		CPObjective cpobjective; memset(&cpobjective, 0, sizeof(cpobjective));
-		gamedata.CPObjectives[0] = cpobjective;
+		gamedata.CPObjectives[1].Player = 255;  // Wait a bit, continue with next objective
+		gamedata.CPObjectives[1].Parent = 0;
+		gamedata.CPObjectives[1].Child = 2;
+		gamedata.CPObjectives[1].ActionType = CPOAT_WAIT_TIME;
+		gamedata.CPObjectives[1].Action = CPOA_NONE;
+		gamedata.CPObjectives[1].Flags = 0;
+		gamedata.CPObjectives[1].X = 100;
+		gamedata.CPObjectives[1].Y = 0;
+		gamedata.CPObjectives[1].Z = 0;
 
-		/*Person person; memset(&person, 0, sizeof(person));
-		gamedata.People[4] = gamedata.People[5] = gamedata.People[6] = gamedata.People[7] = person;*/
+		gamedata.CPObjectives[2].Player = 255;  // Fork CPObjectives execution flow for each agent (see below)
+		gamedata.CPObjectives[2].Parent = 1;
+		gamedata.CPObjectives[2].Child = 0;
+		gamedata.CPObjectives[2].ActionType = CPOAT_FORK_CPOBJ_FLOW;
+		gamedata.CPObjectives[2].Action = CPOA_NONE;
+		gamedata.CPObjectives[2].Flags = 0;
+		gamedata.CPObjectives[2].X = 0;
+		gamedata.CPObjectives[2].Y = 0;
+		gamedata.CPObjectives[2].Z = 0;
 
+		// CP Objectives for each of the eight computer player agents individually
+		size_t spo = 3;                               // Right after CPObjectives 0-2 defined above
+		for (size_t p = 8; p < 16; p++) {
+			gamedata.CPObjectives[spo].Player = 255;  // Step forward, continue with next objective
+			gamedata.CPObjectives[spo].Parent = 0;
+			gamedata.CPObjectives[spo].Child = spo+1;
+			gamedata.CPObjectives[spo].ActionType = CPOAT_MOVE;
+			gamedata.CPObjectives[spo].Action = CPOA_GOTO_POSITION;
+			gamedata.CPObjectives[spo].Flags = 0;
+			gamedata.CPObjectives[spo].X = gamedata.People[p].Xpos + 500;
+			gamedata.CPObjectives[spo].Y = gamedata.People[p].Ypos;
+			gamedata.CPObjectives[spo].Z = gamedata.People[p].Zpos;
+			spo++;
 
-		size_t objective_slot; uint16_t playnum;
+			gamedata.CPObjectives[spo].Player = 255;  // Wait a bit, continue with next objective
+			gamedata.CPObjectives[spo].Parent = spo-1;
+			gamedata.CPObjectives[spo].Child = spo+1;
+			gamedata.CPObjectives[spo].ActionType = CPOAT_WAIT_TIME;
+			gamedata.CPObjectives[spo].Action = CPOA_NONE;
+			gamedata.CPObjectives[spo].Flags = 0;
+			gamedata.CPObjectives[spo].X = 50;
+			gamedata.CPObjectives[spo].Y = 0;
+			gamedata.CPObjectives[spo].Z = 0;
+			spo++;
 
-		// CP Player 1
-		objective_slot = 3; playnum = 1;
-		gamedata.CPObjectives[objective_slot+0].Player = playnum;
-		gamedata.CPObjectives[objective_slot+0].Parent = 0;
-		gamedata.CPObjectives[objective_slot+0].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+0].ActionType = CPOAT_WAIT_TIME;
-		gamedata.CPObjectives[objective_slot+0].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+0].Flags = 0;
-		gamedata.CPObjectives[objective_slot+0].X = 50;
-		gamedata.CPObjectives[objective_slot+0].Y = 0;
-		gamedata.CPObjectives[objective_slot+0].Z = 0;
-
-		gamedata.CPObjectives[objective_slot+1].Player = playnum;
-		gamedata.CPObjectives[objective_slot+1].Parent = objective_slot+0;
-		gamedata.CPObjectives[objective_slot+1].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+1].ActionType = CPOAT_GOTO;
-		gamedata.CPObjectives[objective_slot+1].Action = CPOA_POSITION;
-		gamedata.CPObjectives[objective_slot+1].Flags = 0;
-		gamedata.CPObjectives[objective_slot+1].X = gamedata.Vehicles[0].Xpos - 0;
-		gamedata.CPObjectives[objective_slot+1].Y = gamedata.Vehicles[0].Ypos + 500;
-		gamedata.CPObjectives[objective_slot+1].Z = gamedata.Vehicles[0].Zpos;
-
-		gamedata.CPObjectives[objective_slot+2].Player = playnum;
-		gamedata.CPObjectives[objective_slot+2].Parent = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+2].Child = 0;
-		gamedata.CPObjectives[objective_slot+2].ActionType = CPOAT_KILL_PERSON;
-		gamedata.CPObjectives[objective_slot+2].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+2].Flags = 0;
-		gamedata.CPObjectives[objective_slot+2].X = 738;
-		gamedata.CPObjectives[objective_slot+2].Y = 0;
-		gamedata.CPObjectives[objective_slot+2].Z = 0;
-
-
-		// CP Player 2
-		objective_slot = 9; playnum = 2;
-		gamedata.CPObjectives[objective_slot+0].Player = playnum;
-		gamedata.CPObjectives[objective_slot+0].Parent = 0;
-		gamedata.CPObjectives[objective_slot+0].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+0].ActionType = CPOAT_WAIT_TIME;
-		gamedata.CPObjectives[objective_slot+0].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+0].Flags = 0;
-		gamedata.CPObjectives[objective_slot+0].X = 75;
-		gamedata.CPObjectives[objective_slot+0].Y = 0;
-		gamedata.CPObjectives[objective_slot+0].Z = 0;
-
-		gamedata.CPObjectives[objective_slot+1].Player = playnum;
-		gamedata.CPObjectives[objective_slot+1].Parent = objective_slot+0;
-		gamedata.CPObjectives[objective_slot+1].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+1].ActionType = CPOAT_GOTO;
-		gamedata.CPObjectives[objective_slot+1].Action = CPOA_POSITION;
-		gamedata.CPObjectives[objective_slot+1].Flags = 0;
-		gamedata.CPObjectives[objective_slot+1].X = gamedata.Vehicles[0].Xpos - 500;
-		gamedata.CPObjectives[objective_slot+1].Y = gamedata.Vehicles[0].Ypos + 500;
-		gamedata.CPObjectives[objective_slot+1].Z = gamedata.Vehicles[0].Zpos;
-
-		gamedata.CPObjectives[objective_slot+2].Player = playnum;
-		gamedata.CPObjectives[objective_slot+2].Parent = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+2].Child = 0;
-		gamedata.CPObjectives[objective_slot+2].ActionType = CPOAT_KILL_PERSON;
-		gamedata.CPObjectives[objective_slot+2].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+2].Flags = 0;
-		gamedata.CPObjectives[objective_slot+2].X = 738;
-		gamedata.CPObjectives[objective_slot+2].Y = 0;
-		gamedata.CPObjectives[objective_slot+2].Z = 0;
-
-
-		// CP Player 3
-		objective_slot = 15; playnum = 3;
-		gamedata.CPObjectives[objective_slot+0].Player = playnum;
-		gamedata.CPObjectives[objective_slot+0].Parent = 0;
-		gamedata.CPObjectives[objective_slot+0].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+0].ActionType = CPOAT_WAIT_TIME;
-		gamedata.CPObjectives[objective_slot+0].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+0].Flags = 0;
-		gamedata.CPObjectives[objective_slot+0].X = 100;
-		gamedata.CPObjectives[objective_slot+0].Y = 0;
-		gamedata.CPObjectives[objective_slot+0].Z = 0;
-
-		gamedata.CPObjectives[objective_slot+1].Player = playnum;
-		gamedata.CPObjectives[objective_slot+1].Parent = objective_slot+0;
-		gamedata.CPObjectives[objective_slot+1].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+1].ActionType = CPOAT_GOTO;
-		gamedata.CPObjectives[objective_slot+1].Action = CPOA_POSITION;
-		gamedata.CPObjectives[objective_slot+1].Flags = 0;
-		gamedata.CPObjectives[objective_slot+1].X = gamedata.Vehicles[0].Xpos - 1000;
-		gamedata.CPObjectives[objective_slot+1].Y = gamedata.Vehicles[0].Ypos + 500;
-		gamedata.CPObjectives[objective_slot+1].Z = gamedata.Vehicles[0].Zpos;
-
-		gamedata.CPObjectives[objective_slot+2].Player = playnum;
-		gamedata.CPObjectives[objective_slot+2].Parent = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+2].Child = 0;
-		gamedata.CPObjectives[objective_slot+2].ActionType = CPOAT_KILL_PERSON;
-		gamedata.CPObjectives[objective_slot+2].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+2].Flags = 0;
-		gamedata.CPObjectives[objective_slot+2].X = 738;
-		gamedata.CPObjectives[objective_slot+2].Y = 0;
-		gamedata.CPObjectives[objective_slot+2].Z = 0;
-
-
-		// CP Player 4
-		objective_slot = 21; playnum = 4;
-		gamedata.CPObjectives[objective_slot+0].Player = playnum;
-		gamedata.CPObjectives[objective_slot+0].Parent = 0;
-		gamedata.CPObjectives[objective_slot+0].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+0].ActionType = CPOAT_WAIT_TIME;
-		gamedata.CPObjectives[objective_slot+0].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+0].Flags = 0;
-		gamedata.CPObjectives[objective_slot+0].X = 100;
-		gamedata.CPObjectives[objective_slot+0].Y = 0;
-		gamedata.CPObjectives[objective_slot+0].Z = 0;
-
-		gamedata.CPObjectives[objective_slot+1].Player = playnum;
-		gamedata.CPObjectives[objective_slot+1].Parent = objective_slot+0;
-		gamedata.CPObjectives[objective_slot+1].Child = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+1].ActionType = CPOAT_GOTO;
-		gamedata.CPObjectives[objective_slot+1].Action = CPOA_POSITION;
-		gamedata.CPObjectives[objective_slot+1].Flags = 0;
-		gamedata.CPObjectives[objective_slot+1].X = gamedata.Vehicles[0].Xpos - 1500;
-		gamedata.CPObjectives[objective_slot+1].Y = gamedata.Vehicles[0].Ypos + 500;
-		gamedata.CPObjectives[objective_slot+1].Z = gamedata.Vehicles[0].Zpos;
-
-		gamedata.CPObjectives[objective_slot+2].Player = playnum;
-		gamedata.CPObjectives[objective_slot+2].Parent = objective_slot+1;
-		gamedata.CPObjectives[objective_slot+2].Child = 0;
-		gamedata.CPObjectives[objective_slot+2].ActionType = CPOAT_KILL_PERSON;
-		gamedata.CPObjectives[objective_slot+2].Action = CPOA_NONE;
-		gamedata.CPObjectives[objective_slot+2].Flags = 0;
-		gamedata.CPObjectives[objective_slot+2].X = 738;
-		gamedata.CPObjectives[objective_slot+2].Y = 0;
-		gamedata.CPObjectives[objective_slot+2].Z = 0;
-
-
-		size_t person_slot = 8;
-		gamedata.People[12].Status &= (~TS_MAPWHO);
-		gamedata.People[12].Status &= (~TS_NODRAW);
-		uint16_t xpos = gamedata.People[12].Xpos + 500;
-		uint16_t ypos = gamedata.People[12].Ypos - 500;
-		uint16_t zpos = gamedata.People[12].Zpos;
-		for (size_t i = 0; i < 16; i++) {
-			memset(&gamedata.People[person_slot], 0, sizeof(gamedata.People[person_slot]));
-			gamedata.People[person_slot].Xpos = xpos;
-			gamedata.People[person_slot].Ypos = ypos;
-			gamedata.People[person_slot].Zpos = zpos;
-			gamedata.People[person_slot].Status = TS_MAPWHO;
-			gamedata.People[person_slot].BaseFrame = PB_AGENT;
-			gamedata.People[person_slot].Life = 8;
-			gamedata.People[person_slot].Model = TM_PERSON;
-			gamedata.People[person_slot].Angle = TA_SOUTHEAST;
-			gamedata.People[person_slot].Unique = PU_AGENT;
-			gamedata.People[person_slot].State = gamedata.People[person_slot].OldState = gamedata.People[person_slot].NewState = PS_NONE;
-			person_slot++;
-			memset(&gamedata.People[person_slot], 0, sizeof(gamedata.People[person_slot]));
-			gamedata.People[person_slot].Xpos = xpos + 250;
-			gamedata.People[person_slot].Ypos = ypos;
-			gamedata.People[person_slot].Zpos = zpos;
-			gamedata.People[person_slot].Status = TS_MAPWHO;
-			gamedata.People[person_slot].BaseFrame = PB_AGENT;
-			gamedata.People[person_slot].Life = 8;
-			gamedata.People[person_slot].Model = TM_PERSON;
-			gamedata.People[person_slot].Angle = TA_SOUTHEAST;
-			gamedata.People[person_slot].Unique = PU_AGENT;
-			gamedata.People[person_slot].State = gamedata.People[person_slot].OldState = gamedata.People[person_slot].NewState = PS_NONE;
-			person_slot++;
-			ypos -= 250;
+			gamedata.CPObjectives[spo].Player = 255;  // Step back, stay put (endless loop)
+			gamedata.CPObjectives[spo].Parent = spo-1;
+			gamedata.CPObjectives[spo].Child = spo;
+			gamedata.CPObjectives[spo].ActionType = CPOAT_MOVE;
+			gamedata.CPObjectives[spo].Action = CPOA_GOTO_POSITION;
+			gamedata.CPObjectives[spo].Flags = 0;
+			gamedata.CPObjectives[spo].X = gamedata.People[p].Xpos;
+			gamedata.CPObjectives[spo].Y = gamedata.People[p].Ypos;
+			gamedata.CPObjectives[spo].Z = gamedata.People[p].Zpos;
+			spo++;
 		}
 
+		// Rebuild MapWho to account for added things
 		rebuild_mapwho(&gamedata);
-
-		// [TESTING] Command your own agents to be useful on their own
-		/*gamedata.LoBoundaryx = 0;
-		gamedata.LoBoundaryy = 0;
-		gamedata.HiBoundaryx = 255;
-		gamedata.HiBoundaryy = 255;
-		Command command; memset(&command, 0, sizeof(Command)); size_t command_slot = 63;
-		for (size_t i = 0; i <= 7; i++) {
-			gamedata.People[i].NewState = PS_NEXT_COMMAND;
-			gamedata.People[i].StartCommand = gamedata.People[i].Command = sizeof(Command) * command_slot;
-		}
-		command.Next = sizeof(Command) * (command_slot+1);
-		command.GotoX = POS_TO_CMDGOTO(gamedata.People[0].Xpos) - 28;  // Go to 28 half-sized tiles north-west of starting point
-		command.GotoY = POS_TO_CMDGOTO(gamedata.People[0].Ypos);       // (more or less the center of the court after bridge)
-		command.State = CS_GOTO_POINT;
-		gamedata.Commands[command_slot++] = command;
-		for (size_t i = 0; i < PEOPLE_COUNT; i++) {
-			if (gamedata.People[i].Unique != PU_GUARD)
-				continue;
-			command.Next = sizeof(Command) * (command_slot+1);
-			command.GotoX = POS_TO_CMDGOTO(gamedata.People[i].Xpos);   // Hunt down guards
-			command.GotoY = POS_TO_CMDGOTO(gamedata.People[i].Ypos);
-			command.State = CS_GOTO_POINT;
-			gamedata.Commands[command_slot++] = command;
-		}
-		//memset(&command, 0, sizeof(Command));                        // End of command list
-		//command.State = CS_END_COMMANDS;
-		//gamedata.Commands[command_slot++] = command;
-		gamedata.Commands[command_slot-1].Next = 456;                  // Let's get that shiny black car (pre-existing command)*/
-
-		// [TESTING] Macros GET_RELOFS_FOR_THING + GET_THING_FOR_RELOFS
-		/*printf("Relative offset of gamedata.People[12]:   %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.People[12]));
-		printf("Relative offset of gamedata.Vehicles[20]: %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.Vehicles[20]));
-		Thing *t = GET_THING_FOR_RELOFS(&gamedata, 1106);   // Retrieved thing must match gamedata.People[12]
-		printf("Thing.RelOfs:  %u, Thing.Xpos:  %u, Thing.Ypos:  %u\n", 1106, t->Xpos, t->Ypos);
-		printf("Person.RelOfs: %u, Person.Xpos: %u, Person.Ypos: %u\n", (uint16_t)(PEOPLE_RELATIVE_OFFSET + sizeof(Person) * 12), gamedata.People[12].Xpos, gamedata.People[12].Ypos);
-		Thing *t2 = GET_THING_FOR_RELOFS(&gamedata, 24394); // Retrieved thing must match gamedata.Vehicles[20]
-		printf("Thing.RelOfs:   %u, Thing.Xpos:   %u, Thing.Ypos:   %u\n", 24394, t2->Xpos, t2->Ypos);
-		printf("Vehicle.RelOfs: %u, Vehicle.Xpos: %u, Vehicle.Ypos: %u\n", (uint16_t)(VEHICLES_RELATIVE_OFFSET + sizeof(Vehicle) * 20), gamedata.Vehicles[20].Xpos, gamedata.Vehicles[20].Ypos);*/
-#endif
 
 	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {  // Eastern Europe
 
-		printf("Modifying GAME10.DAT...\n");
+		printf("Modifying GAME10.DAT (see sources)...\n");
 		Weapon weapon = gamedata.Weapons[1];                 // Existing Uzi
 		size_t weapon_slot = 30;                             // Lots of free space
-		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People
+		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People!
 			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // Women get Uzis
 				gamedata.People[i].Unique = PU_GUARD;
 				gamedata.People[i].Life = 10;
@@ -399,7 +248,7 @@ int main(int argc, char *argv[]) {
 
 	} else if (strstr(infile_name, "GAME20.DAT") != NULL) {  // Scandinavia
 
-		printf("Modifying GAME20.DAT...\n");
+		printf("Modifying GAME20.DAT (see sources)...\n");
 		size_t person_slot = 65;                             // Lots of free space
 		for (size_t i = 8; i < 60; i++) {                    // Twice the civilians == twice the fun
 			if (gamedata.People[i].Unique == PU_CIVILIAN) {
@@ -426,8 +275,14 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-		// Rebuild MapWho to account for added things
+		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
+
+	} else if (strstr(infile_name, "GAME31.DAT") != NULL) {  // South Africa
+
+		printf("Modifying GAME31.DAT (see sources)...\n");
+		//gamedata.CPObjectives[1].Child = 3; // Bypass execution flow fork -> ALL blue agents will walk to APC
+		gamedata.CPObjectives[4].Child = 7; // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
 
 	} else {
 		printf("Not modifying game data (see sources).\n");
@@ -528,7 +383,7 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
 	printf("\n");
 
-	// Print struct sizes
+	// [DEBUG] Print struct sizes
 	printf("Struct sizes:\n");
 	//printf("MapWho:      %zu\n", sizeof(MapWho));
 	printf("Thing:       %zu\n", sizeof(Thing));
@@ -545,7 +400,7 @@ int main(int argc, char *argv[]) {
 	printf("GameData:    %zu\n", sizeof(GameData));
 	printf("\n");
 
-	// Print offsets of GameData struct members
+	// [DEBUG] Print offsets of GameData struct members
 	printf("GameData offsets:\n");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Seed),         offsetof(GameData, Seed),         "uint16_t     Seed");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, PersonCount),  offsetof(GameData, PersonCount),  "uint16_t     PersonCount");
