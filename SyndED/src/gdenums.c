@@ -93,6 +93,22 @@ const char* cpobjective_actiontype_to_str(const CPObjectiveActionType value) {
 	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTIONTYPE_VALUES)
 }
 
-const char* cpobjective_action_to_str(const CPObjectiveAction value) {
-	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTION_VALUES)
+const char* cpobjective_atmove_action_to_str(const CPObjectiveATMoveAction value) {
+	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ATMOVE_ACTION_VALUES)
+}
+
+const char* cpobjective_action_to_str(const CPObjectiveActionType actiontype, const int action) {
+	switch (actiontype) {
+		case CPOAT_MOVE:
+			return cpobjective_atmove_action_to_str(action);
+		default:
+			if (action == 0)
+				return "CPOA_NONE";
+			else
+				return "VALUE_UNDEFINED";
+	}
+}
+
+const char* structless_cpflags_to_str(const StructlessCPFlags value) {
+	GENERATE_TOSTR_FLAGS(STRUCTLESS_CPFLAGS_FLAGS, CPF_NONE)
 }

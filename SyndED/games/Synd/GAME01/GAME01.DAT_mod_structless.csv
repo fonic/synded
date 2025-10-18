@@ -1,2 +1,2 @@
-Seed,PersonCount,Timer,Unknown,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon
-65461,13,44939,0,1,78,42,151,99,2,8,0,0,1,1,0,0
+Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon
+65461,13,44939,0,1,78,42,151,99,5,8,8,1,0,0,CPF_SHOOT_WHEN_NEAR_TARGET,0

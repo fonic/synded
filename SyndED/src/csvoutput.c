@@ -223,7 +223,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Unknown[0],Unknown[1]\n");
+	fprintf(file, "GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Unknown\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", offset_global + sizeof(Object) * i);
 		fprintf(file, "%zu,", offset_relative + sizeof(Object) * i);
@@ -248,8 +248,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 		fprintf(file, "%u,",  objects[i].Angle);
 		fprintf(file, "%s,",  thing_angle_to_str(objects[i].Angle));
 		fprintf(file, "%u,",  objects[i].ZAngle);
-		fprintf(file, "%u,",  objects[i].Unknown[0]);
-		fprintf(file, "%u",   objects[i].Unknown[1]);
+		fprintf(file, "%u,",  objects[i].Unknown);
 		fprintf(file, "\n");
 	}
 
@@ -522,7 +521,7 @@ int write_cpobjectives_to_csv(const char *file_name, const CPObjective cpobjecti
 		fprintf(file, "%u,",  cpobjectives[i].ActionType);
 		fprintf(file, "%s,",  cpobjective_actiontype_to_str(cpobjectives[i].ActionType));
 		fprintf(file, "%u,",  cpobjectives[i].Action);
-		fprintf(file, "%s,",  cpobjective_action_to_str(cpobjectives[i].Action));
+		fprintf(file, "%s,",  cpobjective_action_to_str(cpobjectives[i].ActionType, cpobjectives[i].Action));
 		fprintf(file, "%i,",  cpobjectives[i].X);
 		fprintf(file, "%i,",  cpobjectives[i].Y);
 		fprintf(file, "%i",   cpobjectives[i].Z);
@@ -552,7 +551,7 @@ int write_structless_to_csv(const char *file_name, const GameData *gamedata) {
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Seed,PersonCount,Timer,Unknown,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon\n");
+	fprintf(file, "Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon\n");
 	fprintf(file, "%u,",  gamedata->Seed);
 	fprintf(file, "%u,",  gamedata->PersonCount);
 	fprintf(file, "%u,",  gamedata->Timer);
@@ -568,7 +567,7 @@ int write_structless_to_csv(const char *file_name, const GameData *gamedata) {
 	fprintf(file, "%u,",  gamedata->CPLvlInit);
 	fprintf(file, "%u,",  gamedata->CPIsBombTeam);
 	fprintf(file, "%u,",  gamedata->CPIsPersTeam);
-	fprintf(file, "%u,",  gamedata->CPFlags);
+	fprintf(file, "%s,",  structless_cpflags_to_str(gamedata->CPFlags));
 	fprintf(file, "%u",   gamedata->CPWeapon);
 	fprintf(file, "\n");
 

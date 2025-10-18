@@ -1,0 +1,66 @@
+
+--------------------------------------------------------------------------------
+- WORK IN PROGRESS                                                             -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- TODO (FURTHER DEVELOPMENT)                                                   -
+--------------------------------------------------------------------------------
+
+Fix bugs:
+
+- Menu transition from mission description to agent configuration is skipped
+  when hitting Enter (only happens for this transition)
+
+- Path finding for persuaded people breaks down when a huge number of people
+  has been persuaded
+
+
+Extend existing features:
+
+- Allow for mixing of multiple sounds (currently, only ONE sound can play at
+  a time)
+
+- Lift restricting limits (e.g. larger maps, more people, more agents, ...)
+  -> Will be quite tough to achieve as this will affect MANY data structures
+     and hard-coded value
+
+
+Add new feature:
+
+- Allow snapshotting current mission (i.e. write current game state to disk);
+  presumably, in-mission game state has the SAME format as GAMExx.DAT file
+  contents, thus this should be pretty easy -and- allow loading snapshots
+  into SyndED
+
+- Add options menu to configure stuff like animated menu transitions, music/
+  sound volume, key bindings, etc.
+
+
+--------------------------------------------------------------------------------
+- TODO (CODE MAINTENANCE)                                                      -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- DONE                                                                         -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- CANCELED                                                                     -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- Date: 10/07/25 - 10/18/25                                                    -
+--------------------------------------------------------------------------------

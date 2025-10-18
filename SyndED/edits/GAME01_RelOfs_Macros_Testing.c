@@ -1,3 +1,4 @@
+
 		// [TESTING] Macros GET_RELOFS_FOR_THING + GET_THING_FOR_RELOFS
 		printf("Relative offset of gamedata.People[12]:   %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.People[12]));
 		printf("Relative offset of gamedata.Vehicles[20]: %u\n", GET_RELOFS_FOR_THING(&gamedata, &gamedata.Vehicles[20]));

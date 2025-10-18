@@ -1,2 +1,2 @@
-Seed,PersonCount,Timer,Unknown,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon
-58448,36,42060,0,43,16,28,181,145,3,8,0,0,0,0,31,0
+Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon
+58448,36,42060,0,43,16,28,181,145,3,8,0,0,0,0,CPF_UNKNOWN_1 | CPF_UNKNOWN_2 | CPF_SHOOT_WHEN_NEAR_TARGET | CPF_UNKNOWN_8 | CPF_UNKNOWN_10,0

@@ -4,15 +4,12 @@
 --------------------------------------------------------------------------------
 
 - Analyze CPObjectives (functions, parameters, execution flow, etc.)
+- Analyze CP* flags (CPCount, CPTeamSize, CPProcInt, etc.)
 
 
 --------------------------------------------------------------------------------
 - TODO (FURTHER DEVELOPMENT)                                                   -
 --------------------------------------------------------------------------------
-
-- Decode Objective.Objective (should be possible simply from mission
-  descriptions, e.g. persuade person, kill person, kill agents, evacuate,
-  etc.
 
 - Add convenient functions for managing things:
   Person*  add_person(...)
@@ -56,6 +53,9 @@
 - Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
   investigate the differences and check if other versions have discrepancies
   as well in that regard
+  -> At least partial reading/writing should be achievable by investigating
+     where tables start (e.g. People table always starts with human-player
+     agents -> compare to final via hex editor)
 
 - Further refine game data structs
   -> ONGOING, will take some time + input from Mefistotelis as disassembly
@@ -72,6 +72,13 @@
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Update CSV output to account for new enum and other changes
+- Add enum for GameData.CPFlags
+- Add function to properly translate CPObjective.Action to string based on
+  value of CPObjective.ActionType (which serves as a kind of category)
+  -> cpobjective_action_to_str()
+- Apply minor changes to game data structs (mainly regarding 'Unknown's)
 
 - Update enums for CPObjective.ActionType, CPObjective.Action
   (based on out own testing + input from Moburma)
@@ -311,5 +318,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/15/25                                                    -
+- Date: 10/07/25 - 10/18/25                                                    -
 --------------------------------------------------------------------------------

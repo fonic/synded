@@ -1,3 +1,4 @@
+
 		// [TESTING] Command your own agents to be useful on their own
 		gamedata.LoBoundaryx = 0;
 		gamedata.LoBoundaryy = 0;

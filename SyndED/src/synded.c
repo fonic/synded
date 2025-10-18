@@ -123,104 +123,112 @@ int main(int argc, char *argv[]) {
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}*/
 
+		// Move human-player agents closer to the action
+		uint16_t xpos = gamedata.People[8].Xpos - 75;  // Position of Soldier in building
+		uint16_t ypos = gamedata.People[8].Ypos - 125;
+		uint16_t zpos = gamedata.People[8].Zpos;
+		for (size_t i = 0; i < 8; i++) {
+			gamedata.People[i].Xpos = xpos;
+			gamedata.People[i].Ypos = ypos;
+			gamedata.People[i].Zpos = zpos;
+			xpos += 50;
+		}
+
 		// Define agents for computer player right after agents for human player
-		uint16_t xpos = gamedata.People[12].Xpos + 500;  // Position of Guard near road
-		uint16_t ypos = gamedata.People[12].Ypos - 500;
-		uint16_t zpos = gamedata.People[12].Zpos;
-		for (size_t p = 8; p < 16; p++) {
-			memset(&gamedata.People[p], 0, sizeof(gamedata.People[p]));
-			gamedata.People[p].Xpos = xpos;
-			gamedata.People[p].Ypos = ypos;
-			gamedata.People[p].Zpos = zpos;
-			gamedata.People[p].Status = TS_MAPWHO;
-			gamedata.People[p].BaseFrame = PB_AGENT;
-			gamedata.People[p].Life = 8;
-			gamedata.People[p].Model = TM_PERSON;
-			gamedata.People[p].Angle = TA_SOUTHEAST;
-			gamedata.People[p].Unique = PU_AGENT;
-			gamedata.People[p].State = gamedata.People[p].OldState = gamedata.People[p].NewState = PS_NONE;
-			ypos -= 250;
+		size_t ps = 8;
+		xpos = gamedata.People[12].Xpos + 400;  // Position of Guard near road
+		ypos = gamedata.People[12].Ypos - 500;
+		zpos = gamedata.People[12].Zpos;
+		for (size_t i = 0; i < 16; i++) {
+			memset(&gamedata.People[ps], 0, sizeof(gamedata.People[ps]));
+			gamedata.People[ps].Xpos = xpos;
+			gamedata.People[ps].Ypos = ypos;
+			gamedata.People[ps].Zpos = zpos;
+			gamedata.People[ps].Status = TS_MAPWHO;
+			gamedata.People[ps].BaseFrame = PB_AGENT;
+			gamedata.People[ps].Life = 16;     // Setting does NOT seem to affect health of computer player agents
+			gamedata.People[ps].Model = TM_PERSON;
+			gamedata.People[ps].Angle = TA_SOUTHEAST;
+			gamedata.People[ps].Unique = PU_AGENT;
+			gamedata.People[ps].State = gamedata.People[ps].OldState = gamedata.People[ps].NewState = PS_NONE;
+			ps++;
+			memset(&gamedata.People[ps], 0, sizeof(gamedata.People[ps]));
+			gamedata.People[ps].Xpos = xpos + 125;
+			gamedata.People[ps].Ypos = ypos;
+			gamedata.People[ps].Zpos = zpos;
+			gamedata.People[ps].Status = TS_MAPWHO;
+			gamedata.People[ps].BaseFrame = PB_AGENT;
+			gamedata.People[ps].Life = 16;
+			gamedata.People[ps].Model = TM_PERSON;
+			gamedata.People[ps].Angle = TA_SOUTHEAST;
+			gamedata.People[ps].Unique = PU_AGENT;
+			gamedata.People[ps].State = gamedata.People[ps].OldState = gamedata.People[ps].NewState = PS_NONE;
+			ps++;
+			ypos -= 125;
+			if ((i+1) % 4 == 0)  // Nicely group enemy agents
+				ypos -= 125;
 		}
 
 		// CP Config
-		gamedata.CPCount      = 2;
-		gamedata.CPTeamSize   = 8;
-		gamedata.CPProcInt    = 0;
-		gamedata.CPLvlInit    = 0;
-		gamedata.CPIsBombTeam = 1;
-		gamedata.CPIsPersTeam = 1;
-		gamedata.CPFlags      = 0;
-		gamedata.CPWeapon     = 0;
+		gamedata.CPCount      = 5;  // Needs to be set to # of computer player + 1 (unsure why; wrong values cause buggy behavior)
+		gamedata.CPTeamSize   = 8;  // If there is more than ONE computer player, only 8 works reliably (lower values cause buggy behavior)
+		gamedata.CPProcInt    = 8;  // Tunes general aggressiveness (reaction time + fire rate; lower value == higher aggressiveness)
+		gamedata.CPLvlInit    = 1;  // Sets level of body mods (for all body parts)
+		gamedata.CPIsBombTeam = 0;  // Specifies if agents carry time bombs (in addition to regular firearm)
+		gamedata.CPIsPersTeam = 0;  // Specifies if agents carry persuadertrons (in addition to regular firearm)
+		gamedata.CPFlags      = 4;  // Largely unknown, but it would seem 4 is REQUIRED to enable computer player infighting (*)
+		gamedata.CPWeapon     = 0;  // Specifies firearm agents carry (e.g. WS_PISTOL; if set to 0, firearm is based on human player research
+		                            // status: Shotgun, Uzi or Minigun)
 
-		// CP Objectives 0-2
-		gamedata.CPObjectives[0].Player = 255;  // Hunt and kill human player (endless loop)
+		                            // (*) Value/flag 4 leads to "Yukon-style shoot when approaching target" behavior
+		                            // (which, when computer players hunt for the human player, can lead to infighting
+		                            // as agents seem to retaliate after being hit);
+		                            // Even if computer players are instructed to attack other computer players (via
+		                            // CPObjectives), this flag seems to be REQUIRED for actual infighting to occur
+		                            // (without it, agents will just walk to their target and be "friendly" with it)
+
+		// CP Objectives
+		gamedata.CPObjectives[0].Player = 1;  // Player 1 ...
 		gamedata.CPObjectives[0].Parent = 0;
 		gamedata.CPObjectives[0].Child = 0;
-		gamedata.CPObjectives[0].ActionType = CPOAT_KILL_HUMAN_PLAYER;
+		gamedata.CPObjectives[0].ActionType = CPOAT_ATTACK_PLAYER;
 		gamedata.CPObjectives[0].Action = CPOA_NONE;
 		gamedata.CPObjectives[0].Flags = 0;
-		gamedata.CPObjectives[0].X = 0;
+		gamedata.CPObjectives[0].X = 2;       // ... attacks player 2
 		gamedata.CPObjectives[0].Y = 0;
 		gamedata.CPObjectives[0].Z = 0;
 
-		gamedata.CPObjectives[1].Player = 255;  // Wait a bit, continue with next objective
+		gamedata.CPObjectives[1].Player = 2;  // Player 2 ...
 		gamedata.CPObjectives[1].Parent = 0;
-		gamedata.CPObjectives[1].Child = 2;
-		gamedata.CPObjectives[1].ActionType = CPOAT_WAIT_TIME;
+		gamedata.CPObjectives[1].Child = 0;
+		gamedata.CPObjectives[1].ActionType = CPOAT_ATTACK_PLAYER;
 		gamedata.CPObjectives[1].Action = CPOA_NONE;
 		gamedata.CPObjectives[1].Flags = 0;
-		gamedata.CPObjectives[1].X = 100;
+		gamedata.CPObjectives[1].X = 1;       // ... attacks player 1
 		gamedata.CPObjectives[1].Y = 0;
 		gamedata.CPObjectives[1].Z = 0;
 
-		gamedata.CPObjectives[2].Player = 255;  // Fork CPObjectives execution flow for each agent (see below)
-		gamedata.CPObjectives[2].Parent = 1;
+		gamedata.CPObjectives[2].Player = 3;  // Player 3 ...
+		gamedata.CPObjectives[2].Parent = 0;
 		gamedata.CPObjectives[2].Child = 0;
-		gamedata.CPObjectives[2].ActionType = CPOAT_FORK_CPOBJ_FLOW;
+		gamedata.CPObjectives[2].ActionType = CPOAT_ATTACK_PLAYER;
 		gamedata.CPObjectives[2].Action = CPOA_NONE;
 		gamedata.CPObjectives[2].Flags = 0;
-		gamedata.CPObjectives[2].X = 0;
+		gamedata.CPObjectives[2].X = 4;       // ... attacks player 4
 		gamedata.CPObjectives[2].Y = 0;
 		gamedata.CPObjectives[2].Z = 0;
 
-		// CP Objectives for each of the eight computer player agents individually
-		size_t spo = 3;                               // Right after CPObjectives 0-2 defined above
-		for (size_t p = 8; p < 16; p++) {
-			gamedata.CPObjectives[spo].Player = 255;  // Step forward, continue with next objective
-			gamedata.CPObjectives[spo].Parent = 0;
-			gamedata.CPObjectives[spo].Child = spo+1;
-			gamedata.CPObjectives[spo].ActionType = CPOAT_MOVE;
-			gamedata.CPObjectives[spo].Action = CPOA_GOTO_POSITION;
-			gamedata.CPObjectives[spo].Flags = 0;
-			gamedata.CPObjectives[spo].X = gamedata.People[p].Xpos + 500;
-			gamedata.CPObjectives[spo].Y = gamedata.People[p].Ypos;
-			gamedata.CPObjectives[spo].Z = gamedata.People[p].Zpos;
-			spo++;
+		gamedata.CPObjectives[3].Player = 4;  // Player 4 ...
+		gamedata.CPObjectives[3].Parent = 0;
+		gamedata.CPObjectives[3].Child = 0;
+		gamedata.CPObjectives[3].ActionType = CPOAT_ATTACK_PLAYER;
+		gamedata.CPObjectives[3].Action = CPOA_NONE;
+		gamedata.CPObjectives[3].Flags = 0;
+		gamedata.CPObjectives[3].X = 3;       // ... attacks player 3
+		gamedata.CPObjectives[3].Y = 0;
+		gamedata.CPObjectives[3].Z = 0;
 
-			gamedata.CPObjectives[spo].Player = 255;  // Wait a bit, continue with next objective
-			gamedata.CPObjectives[spo].Parent = spo-1;
-			gamedata.CPObjectives[spo].Child = spo+1;
-			gamedata.CPObjectives[spo].ActionType = CPOAT_WAIT_TIME;
-			gamedata.CPObjectives[spo].Action = CPOA_NONE;
-			gamedata.CPObjectives[spo].Flags = 0;
-			gamedata.CPObjectives[spo].X = 50;
-			gamedata.CPObjectives[spo].Y = 0;
-			gamedata.CPObjectives[spo].Z = 0;
-			spo++;
-
-			gamedata.CPObjectives[spo].Player = 255;  // Step back, stay put (endless loop)
-			gamedata.CPObjectives[spo].Parent = spo-1;
-			gamedata.CPObjectives[spo].Child = spo;
-			gamedata.CPObjectives[spo].ActionType = CPOAT_MOVE;
-			gamedata.CPObjectives[spo].Action = CPOA_GOTO_POSITION;
-			gamedata.CPObjectives[spo].Flags = 0;
-			gamedata.CPObjectives[spo].X = gamedata.People[p].Xpos;
-			gamedata.CPObjectives[spo].Y = gamedata.People[p].Ypos;
-			gamedata.CPObjectives[spo].Z = gamedata.People[p].Zpos;
-			spo++;
-		}
-
-		// Rebuild MapWho to account for added things
+		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
 	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {  // Eastern Europe

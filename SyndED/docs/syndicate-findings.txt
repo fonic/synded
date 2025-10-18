@@ -4,10 +4,11 @@
 --------------------------------------------------------------------------------
 
 - Analyze CPObjectives (functions, parameters, execution flow, etc.)
+- Analyze CP* flags (CPCount, CPTeamSize, CPProcInt, etc.)
 
 
 --------------------------------------------------------------------------------
-- OPEN                                                                         -
+- OPEN (INVESTIGATE)                                                           -
 --------------------------------------------------------------------------------
 
 - Test if placing DEAD people works (would be interesting for level design)
@@ -17,14 +18,15 @@
 
 - Test if NPCs and/or computer-controlled agents can wield the Persuadertron
   (does not happen in final game)
-  -> no luck yet with CPIsPersTeam + SPObjectives
+  -> No luck yet with CPIsPersTeam + SPObjectives
+  -> Trying giving one to a Guard or a Civilian
 
 
 --------------------------------------------------------------------------------
-- DONE                                                                         -
+- DONE (FINDINGS)                                                              -
 --------------------------------------------------------------------------------
 
-CPObjectives:
+Computer Players (Structless CP* variables + CPObjectives):
 
 - Entries in `CPObjectives` don't have a special order or any special entries
   at the start. Like with all the other tables, entries will work fine even
@@ -38,6 +40,8 @@ CPObjectives:
 - `Player == 255` means "all agents of a computer player". If **one** agent of a
   CP reaches a command with `Player == 255`, all agents of that same player
   will execute that command at once.
+  [TODO] This can't be all of it though; `Player == 255` also has to mean "any
+         player"
 - `gamedata.CPTeamSize` with values other than 8 seems to be broken (unless I'm
   missing something), e.g. if set to 4, only 4 agents out of 8 for each team
   will act. Also tested reducing the number of agents in a game to exactly
@@ -68,9 +72,43 @@ CPObjectives:
   ActionType = 1 + Action = 25 -> Exit vehicle
   -> see GAME31
 - ActionType = 5 + Action = 0 -> SPObjectives execution flow forking (see below)
+- Can computer players be turned against each other? There are missions in
+  vanilly Syndicate that actually do have infighting (might be accidental)
+  -> Yes, infighting IS possible:
+     Accidental (i.e. agent shoots other agent who then retaliates)
+     Intentional (by instructing computer player to attack other CP via
+     CPObjectives)
+  -> CPFlags = 4 is important for this
 
 
-ActionType, Action,Description (from Moburma)
+Computer player config variables:
+
+CPCount      = 5;  // Needs to be set to # of computer player + 1 (unsure why;
+                   // wrong values cause buggy behavior)
+CPTeamSize   = 8;  // If there is more than ONE computer player, only 8 works
+                   // reliably (lower values cause buggy behavior)
+CPProcInt    = 4;  // Tunes general aggressiveness (reaction time + fire rate;
+                   // lower value == higher aggressiveness)
+CPLvlInit    = 1;  // Sets level of body mods (for all body parts)
+CPIsBombTeam = 0;  // Specifies if agents carry time bombs (in addition to regular
+                   // firearm)
+CPIsPersTeam = 0;  // Specifies if agents carry persuadertrons (in addition to
+                   // regular firearm)
+CPFlags      = 4;  // Largely unknown, but it would seem 4 is REQUIRED to enable
+                   // computer player infighting (*)
+CPWeapon     = 0;  // Specifies firearm agents carry (e.g. WS_PISTOL; if set to
+                   // 0, firearm is based on human player research status:
+                   // Shotgun, Uzi or Minigun)
+
+(*) Value/flag 4 leads to "Yukon-style shoot when approaching target" behavior
+(which, when computer players hunt for the human player, can lead to infighting
+as agents seem to retaliate after being hit);
+Even if computer players are instructed to attack other computer players (via
+CPObjectives), this flag seems to be REQUIRED for actual infighting to occur
+(without it, agents will just walk to their target and be "friendly" with it)
+
+
+ActionType, Action, Description (from Moburma):
 
 1,    Go To - always has sub-action to determine type of thing/location to go to
  ,3   Go to point - Always has full coordinates
@@ -84,8 +122,8 @@ ActionType, Action,Description (from Moburma)
  ,25  Does not seem to matter for 2, even if set to 0
 
 3,    "Kill human players". Can have modifiers in X field, 4 and 2
-      [TODO], maybe this is not just "kill HUMAN player", but players in
-              general? (i.e. allows targeting other computer players)
+      -> this actually is "attack/kill player", with X specifying the player to
+         attack/kill (0 == human player)
 
 4,    Kill assassination target specified by Objectives
       NOTE: this means "kill the assassination target the human player is
@@ -95,10 +133,12 @@ ActionType, Action,Description (from Moburma)
  ,0   SPObjectives execution flow forking: when this command is executed,
       following SPObjectives will be analyzed and whenever an entry with Parent
       == 0, this entry will be assigned to ONE agent of the computer player
-      (i.e. each agent gets his own command chain)
-      NOTE: it would seem Child == 0, Action == 0 and X/Y/Z = 0 is required for
+      (i.e. each agent gets his own command chain); unsure if this only works
+      for ONE computer player or even multiple
+      NOTE: it would seem Child = 0, Action = 0 and X/Y/Z = 0 is required for
             this command to work as expected (-or- we do not yet fully under-
-            stand what the parameters do/mean)
+            stand how the parameters work, they might be a hint where to find
+            the forked execution flow chains)
 
 6,   Unknown. Just uses Player
  ,0  [TODO], see GAME30 (ONLY use in vanilla Syndicate)
@@ -106,6 +146,9 @@ ActionType, Action,Description (from Moburma)
 7,  Wait. X value is time to wait
 8,  Kill specific non-player person in X field
 9,  Protect? X is a specific person reference
+
+
+--------------------------------------------------------------------------------
 
 
 Objectives:
@@ -116,7 +159,17 @@ Objectives:
 - Objective.Type == 6: same as above
 
 -> NOTE: "assassinate" might simply be a switch-case-default (i.e. fallback for
-         unhandled values)
+         all unhandled values)
+
+
+--------------------------------------------------------------------------------
+
+
+Misc:
+
+- Initial map viewport is based on location of human-player agent(s), i.e. not
+  defined manually (previously assumed this was controlled by SSMapX/SSMapY,
+  judging from RGAME.C)
 
 
 --------------------------------------------------------------------------------
@@ -127,5 +180,5 @@ Objectives:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/16/25 - 10/16/25                                                    -
+- Date: 10/07/25 - 10/18/25                                                    -
 --------------------------------------------------------------------------------

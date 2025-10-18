@@ -298,7 +298,7 @@ typedef struct {
 	uint8_t   Angle;
 	uint8_t   ZAngle;                  // Until here same as Thing
 
-	uint8_t   Unknown[2];              // Attributes unique to Object
+	uint16_t  Unknown;                 // Attributes unique to Object
 } Object;
 #pragma pack(pop)
 
@@ -413,7 +413,7 @@ typedef struct {
 	uint8_t   Crime;
 	uint8_t   Gravity;
 	uint8_t   Density;
-	uint8_t   Unknown;
+	uint8_t   Unknown;                 // Not sure, could simply be that one if the preceding members is 16 bit instead of 8 bit
 } World;
 #pragma pack(pop)
 
@@ -481,7 +481,8 @@ typedef struct {
  *                                                                            *
  *  CPObjective Struct (15 bytes)                                             *
  *  Represents mission objectives the computer players have to accomplish     *
- *  (largely unknown for now, likely similar to how Commands for NPCs work)   *
+ *  (very similar to how Commands for NPCs work, but tailored to command      *
+ *  groups of agents)                                                         *
  *                                                                            *
  ******************************************************************************/
 

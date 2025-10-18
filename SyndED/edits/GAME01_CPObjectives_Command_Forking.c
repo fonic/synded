@@ -1,3 +1,4 @@
+
 		// Define agents for computer player right after agents for human player
 		uint16_t xpos = gamedata.People[12].Xpos + 500;  // Position of Guard near road
 		uint16_t ypos = gamedata.People[12].Ypos - 500;
