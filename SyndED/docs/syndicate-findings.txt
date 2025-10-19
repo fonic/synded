@@ -3,13 +3,23 @@
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
 
-- Analyze CPObjectives (functions, parameters, execution flow, etc.)
-- Analyze CP* flags (CPCount, CPTeamSize, CPProcInt, etc.)
+- Nothing atm
 
 
 --------------------------------------------------------------------------------
 - OPEN (INVESTIGATE)                                                           -
 --------------------------------------------------------------------------------
+
+- Find out meaning/translations of Person.HugDistance (probably named wrong)
+- Find out meaning/translations of Person.LevelRecovery (probably named wrong)
+- Find out meaning/translations of Objective.Status
+- Find out meaning/translations of Vehicle.Affect
+- Find out meaning/translations of Object.Life
+- Find out meaning/translations of Object.State
+- Find out meaning/translations of Object.Affect
+
+- Test what flag Thing.Status == TS_DEAD does (used quite often, name seems
+  wrong)
 
 - Test if placing DEAD people works (would be interesting for level design)
 
@@ -19,7 +29,7 @@
 - Test if NPCs and/or computer-controlled agents can wield the Persuadertron
   (does not happen in final game)
   -> No luck yet with CPIsPersTeam + SPObjectives
-  -> Trying giving one to a Guard or a Civilian
+  -> Try giving one to a Guard or a Civilian
 
 
 --------------------------------------------------------------------------------
@@ -76,17 +86,38 @@ Computer Players (Structless CP* variables + CPObjectives):
   vanilly Syndicate that actually do have infighting (might be accidental)
   -> Yes, infighting IS possible:
      Accidental (i.e. agent shoots other agent who then retaliates)
-     Intentional (by instructing computer player to attack other CP via
-     CPObjectives)
+     Intentional (i.e. computer player is instructed via CPObjectives to attack
+     some other CP)
   -> CPFlags = 4 is important for this
+  -> Examples:
+     GAME21.DAT,MAP39,39 Yukon -> accidental
+     GAME30.DAT,MAP67,67 Argentina -> intentional
+  -> Not sure yet if Person.WhoShotMe / Person.Target can also be used to turn
+     agents against each other (or against Police/Guards)
+
+- Test if smaller computer player teams (i.e. CPTeamSize < 8) can be made
+  viable by using 'holes' in People table to account
+  -> YES, works exactly like that (e.g. for CPTeamSize == 4, use 4 consecutive
+     People table slots for agents followed by 4 empty slot, repeat this pattern
+     for each computer player)
+- Maximum amount of computer players: 7 (i.e. CPCount == 8; higher values lead
+  to graphical glitches)
+  Results in a maximum of 7 * 8 = 56 enemy agents total
+- CPObjective.ActionType == CPOAT_WAIT_TIME can be interrupted by triggers
+  (observed: when human player agents get near)
 
 
 Computer player config variables:
 
 CPCount      = 5;  // Needs to be set to # of computer player + 1 (unsure why;
-                   // wrong values cause buggy behavior)
-CPTeamSize   = 8;  // If there is more than ONE computer player, only 8 works
-                   // reliably (lower values cause buggy behavior)
+                   // wrong values cause buggy behavior); maximum is 8 (i.e.
+                   // 7 computer players), higher values produce graphical
+                   // glitches + agent of the same color as the human player
+CPTeamSize   = 8;  // Specifies number of agents per computer player (1-8)
+                   // CAUTION: values lower than 8 requires punching 'holes' in
+                   // the People array (e.g. CPTeamSize == 4 -> 4 consecutive
+                   // agents followed by 4 empty slots; repeat this pattern for
+                   // each computer player)
 CPProcInt    = 4;  // Tunes general aggressiveness (reaction time + fire rate;
                    // lower value == higher aggressiveness)
 CPLvlInit    = 1;  // Sets level of body mods (for all body parts)
@@ -180,5 +211,5 @@ Misc:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/18/25                                                    -
+- Date: 10/07/25 - 10/19/25                                                    -
 --------------------------------------------------------------------------------

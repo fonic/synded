@@ -1,4 +1,15 @@
 
+		// Move human-player agents closer to the action
+		uint16_t xpos = gamedata.People[8].Xpos - 75;   // Position of Soldier in building
+		uint16_t ypos = gamedata.People[8].Ypos - 125;
+		uint16_t zpos = gamedata.People[8].Zpos;
+		for (size_t i = 0; i < 8; i++) {
+			gamedata.People[i].Xpos = xpos;
+			gamedata.People[i].Ypos = ypos;
+			gamedata.People[i].Zpos = zpos;
+			xpos += 250;
+		}
+
 		// Define agents for computer player right after agents for human player
 		size_t ps = 8;
 		xpos = gamedata.People[12].Xpos + 400;  // Position of Guard near road

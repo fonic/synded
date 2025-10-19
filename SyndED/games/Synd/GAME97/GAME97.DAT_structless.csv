@@ -1,0 +1,2 @@
+Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon
+20031,28,45065,0,90,2,18,200,154,1,4,0,0,0,0,CPF_NONE,0

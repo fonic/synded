@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/14/25                                                 *
+ *  Date: 10/08/25 - 10/19/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -168,6 +168,7 @@ typedef enum {
 const char* thing_model_to_str(const ThingModel value);
 
 
+// Based on ON-SCREEN visuals, NOT accounting for isometric projection
 #define THING_ANGLE_VALUES(GENERATOR_FUNC)  \
     GENERATOR_FUNC(TA_SOUTHWEST, 0x00)      \
     GENERATOR_FUNC(TA_SOUTH,     0x20)      \
@@ -504,6 +505,7 @@ const char* cpobjective_action_to_str(const CPObjectiveActionType actiontype, co
  *                                                                            *
  ******************************************************************************/
 
+// Flag 'CPF_SHOOT_WHEN_NEAR_TARGET' also toggles CP infighting
 #define STRUCTLESS_CPFLAGS_FLAGS(GENERATOR_FUNC)      \
     GENERATOR_FUNC(CPF_NONE,                   0x00)  \
     GENERATOR_FUNC(CPF_UNKNOWN_1,              0x01)  \

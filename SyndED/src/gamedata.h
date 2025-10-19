@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Structs, Defines, Macros                     *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/14/25                                                 *
+ *  Date: 10/08/25 - 10/19/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -113,7 +113,8 @@
 
 #define GET_THING_FOR_RELOFS(gamedata, relofs) (Thing*)((size_t)(gamedata) + offsetof(GameData, RelOfsBase) + relofs)               // Get Thing from GameData struct based on relative offset
 #define GET_RELOFS_FOR_THING(gamedata, thing)  (uint16_t)((size_t)(thing) - (size_t)(gamedata) - offsetof(GameData, RelOfsBase))    // Get relative offset of Thing in GameData struct (CAUTION:
-                                                                                                                                    // only valid for Things that are actually part of the specified
+                                                                                                                                    // result is only valid for Things that are actually part of
+                                                                                                                                    // the specified GameData struct)
 
 
 /******************************************************************************

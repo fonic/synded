@@ -3,8 +3,7 @@
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
 
-- Analyze CPObjectives (functions, parameters, execution flow, etc.)
-- Analyze CP* flags (CPCount, CPTeamSize, CPProcInt, etc.)
+- Nothing atm
 
 
 --------------------------------------------------------------------------------
@@ -73,6 +72,15 @@
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
 
+- Restructure main (synded.c) to increase code navigation/readability
+- Generate CSV output for BOTH input and output file to facilitate before vs.
+  after comparisons
+
+- Add indices for ALL generated CSV tables (like in table CPObjectives) to
+  facilitate writing editing code (which heavily relies on indices)
+
+- Change enum value indentation from tabs to spaces (to maintain proper
+  indentation even when using different tab size in editor/viewer)
 - Update CSV output to account for new enum and other changes
 - Add enum for GameData.CPFlags
 - Add function to properly translate CPObjective.Action to string based on
@@ -175,7 +183,7 @@
 - Add enum + _to_str() function for Thing.Angle to 'gdenums.h' + integrate into
   CSV output:
 
-  Angle ranges (from testing, as it appears on-screen):
+  Angle ranges (from testing, as it appears ON-SCREEN, i.e. NOT isometric):
   0xF0 - 0x0F: South-West
   0x10 - 0x2F: South
   0x30 - 0x4F: South-East
@@ -318,5 +326,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/18/25                                                    -
+- Date: 10/07/25 - 10/19/25                                                    -
 --------------------------------------------------------------------------------

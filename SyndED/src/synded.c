@@ -3,7 +3,7 @@
  *  Syndicate Editor - Main                                                   *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/14/25                                                 *
+ *  Date: 10/08/25 - 10/19/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -22,21 +22,34 @@
 #include "csvoutput.h"
 #include "mapwho.h"
 
+
 int main(int argc, char *argv[]) {
 
-	// Game data struct
-	GameData gamedata;
 
+	/******************************************************************************
+	 *                                                                            *
+	 *  Process command line                                                      *
+	 *                                                                            *
+	 ******************************************************************************/
 
 	// Process command line
 	if (argc != 3) {
 		fprintf(stderr, "Usage:   %s INFILE OUTFILE\n", argv[0]);
-		fprintf(stderr, "Example: %s GAMExx.DAT GAMExx.DAT_mod\n", argv[0]);
+		fprintf(stderr, "Example: %s GAMExx.DAT GAMExx.DAT_zmod\n", argv[0]);
 		return 2;
 	}
 	const char *infile_name = argv[1];
 	const char *outfile_name = argv[2];
 
+
+	/******************************************************************************
+	 *                                                                            *
+	 *  Check and read input file                                                 *
+	 *                                                                            *
+	 ******************************************************************************/
+
+	// Game data struct
+	GameData gamedata;
 
 	// Open input file
 	printf("Opening input file '%s'...\n", infile_name);
@@ -85,11 +98,82 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 
 
-	// Editing/modification examples: make GAME01.DAT and GAME10.DAT more interesting
+	/******************************************************************************
+	 *                                                                            *
+	 *  Generate CSV output (BEFORE editing, reflects INPUT file contents)        *
+	 *                                                                            *
+	 ******************************************************************************/
+
+	// CSV file name
+	char *csvfile_name;
+
+	// Write MapWho array to CSV file
+	asprintf(&csvfile_name, "%s_mapwho.csv", infile_name);
+	write_mapwho_to_csv(csvfile_name, gamedata.MapWho, TILES_COUNT_X, TILES_COUNT_Y);
+	free(csvfile_name);
+
+	// Write People array to CSV file
+	asprintf(&csvfile_name, "%s_people.csv", infile_name);
+	write_people_to_csv(csvfile_name, gamedata.People, PEOPLE_COUNT, PEOPLE_GLOBAL_OFFSET, PEOPLE_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Vehicles array to CSV file
+	asprintf(&csvfile_name, "%s_vehicles.csv", infile_name);
+	write_vehicles_to_csv(csvfile_name, gamedata.Vehicles, VEHICLES_COUNT, VEHICLES_GLOBAL_OFFSET, VEHICLES_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Objects array to CSV file
+	asprintf(&csvfile_name, "%s_objects.csv", infile_name);
+	write_objects_to_csv(csvfile_name, gamedata.Objects, OBJECTS_COUNT, OBJECTS_GLOBAL_OFFSET, OBJECTS_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Weapons array to CSV file
+	asprintf(&csvfile_name, "%s_weapons.csv", infile_name);
+	write_weapons_to_csv(csvfile_name, gamedata.Weapons, WEAPONS_COUNT, WEAPONS_GLOBAL_OFFSET, WEAPONS_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Effects array to CSV file
+	asprintf(&csvfile_name, "%s_effects.csv", infile_name);
+	write_effects_to_csv(csvfile_name, gamedata.Effects, EFFECTS_COUNT, EFFECTS_GLOBAL_OFFSET, EFFECTS_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Commands array to CSV file
+	asprintf(&csvfile_name, "%s_commands.csv", infile_name);
+	write_commands_to_csv(csvfile_name, gamedata.Commands, COMMANDS_COUNT, COMMANDS_GLOBAL_OFFSET, COMMANDS_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Worlds array to CSV file
+	asprintf(&csvfile_name, "%s_worlds.csv", infile_name);
+	write_worlds_to_csv(csvfile_name, gamedata.Worlds, WORLDS_COUNT, WORLDS_GLOBAL_OFFSET, WORLDS_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write Objectives array to CSV file
+	asprintf(&csvfile_name, "%s_objectives.csv", infile_name);
+	write_objectives_to_csv(csvfile_name, gamedata.Objectives, OBJECTIVES_COUNT, OBJECTIVES_GLOBAL_OFFSET, OBJECTIVES_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write CPObjectives array to CSV file
+	asprintf(&csvfile_name, "%s_cpobjectives.csv", infile_name);
+	write_cpobjectives_to_csv(csvfile_name, gamedata.CPObjectives, CPOBJECTIVES_COUNT, CPOBJECTIVES_GLOBAL_OFFSET, CPOBJECTIVES_RELATIVE_OFFSET);
+	free(csvfile_name);
+
+	// Write structless GameData members to CSV file
+	asprintf(&csvfile_name, "%s_structless.csv", infile_name);
+	write_structless_to_csv(csvfile_name, &gamedata);
+	free(csvfile_name);
+	printf("\n");
+
+
+	/******************************************************************************
+	 *                                                                            *
+	 *  Edit/modify game data                                                     *
+	 *                                                                            *
+	 ******************************************************************************/
+
 	if (strstr(infile_name, "GAME01.DAT") != NULL) {  // Western Europe
 
-		printf("Modifying GAME01.DAT (see sources)...\n");
-		/*Vehicle vehicle = gamedata.Vehicles[0];       // Existing Vehicle
+		printf("Editing/modifying GAME01.DAT (see sources)...\n");
+		Vehicle vehicle = gamedata.Vehicles[0];       // Existing Vehicle
 		Person person = gamedata.People[9];           // Existing Guard
 		Weapon weapon = gamedata.Weapons[0];          // Existing Uzi (belongs to last guard at road)
 
@@ -121,119 +205,14 @@ int main(int argc, char *argv[]) {
 			person.State = person.NewState = 0; person.Angle = TA_WEST; person.Parent = person.ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
 			weapon.State = WS_MINIGUN; weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * person_slot;
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
-		}*/
-
-		// Move human-player agents closer to the action
-		uint16_t xpos = gamedata.People[8].Xpos - 75;  // Position of Soldier in building
-		uint16_t ypos = gamedata.People[8].Ypos - 125;
-		uint16_t zpos = gamedata.People[8].Zpos;
-		for (size_t i = 0; i < 8; i++) {
-			gamedata.People[i].Xpos = xpos;
-			gamedata.People[i].Ypos = ypos;
-			gamedata.People[i].Zpos = zpos;
-			xpos += 50;
 		}
-
-		// Define agents for computer player right after agents for human player
-		size_t ps = 8;
-		xpos = gamedata.People[12].Xpos + 400;  // Position of Guard near road
-		ypos = gamedata.People[12].Ypos - 500;
-		zpos = gamedata.People[12].Zpos;
-		for (size_t i = 0; i < 16; i++) {
-			memset(&gamedata.People[ps], 0, sizeof(gamedata.People[ps]));
-			gamedata.People[ps].Xpos = xpos;
-			gamedata.People[ps].Ypos = ypos;
-			gamedata.People[ps].Zpos = zpos;
-			gamedata.People[ps].Status = TS_MAPWHO;
-			gamedata.People[ps].BaseFrame = PB_AGENT;
-			gamedata.People[ps].Life = 16;     // Setting does NOT seem to affect health of computer player agents
-			gamedata.People[ps].Model = TM_PERSON;
-			gamedata.People[ps].Angle = TA_SOUTHEAST;
-			gamedata.People[ps].Unique = PU_AGENT;
-			gamedata.People[ps].State = gamedata.People[ps].OldState = gamedata.People[ps].NewState = PS_NONE;
-			ps++;
-			memset(&gamedata.People[ps], 0, sizeof(gamedata.People[ps]));
-			gamedata.People[ps].Xpos = xpos + 125;
-			gamedata.People[ps].Ypos = ypos;
-			gamedata.People[ps].Zpos = zpos;
-			gamedata.People[ps].Status = TS_MAPWHO;
-			gamedata.People[ps].BaseFrame = PB_AGENT;
-			gamedata.People[ps].Life = 16;
-			gamedata.People[ps].Model = TM_PERSON;
-			gamedata.People[ps].Angle = TA_SOUTHEAST;
-			gamedata.People[ps].Unique = PU_AGENT;
-			gamedata.People[ps].State = gamedata.People[ps].OldState = gamedata.People[ps].NewState = PS_NONE;
-			ps++;
-			ypos -= 125;
-			if ((i+1) % 4 == 0)  // Nicely group enemy agents
-				ypos -= 125;
-		}
-
-		// CP Config
-		gamedata.CPCount      = 5;  // Needs to be set to # of computer player + 1 (unsure why; wrong values cause buggy behavior)
-		gamedata.CPTeamSize   = 8;  // If there is more than ONE computer player, only 8 works reliably (lower values cause buggy behavior)
-		gamedata.CPProcInt    = 8;  // Tunes general aggressiveness (reaction time + fire rate; lower value == higher aggressiveness)
-		gamedata.CPLvlInit    = 1;  // Sets level of body mods (for all body parts)
-		gamedata.CPIsBombTeam = 0;  // Specifies if agents carry time bombs (in addition to regular firearm)
-		gamedata.CPIsPersTeam = 0;  // Specifies if agents carry persuadertrons (in addition to regular firearm)
-		gamedata.CPFlags      = 4;  // Largely unknown, but it would seem 4 is REQUIRED to enable computer player infighting (*)
-		gamedata.CPWeapon     = 0;  // Specifies firearm agents carry (e.g. WS_PISTOL; if set to 0, firearm is based on human player research
-		                            // status: Shotgun, Uzi or Minigun)
-
-		                            // (*) Value/flag 4 leads to "Yukon-style shoot when approaching target" behavior
-		                            // (which, when computer players hunt for the human player, can lead to infighting
-		                            // as agents seem to retaliate after being hit);
-		                            // Even if computer players are instructed to attack other computer players (via
-		                            // CPObjectives), this flag seems to be REQUIRED for actual infighting to occur
-		                            // (without it, agents will just walk to their target and be "friendly" with it)
-
-		// CP Objectives
-		gamedata.CPObjectives[0].Player = 1;  // Player 1 ...
-		gamedata.CPObjectives[0].Parent = 0;
-		gamedata.CPObjectives[0].Child = 0;
-		gamedata.CPObjectives[0].ActionType = CPOAT_ATTACK_PLAYER;
-		gamedata.CPObjectives[0].Action = CPOA_NONE;
-		gamedata.CPObjectives[0].Flags = 0;
-		gamedata.CPObjectives[0].X = 2;       // ... attacks player 2
-		gamedata.CPObjectives[0].Y = 0;
-		gamedata.CPObjectives[0].Z = 0;
-
-		gamedata.CPObjectives[1].Player = 2;  // Player 2 ...
-		gamedata.CPObjectives[1].Parent = 0;
-		gamedata.CPObjectives[1].Child = 0;
-		gamedata.CPObjectives[1].ActionType = CPOAT_ATTACK_PLAYER;
-		gamedata.CPObjectives[1].Action = CPOA_NONE;
-		gamedata.CPObjectives[1].Flags = 0;
-		gamedata.CPObjectives[1].X = 1;       // ... attacks player 1
-		gamedata.CPObjectives[1].Y = 0;
-		gamedata.CPObjectives[1].Z = 0;
-
-		gamedata.CPObjectives[2].Player = 3;  // Player 3 ...
-		gamedata.CPObjectives[2].Parent = 0;
-		gamedata.CPObjectives[2].Child = 0;
-		gamedata.CPObjectives[2].ActionType = CPOAT_ATTACK_PLAYER;
-		gamedata.CPObjectives[2].Action = CPOA_NONE;
-		gamedata.CPObjectives[2].Flags = 0;
-		gamedata.CPObjectives[2].X = 4;       // ... attacks player 4
-		gamedata.CPObjectives[2].Y = 0;
-		gamedata.CPObjectives[2].Z = 0;
-
-		gamedata.CPObjectives[3].Player = 4;  // Player 4 ...
-		gamedata.CPObjectives[3].Parent = 0;
-		gamedata.CPObjectives[3].Child = 0;
-		gamedata.CPObjectives[3].ActionType = CPOAT_ATTACK_PLAYER;
-		gamedata.CPObjectives[3].Action = CPOA_NONE;
-		gamedata.CPObjectives[3].Flags = 0;
-		gamedata.CPObjectives[3].X = 3;       // ... attacks player 3
-		gamedata.CPObjectives[3].Y = 0;
-		gamedata.CPObjectives[3].Z = 0;
 
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
 	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {  // Eastern Europe
 
-		printf("Modifying GAME10.DAT (see sources)...\n");
+		printf("Editing/modifying GAME10.DAT (see sources)...\n");
 		Weapon weapon = gamedata.Weapons[1];                 // Existing Uzi
 		size_t weapon_slot = 30;                             // Lots of free space
 		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People!
@@ -254,9 +233,12 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
+		// No MapWho rebuild required here
+		//rebuild_mapwho(&gamedata);
+
 	} else if (strstr(infile_name, "GAME20.DAT") != NULL) {  // Scandinavia
 
-		printf("Modifying GAME20.DAT (see sources)...\n");
+		printf("Editing/modifying GAME20.DAT (see sources)...\n");
 		size_t person_slot = 65;                             // Lots of free space
 		for (size_t i = 8; i < 60; i++) {                    // Twice the civilians == twice the fun
 			if (gamedata.People[i].Unique == PU_CIVILIAN) {
@@ -288,15 +270,21 @@ int main(int argc, char *argv[]) {
 
 	} else if (strstr(infile_name, "GAME31.DAT") != NULL) {  // South Africa
 
-		printf("Modifying GAME31.DAT (see sources)...\n");
-		//gamedata.CPObjectives[1].Child = 3; // Bypass execution flow fork -> ALL blue agents will walk to APC
-		gamedata.CPObjectives[4].Child = 7; // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
+		printf("Editing/modifying GAME31.DAT (see sources)...\n");
+		//gamedata.CPObjectives[1].Child = 3;  // Bypass execution flow fork -> ALL blue agents will walk to APC
+		gamedata.CPObjectives[4].Child = 7;    // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
 
 	} else {
-		printf("Not modifying game data (see sources).\n");
+		printf("Not editing/modifying game data (see sources).\n");
 	}
 	printf("\n");
 
+
+	/******************************************************************************
+	 *                                                                            *
+	 *  Write modified game data to output file                                   *
+	 *                                                                            *
+	 ******************************************************************************/
 
 	// Open output file
 	printf("Opening output file '%s'...\n", outfile_name);
@@ -324,11 +312,14 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 
 
-	// ----------------------------------------------------------------------------------------------------------------------
-
+	/******************************************************************************
+	 *                                                                            *
+	 *  Generate CSV output (AFTER editing, reflects OUTPUT file contents)        *
+	 *                                                                            *
+	 ******************************************************************************/
 
 	// CSV file name
-	char *csvfile_name;
+	//char *csvfile_name;
 
 	// Write MapWho array to CSV file
 	asprintf(&csvfile_name, "%s_mapwho.csv", outfile_name);
@@ -386,12 +377,16 @@ int main(int argc, char *argv[]) {
 	free(csvfile_name);
 
 
-	// ----------------------------------------------------------------------------------------------------------------------
+	/******************************************************************************
+	 *                                                                            *
+	 *  Debug output (debug builds only)                                          *
+	 *                                                                            *
+	 ******************************************************************************/
 
 #ifdef DEBUG
 	printf("\n");
 
-	// [DEBUG] Print struct sizes
+	// Print struct sizes
 	printf("Struct sizes:\n");
 	//printf("MapWho:      %zu\n", sizeof(MapWho));
 	printf("Thing:       %zu\n", sizeof(Thing));
@@ -408,7 +403,7 @@ int main(int argc, char *argv[]) {
 	printf("GameData:    %zu\n", sizeof(GameData));
 	printf("\n");
 
-	// [DEBUG] Print offsets of GameData struct members
+	// Print offsets of GameData struct members
 	printf("GameData offsets:\n");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Seed),         offsetof(GameData, Seed),         "uint16_t     Seed");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, PersonCount),  offsetof(GameData, PersonCount),  "uint16_t     PersonCount");
@@ -441,11 +436,14 @@ int main(int argc, char *argv[]) {
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPWeapon),     offsetof(GameData, CPWeapon),     "uint8_t      CPWeapon");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, CPObjectives), offsetof(GameData, CPObjectives), "CPObjective  CPObjectives[CPOBJECTIVES_COUNT]");
 	printf("/* %6zu 0x%05lx */  %s\n", sizeof(GameData),                 sizeof(GameData),                 "[ End of struct ]");
-
 #endif
 
-	// ----------------------------------------------------------------------------------------------------------------------
 
+	/******************************************************************************
+	 *                                                                            *
+	 *  End of main                                                               *
+	 *                                                                            *
+	 ******************************************************************************/
 
 	// Get home safely
 	return 0;

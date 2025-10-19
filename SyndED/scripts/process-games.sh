@@ -30,12 +30,12 @@ fi
 for game in "${games[@]}"; do
 	if ${VERBOSE_OUTPUT}; then
 		echo -e "\e[1mRunning SyndED for '${game}':\e[0m"; echo
-		rm -f -- "${game}_mod"*
-		"${SYNDED_EXE}" "${game}" "${game}_mod" |& tee -- "${game}_mod_log.txt"
+		rm -f -- "${game}"_*
+		"${SYNDED_EXE}" "${game}" "${game}_zmod" |& tee -- "${game}_zmod_zlog.txt"
 	else
 		echo -n "Running SyndED for '${game}'... "
-		rm -f -- "${game}_mod"*
-		"${SYNDED_EXE}" "${game}" "${game}_mod" &> "${game}_mod_log.txt"
+		rm -f -- "${game}"_*
+		"${SYNDED_EXE}" "${game}" "${game}_zmod" &> "${game}_zmod_zlog.txt"
 		(( $? == 0 )) && echo -e "\e[1;32msuccess\e[0m" || echo -e "\e[1;31mfailed\e[0m"
 	fi
 done

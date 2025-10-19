@@ -3,7 +3,7 @@
  *  Syndicate Editor - CSV Output                                             *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/14/25                                                 *
+ *  Date: 10/08/25 - 10/19/25                                                 *
  *                                                                            *
  ******************************************************************************/
 

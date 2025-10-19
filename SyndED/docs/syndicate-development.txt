@@ -16,13 +16,21 @@ Fix bugs:
   when hitting Enter (only happens for this transition)
 
 - Path finding for persuaded people breaks down when a huge number of people
-  has been persuaded
+  has been persuaded; same when the maximum of 7 * 8 = 56 enemy agents run for
+  the human player at once
 
 
 Extend existing features:
 
+- Make the game use the entire screen (currently, only a portion of the 640x
+  480 resolution seems to be used; that additional space can be used to show
+  more of the map, i.e. to enlargen the viewport)
+
 - Allow for mixing of multiple sounds (currently, only ONE sound can play at
   a time)
+
+- "Wall hugging" path finding just doesn't cut it in general, either improve
+  upon or replace with something better
 
 - Lift restricting limits (e.g. larger maps, more people, more agents, ...)
   -> Will be quite tough to achieve as this will affect MANY data structures
@@ -62,5 +70,5 @@ Add new feature:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/18/25                                                    -
+- Date: 10/07/25 - 10/19/25                                                    -
 --------------------------------------------------------------------------------
