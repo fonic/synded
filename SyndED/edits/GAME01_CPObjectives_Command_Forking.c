@@ -49,6 +49,13 @@
 		gamedata.CPObjectives[1].Y = 0;
 		gamedata.CPObjectives[1].Z = 0;
 
+		// NOTE:
+		// If everything below works correctly, each agent should step forward,
+		// wait a bit, and then step backwards. This may not look like much, but
+		// actually requires some serious effort, as CPObjectives focuses on
+		// controlling groups of agents, whereas controlling indiviual agents
+		// seems more like an afterthought
+
 		gamedata.CPObjectives[2].Player = 255;  // Fork CPObjectives execution flow for each agent (see below)
 		gamedata.CPObjectives[2].Parent = 1;
 		gamedata.CPObjectives[2].Child = 0;

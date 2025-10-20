@@ -49,6 +49,11 @@
 				ypos -= 125;
 		}
 
+		// NOTE:
+		// Everything below was tailored to resemble the Yukon mission (which
+		// features infighting), but in the end it turned out that CPFlags = 4
+		// is all that's really needed for infighting to occur
+
 		// CP Config
 		gamedata.CPCount      = 5;
 		gamedata.CPTeamSize   = 8;
@@ -56,7 +61,7 @@
 		gamedata.CPLvlInit    = 0;
 		gamedata.CPIsBombTeam = 0;
 		gamedata.CPIsPersTeam = 0;
-		gamedata.CPFlags      = 23;
+		gamedata.CPFlags      = 23;  // Flag 4 enables infighting
 		gamedata.CPWeapon     = 0;
 
 		// CP Objectives

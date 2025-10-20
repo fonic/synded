@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------------
+- How to dump game data from Syndicate's memory                                -
+--------------------------------------------------------------------------------
+
+Follow these steps:
+
+1.  Use a DOSBox debug build (only these builds contain the debugger)
+2.  Run 'dosbox-debug', then run Syndicate within DOSBox Debug
+3.  Start playing a mission; to make steps 9 and 10 easier, only use
+    agents 2-4 and leave agent 1 somewhere safe WITHOUT touching the
+    drug levels
+4.  Break into DOSBox debugger using key combination Alt + Pause/Break
+    (on Linux, the debugger will show up in the terminal that was used
+    to run 'dosbox-debug'; on Windows, a separate window will show up)
+5.  In the debugger, use command 'SELINFO' to get information about
+    selectors
+6.  Within the selector information, identify a selector with a base
+    address of 0
+    [NOTE: while testing, this was always selector 13]
+7.  Use debugger command 'MEMDUMPBIN <selnum>:0 400000' to dump 4 MB of
+    memory to file 'MEMDUMP.BIN' (will be stored in the directory where
+    'dosbox-debug' was run)
+    [NOTE: testing showed that Syndicate only uses up to 4 MB of RAM]
+8.  Open both 'MEMDUMP.BIN' and the 'GAMExx.DAT' file for the respective
+    mission in a hex editor
+9.  In the .DAT file, find an easily recognizable but UNIQUE 'landmark',
+    e.g. 80 80 80 00 80 80 80 00 80 80 80 00 (the default drug levels
+    of agent 1); take note of OFFSET1 where this pattern is located
+10. Locate the same 'landmark' within 'MEMDUMP.BIN', then jump backwards
+    within the memory dump by the amount of OFFSET1 from step 9; the re-
+    sulting OFFSET2 should be the start of game data; game data begins
+    with 6 bytes that are usually not [all] 0 (Seed, PersonCount, Timer),
+    followed by a vast space that is mostly 0 with occasional non-zero
+    values (MapWho)
+    [NOTE: while testing, the start of game data was always 0x1cf898]
+11. Extract exactly 116010 bytes (0x1c52a) from 'MEMDUMP.BIN', starting
+    from OFFSET2 determined in step 10, to a new .DAT file (using the
+    hex editor or tools like dd), e.g.:
+    $ dd if="MEMDUMP.BIN" of="DGAMExx.DAT" skip=1898648 count=116010 iflag=skip_bytes,count_bytes
+             ^ input file     ^ output file     ^ OFFSET2     ^ game data size
+
+NOTE:
+Another suitable, reliable 'landmark' consists of the 10 bytes that make
+up MapNumber, LoBoundaryx, LoBoundaryy, HiBoundaryx, HiBoundaryy, which
+are guaranteed to stay constant throughout a mission.
+
+Resources:
+https://www.vogons.org/viewtopic.php?p=47301#p47301
+https://www.vogons.org/viewtopic.php?p=30224#p30224
+https://www.vogons.org/viewtopic.php?p=465594#p465594
+https://www.vogons.org/viewtopic.php?p=64017#p64017
+
+--------------------------------------------------------------------------------
+- Date: 10/07/25 - 10/19/25                                                    -
+--------------------------------------------------------------------------------

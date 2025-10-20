@@ -63,6 +63,11 @@
 		                            // CPObjectives), this flag seems to be REQUIRED for actual infighting to occur
 		                            // (without it, agents will just walk to their target and be "friendly" with it)
 
+		// NOTE:
+		// Infighting by instruction: instruct computer playery to attack each
+		// other using CPObjective.ActionType = CPOAT_ATTACK_PLAYER + # of CP
+		// to attack in X
+
 		// CP Objectives
 		gamedata.CPObjectives[0].Player = 1;  // Player 1 ...
 		gamedata.CPObjectives[0].Parent = 0;

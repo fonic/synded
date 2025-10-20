@@ -67,7 +67,7 @@
 			ps++;
 			ypos -= 500;
 			memset(&gamedata.People[ps], 0, sizeof(gamedata.People[ps]));      // Leave 4 People table slots unoccupied
-			memset(&gamedata.People[ps+1], 0, sizeof(gamedata.People[ps+1]));
+			memset(&gamedata.People[ps+1], 0, sizeof(gamedata.People[ps+1]));  // (necessary workaround for teams smaller than 8)
 			memset(&gamedata.People[ps+2], 0, sizeof(gamedata.People[ps+2]));
 			memset(&gamedata.People[ps+3], 0, sizeof(gamedata.People[ps+3]));
 			ps += 4;
@@ -75,7 +75,7 @@
 
 		// CP Config
 		gamedata.CPCount      = 5;  // Needs to be set to # of computer player + 1 (unsure why; wrong values cause buggy behavior)
-		gamedata.CPTeamSize   = 4;  // If there is more than ONE computer player, only 8 works reliably (lower values cause buggy behavior)
+		gamedata.CPTeamSize   = 4;  // Values lower than 8 requires some additional effort (see memset block above)
 		gamedata.CPProcInt    = 8;  // Tunes general aggressiveness (reaction time + fire rate; lower value == higher aggressiveness)
 		gamedata.CPLvlInit    = 1;  // Sets level of body mods (for all body parts)
 		gamedata.CPIsBombTeam = 0;  // Specifies if agents carry time bombs (in addition to regular firearm)
@@ -131,61 +131,6 @@
 		gamedata.CPObjectives[3].X = GET_RELOFS_FOR_THING(&gamedata, &gamedata.People[0]);
 		gamedata.CPObjectives[3].Y = 0;       // ... walks to human player agent 1
 		gamedata.CPObjectives[3].Z = 0;
-
-		// Rebuild MapWho to account for added things (important!)
-		rebuild_mapwho(&gamedata);
-
-	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {  // Eastern Europe
-
-		printf("Modifying GAME10.DAT (see sources)...\n");
-		Weapon weapon = gamedata.Weapons[1];                 // Existing Uzi
-		size_t weapon_slot = 30;                             // Lots of free space
-		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People!
-			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // Women get Uzis
-				gamedata.People[i].Unique = PU_GUARD;
-				gamedata.People[i].Life = 10;
-				gamedata.People[i].Parent = gamedata.People[i].ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-				weapon.State = WS_UZI;
-				weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * i;
-				gamedata.Weapons[weapon_slot++] = weapon;
-			} else if (gamedata.People[i].BaseFrame == PB_MAN_SUIT || gamedata.People[i].BaseFrame == PB_MAN_JACKET) {  // Men get Shotguns
-				gamedata.People[i].Unique = PU_GUARD;
-				gamedata.People[i].Life = 10;
-				gamedata.People[i].Parent = gamedata.People[i].ChildWeapon = WEAPONS_RELATIVE_OFFSET + sizeof(Weapon) * weapon_slot;
-				weapon.State = WS_SHOTGUN;
-				weapon.ParentWeapon = weapon.WhoOwnsWeapon = PEOPLE_RELATIVE_OFFSET + sizeof(Person) * i;
-				gamedata.Weapons[weapon_slot++] = weapon;
-			}
-		}
-
-	} else if (strstr(infile_name, "GAME20.DAT") != NULL) {  // Scandinavia
-
-		printf("Modifying GAME20.DAT (see sources)...\n");
-		size_t person_slot = 65;                             // Lots of free space
-		for (size_t i = 8; i < 60; i++) {                    // Twice the civilians == twice the fun
-			if (gamedata.People[i].Unique == PU_CIVILIAN) {
-				Person person = gamedata.People[i];          // Two tiles variation in positioning
-				person.Xpos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
-				person.Ypos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
-				person.Angle = rand() % 256;                 // Wander somewhere nice
-				person.NewState = PS_WANDER;
-				switch (rand() % 4) {
-					case 0:
-						person.BaseFrame = PB_WOMAN_BLONDE;
-						break;
-					case 1:
-						person.BaseFrame = PB_WOMAN_REDHEAD;
-						break;
-					case 2:
-						person.BaseFrame = PB_MAN_SUIT;
-						break;
-					default:
-						person.BaseFrame = PB_MAN_JACKET;
-						break;
-				}
-				gamedata.People[person_slot++] = person;
-			}
-		}
 
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);

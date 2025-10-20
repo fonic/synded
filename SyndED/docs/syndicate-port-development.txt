@@ -1,0 +1,84 @@
+--------------------------------------------------------------------------------
+- WORK IN PROGRESS                                                             -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- TODO (FURTHER DEVELOPMENT)                                                   -
+--------------------------------------------------------------------------------
+
+Fix bugs:
+
+- Menu transition from mission description to agent configuration is skipped
+  when hitting Enter key (only seems to work for this specific transition)
+
+- Path finding for persuaded people breaks down when a huge number of people
+  has been persuaded; same when the maximum of 7 * 8 = 56 enemy agents run for
+  the human player at once; there seems to be some limit at play, restricting
+  how many actors can perform path finding at once
+
+
+Extend existing features:
+
+- Make the game use the entire screen (currently, only a portion of the 640x
+  480 resolution seems to be used); that additional space can be used to show
+  more of the map, i.e. to enlargen the viewport
+
+- Add keyboard shortcut "5" to allow selecting all agents (i.e. same as group
+  button)
+
+- Allow for mixing of multiple sounds (currently, only ONE sound can play at
+  a time, using a priority system)
+
+- Allow map scrolling when game is paused (should be made toggable via Options
+  menu)
+
+- "Wall hugging" path finding just doesn't cut it in general, either improve
+  upon or replace it with something better
+
+- Check if code for 8 human-player agents is still there/functional; would be
+  interesting to test this and maybe make this a toggable feature; affects
+  both mission gameplay and agent equipment menus
+
+- Lift restricting limits (e.g. larger maps, more people, more agents, ...)
+  -> Will be quite tough to achieve as this will affect MANY data structures
+     and hard-coded values (e.g. offsets, end conditions of for loops, etc.)
+
+
+Add new feature:
+
+- Allow snapshotting current mission (i.e. write current game state to disk);
+  In-mission game state has the exact SAME format as GAMExx.DAT file contents
+  (confirmed), thus this should be pretty easy -and- allow loading snapshots
+  into SyndED
+
+- Add options menu to configure stuff like animated menu transitions, music/
+  sound volume, key bindings, new non-vanilla features, etc.
+
+
+--------------------------------------------------------------------------------
+- TODO (CODE MAINTENANCE)                                                      -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- DONE                                                                         -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- CANCELED                                                                     -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- Date: 10/07/25 - 10/19/25                                                    -
+--------------------------------------------------------------------------------

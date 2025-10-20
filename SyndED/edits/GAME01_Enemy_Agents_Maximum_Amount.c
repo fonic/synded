@@ -15,14 +15,14 @@
 		xpos = gamedata.People[12].Xpos + 400;  // Position of Guard near road
 		ypos = gamedata.People[12].Ypos - 250;
 		zpos = gamedata.People[12].Zpos;
-		for (size_t i = 0; i < 28; i++) {
+		for (size_t i = 0; i < 28; i++) {       // 28 * 2 = 56 agents total -> largest "army" size possible
 			memset(&gamedata.People[ps], 0, sizeof(gamedata.People[ps]));  // Spawn 2 consecutive agents
 			gamedata.People[ps].Xpos = xpos;
 			gamedata.People[ps].Ypos = ypos;
 			gamedata.People[ps].Zpos = zpos;
 			gamedata.People[ps].Status = TS_MAPWHO;
 			gamedata.People[ps].BaseFrame = PB_AGENT;
-			gamedata.People[ps].Life = 16;     // Setting does NOT seem to affect health of computer player agents
+			gamedata.People[ps].Life = 16;      // Setting does NOT seem to affect health of computer player agents
 			gamedata.People[ps].Model = TM_PERSON;
 			gamedata.People[ps].Angle = TA_SOUTHEAST;
 			gamedata.People[ps].Unique = PU_AGENT;

@@ -1,0 +1,208 @@
+--------------------------------------------------------------------------------
+- WORK IN PROGRESS                                                             -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- OPEN (INVESTIGATE)                                                           -
+--------------------------------------------------------------------------------
+
+- Find out meaning/translations of Person.HugDistance (probably named wrong)
+- Find out meaning/translations of Person.LevelRecovery (probably named wrong)
+- Find out meaning/translations of Objective.Status
+- Find out meaning/translations of Vehicle.Affect
+- Find out meaning/translations of Object.Life
+- Find out meaning/translations of Object.State
+- Find out meaning/translations of Object.Affect
+
+- Test what flag Thing.Status == TS_DEAD does (used quite often, name seems
+  wrong)
+
+- Test if placing DEAD people works (would be interesting for level design)
+
+- Test if Person.Unique is a bitmask (e.g. what happens when setting flags
+  PU_AGENT and PU_GUARD?)
+
+- Test if NPCs and/or computer-controlled agents can wield the Persuadertron
+  (does not happen in final game)
+  -> No luck yet with CPIsPersTeam + SPObjectives
+  -> Try giving one to a Guard or a Civilian
+
+
+--------------------------------------------------------------------------------
+- DONE (FINDINGS)                                                              -
+--------------------------------------------------------------------------------
+
+Computer Players (Structless CP* variables + CPObjectives):
+
+- Entries in `CPObjectives` don't have a special order or any special entries
+  at the start. Like with all the other tables, entries will work fine even
+  when placed arbitrarily.
+- Entry 0 is often used as a default, since other entries with `Child == 0` will
+  point to it. But that is by choice, not by design (i.e. entry 0 is **not**
+  special in any way, it just happens to occupy index 0).
+- If one wants a chain of commands to end/stop at a certain command, the last
+  command of the chain has to point to **itself** (i.e. endless loop). `Child
+  == 0` does **not** act as "end of command" (as described above).
+- `Player == 255` means "all agents of a computer player". If **one** agent of a
+  CP reaches a command with `Player == 255`, all agents of that same player
+  will execute that command at once.
+  [TODO] This can't be all of it though; `Player == 255` also has to mean "any
+         player"
+- `gamedata.CPTeamSize` with values other than 8 seems to be broken (unless I'm
+  missing something), e.g. if set to 4, only 4 agents out of 8 for each team
+  will act. Also tested reducing the number of agents in a game to exactly
+  match `gamedata.CPCount` * `gamedata.CPTeamSize` -> no difference
+- `ActionType == WAIT_TIME` seems finicky, won't work correctly if there are
+  more than 3 concurrent waits, the 4th wait will just be ignored / wait
+  endlessly (this was the hardest to figure out).
+- Which agent wears which hat color seems to be determined by the location
+  within the `People` array. Wearing a certain hat color does **not** mean that
+  an agent belongs to a certain computer player (this was even harder to figure
+  out).
+- `CPObjective.ActionType = CPOAT_USE_WEAPON` seems to mean "drop time bomb"
+  specifically; it does not seem to matter what `CPObjective.Action` is set to
+  in this context (works even when set to 0); also, if `CPIsBombTeam == 0` +
+  `CPIsPersTeam = 1`, i.e. agent carry only a Persuadertron, NOTHING gets
+  dropped
+- `CPObjective.ActionType = 4` is implemented and seems to mean "shoot
+   assassination target specified by Objectives", X/Y/Z are ignored (NOTE: this
+   references the target that the human player is suppossed to assassinate, e.g.
+   the soldier in GAME01).
+- `CPObjective.ActionType = 5` seems to be skipped immediately (or we haven't
+   found the correct parameters for Action/X/Y/Z yet; tried to supply person
+   to no avail)
+- `CPObjective.ActionType = 6` seems to halt further command execution (or we
+   haven't found the correct parameters for Action/X/Y/Z yet and this is a sort
+   of "wait for sth. to occur"; tried to supply person, but nothing happens)
+- ActionType = 1 + Action = 9 -> Go to end enter vehicle
+  ActionType = 1 + Action = 25 -> Exit vehicle
+  -> see GAME31
+- ActionType = 5 + Action = 0 -> SPObjectives execution flow forking (see below)
+- Can computer players be turned against each other? There are missions in
+  vanilly Syndicate that actually do have infighting (might be accidental)
+  -> Yes, infighting IS possible:
+     Accidental (i.e. agent shoots other agent who then retaliates)
+     Intentional (i.e. computer player is instructed via CPObjectives to attack
+     some other CP)
+  -> CPFlags = 4 is important for this
+  -> Examples:
+     GAME21.DAT,MAP39,39 Yukon -> accidental
+     GAME30.DAT,MAP67,67 Argentina -> intentional
+  -> Not sure yet if Person.WhoShotMe / Person.Target can also be used to turn
+     agents against each other (or against Police/Guards)
+
+- Test if smaller computer player teams (i.e. CPTeamSize < 8) can be made
+  viable by using 'holes' in People table to account
+  -> YES, works exactly like that (e.g. for CPTeamSize == 4, use 4 consecutive
+     People table slots for agents followed by 4 empty slot, repeat this pattern
+     for each computer player)
+- Maximum amount of computer players: 7 (i.e. CPCount == 8; higher values lead
+  to graphical glitches)
+  Results in a maximum of 7 * 8 = 56 enemy agents total
+- CPObjective.ActionType == CPOAT_WAIT_TIME can be interrupted by triggers
+  (observed: when human player agents get near)
+
+Computer player config variables:
+
+CPCount      = 5;  // Needs to be set to # of computer player + 1 (unsure why;
+                   // wrong values cause buggy behavior); maximum is 8 (i.e.
+                   // 7 computer players), higher values produce graphical
+                   // glitches + agent of the same color as the human player
+CPTeamSize   = 8;  // Specifies number of agents per computer player (1-8)
+                   // CAUTION: values lower than 8 requires punching 'holes' in
+                   // the People array (e.g. CPTeamSize == 4 -> 4 consecutive
+                   // agents followed by 4 empty slots; repeat this pattern for
+                   // each computer player)
+CPProcInt    = 4;  // Tunes general aggressiveness (reaction time + fire rate;
+                   // lower value == higher aggressiveness)
+CPLvlInit    = 1;  // Sets level of body mods (for all body parts)
+CPIsBombTeam = 0;  // Specifies if agents carry time bombs (in addition to regular
+                   // firearm)
+CPIsPersTeam = 0;  // Specifies if agents carry persuadertrons (in addition to
+                   // regular firearm)
+CPFlags      = 4;  // Largely unknown, but it would seem 4 is REQUIRED to enable
+                   // computer player infighting (*)
+CPWeapon     = 0;  // Specifies firearm agents carry (e.g. WS_PISTOL; if set to
+                   // 0, firearm is based on human player research status:
+                   // Shotgun, Uzi or Minigun)
+
+(*) Value/flag 4 leads to "Yukon-style shoot when approaching target" behavior
+(which, when computer players hunt for the human player, can lead to infighting
+as agents seem to retaliate after being hit);
+Even if computer players are instructed to attack other computer players (via
+CPObjectives), this flag seems to be REQUIRED for actual infighting to occur
+(without it, agents will just walk to their target and be "friendly" with it)
+
+ActionType, Action, Description (from Moburma):
+
+1,    Go To - always has sub-action to determine type of thing/location to go to
+ ,3   Go to point - Always has full coordinates
+ ,4   Go to Person - Refers to specific Thing offset in X field
+ ,9   Go to and enter vehicle. X is vehicle offset
+ ,12  Unknown. Has number 255 in Y
+      [TODO], see GAME31 (ONLY use in vanillla Syndicate)
+ ,25  Exit vehicle (see GAME31)
+
+2,    Drop time bomb
+ ,25  Does not seem to matter for 2, even if set to 0
+
+3,    "Kill human players". Can have modifiers in X field, 4 and 2
+      -> this actually is "attack/kill player", with X specifying the player to
+         attack/kill (0 == human player)
+
+4,    Kill assassination target specified by Objectives
+      NOTE: this means "kill the assassination target the human player is
+            suppossed to assassinate for this mission
+
+5,    Unknown. Just uses Player
+ ,0   SPObjectives execution flow forking: when this command is executed,
+      following SPObjectives will be analyzed and whenever an entry with Parent
+      == 0, this entry will be assigned to ONE agent of the computer player
+      (i.e. each agent gets his own command chain); unsure if this only works
+      for ONE computer player or even multiple
+      NOTE: it would seem Child = 0, Action = 0 and X/Y/Z = 0 is required for
+            this command to work as expected (-or- we do not yet fully under-
+            stand how the parameters work, they might be a hint where to find
+            the forked execution flow chains)
+
+6,   Unknown. Just uses Player
+ ,0  [TODO], see GAME30 (ONLY use in vanilla Syndicate)
+
+7,  Wait. X value is time to wait
+8,  Kill specific non-player person in X field
+9,  Protect? X is a specific person reference
+
+--------------------------------------------------------------------------------
+
+Objectives:
+
+- Objective.Type == 4: kill all (?), i.e. something is to be killed, but unclear
+  what (tried civilians, police, agents, guards, criminals)
+
+- Objective.Type == 6: same as above
+
+-> NOTE: "assassinate" might simply be a switch-case-default (i.e. fallback for
+         all unhandled values)
+
+--------------------------------------------------------------------------------
+
+Misc:
+
+- Initial map viewport is based on location of human-player agent(s), i.e. not
+  defined manually (previously assumed this was controlled by SSMapX/SSMapY,
+  judging from RGAME.C)
+
+
+--------------------------------------------------------------------------------
+- CANCELED                                                                     -
+--------------------------------------------------------------------------------
+
+- Nothing atm
+
+
+--------------------------------------------------------------------------------
+- Date: 10/07/25 - 10/19/25                                                    -
+--------------------------------------------------------------------------------

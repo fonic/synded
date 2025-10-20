@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------------
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
@@ -71,6 +70,9 @@
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Add instructions for how to extract game data from memory dumps of Syndicate
+  using DOSBox Debug (see 'docs/syndicate-how-to-dump-game-data.txt')
 
 - Restructure main (synded.c) to increase code navigation/readability
 - Generate CSV output for BOTH input and output file to facilitate before vs.
