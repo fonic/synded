@@ -2,7 +2,8 @@
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
 
-- Nothing atm
+- Add comments to all game data struct members (document everything we know
+  thus far regarding meaning, values, relations to other members, etc.)
 
 
 --------------------------------------------------------------------------------
@@ -48,6 +49,14 @@
 - Implement handling of RNCed files (currently using simple file size check to
   rule out RNCed files as valid input files, works well, thus low priority)
 
+- 3DO version AGAMExx.DAT files are currently incompatible (size 117.920 bytes)
+  -> Check RGAME.C to determine differences (+ 1.910 bytes, assuming RGAME.C
+     was actually intended to read PC version GAMExx.DAT files)
+  -> 3DO has different ENDIANESS (obious when comparing beginning of GAME01.DAT
+     to AGAME01.DAT)
+  -> Shifts in 3DO data might be related to alignment (#pragma), e.g. Vehicles
+     is 128 bytes longer (could be 64 vehicles * 2 bytes)
+
 - Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
   investigate the differences and check if other versions have discrepancies
   as well in that regard
@@ -71,6 +80,21 @@
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
 
+- For DEBUG builds, print n bytes of each member of struct GameData as hex
+  values (useful for comparing .dat files to different versions, e.g. 3DO);
+  (see https://stackoverflow.com/a/71426890)
+- For DEBUG builds, print sizes of each array member of struct GameData
+  (see https://stackoverflow.com/a/3553321)
+
+- Identify and document IPA levels in struct Person
+  Identified and verified via dump analysis + game manual; Levels 1-3 are AIP
+  (Adrenaline, Intelligence, Perception); meaning of base, balance, true and
+  fixed analyzed
+
+- Swap OldState and NewState in struct Person (dump analysis shows that these
+  need to be swapped)
+
+- Create script to extract game data from binary memory dumps
 - Add instructions for how to extract game data from memory dumps of Syndicate
   using DOSBox Debug (see 'docs/syndicate-how-to-dump-game-data.txt')
 
@@ -109,11 +133,11 @@
      size_t offsetof(type, member)
   Macro yields GLOBAL offsets, global offset member - global offset 'RelOfs
   Base' == relative offset.
-  (https://stackoverflow.com/a/7180389/1976617)
+  (https://stackoverflow.com/a/7180389)
 
   Also considered/looked at 'member_size' macro:
      #define member_size(type, member) (sizeof( ((type *)0)->member ))
-  (https://stackoverflow.com/a/3553321/1976617)
+  (https://stackoverflow.com/a/3553321)
 
 - Convert all hard-coded position to tile conversions '(pos >> 8)' to newly
   introduced macros 'POS_TO_TILE'/'POS_TO_CMDGOTO'
@@ -129,7 +153,7 @@
 
 - Revise include strategy for headers/sources (based on this style guide:
   https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes
-  an alternative to this would be: https://stackoverflow.com/a/1804719/1976617)
+  an alternative to this would be: https://stackoverflow.com/a/1804719)
 
 - Migrate SyndED to a _real_ project:
   - Migrate sources to C project template
@@ -199,7 +223,7 @@
    (i.e. considering the isometric perspective) is better suited
 
 - Make compiler warning visible and fix as many as possible
-  (https://stackoverflow.com/q/11714827/1976617)
+  (https://stackoverflow.com/q/11714827)
 
 - Implement file size check for input file (to detect and deny incompatible
   files, e.g. RNCed or from beta version)
@@ -251,7 +275,7 @@
 - Changes enums in 'gdenums.h' to typedefs, then change _to_str() functions
   from '(const enum PersonState value)' to '(const PersonState value)' (enum
   keyword no longer necessary when using typedefs)
-  (https://stackoverflow.com/a/1102556/1976617)
+  (https://stackoverflow.com/a/1102556)
 
 - Deconstruct struct MapWho into struct GameData:
   /*      6 0x00006 */  MapWho       MapWho;
@@ -328,5 +352,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/19/25                                                    -
+- Date: 10/07/25 - 10/23/25                                                    -
 --------------------------------------------------------------------------------

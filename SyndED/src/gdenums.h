@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/19/25                                                 *
+ *  Date: 10/08/25 - 10/23/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -19,7 +19,7 @@
 /******************************************************************************
  *                                                                            *
  *  Enum generator macros are based on this approach:                         *
- *  https://stackoverflow.com/a/10966395/1976617                              *
+ *  https://stackoverflow.com/a/10966395                                      *
  *  (customized/extended to support flags and non-consecutive values)         *
  *                                                                            *
  *  Usage:                                                                    *

@@ -9,26 +9,18 @@
 - OPEN (INVESTIGATE)                                                           -
 --------------------------------------------------------------------------------
 
-- Find out meaning/translations of Person.HugDistance (probably named wrong)
-- Find out meaning/translations of Person.LevelRecovery (probably named wrong)
-- Find out meaning/translations of Objective.Status
-- Find out meaning/translations of Vehicle.Affect
-- Find out meaning/translations of Object.Life
-- Find out meaning/translations of Object.State
-- Find out meaning/translations of Object.Affect
-
 - Test what flag Thing.Status == TS_DEAD does (used quite often, name seems
   wrong)
-
-- Test if placing DEAD people works (would be interesting for level design)
-
-- Test if Person.Unique is a bitmask (e.g. what happens when setting flags
-  PU_AGENT and PU_GUARD?)
+-> Not sure yet, just setting Person.Status = TS_DEAD does not seem to do
+   anything
 
 - Test if NPCs and/or computer-controlled agents can wield the Persuadertron
   (does not happen in final game)
-  -> No luck yet with CPIsPersTeam + SPObjectives
-  -> Try giving one to a Guard or a Civilian
+  -> No luck with computer player agents using CPIsPersTeam + SPObjectives
+  -> No luck when giving one to guard (guard runs aways when human player
+     agents come close)
+-> It would seem this is either disabled or was never implemented to begin
+   with for computer-controlled people
 
 
 --------------------------------------------------------------------------------
@@ -191,9 +183,38 @@ Objectives:
 
 Misc:
 
-- Initial map viewport is based on location of human-player agent(s), i.e. not
-  defined manually (previously assumed this was controlled by SSMapX/SSMapY,
-  judging from RGAME.C)
+- Initial map viewport is based on location of first active human player agent,
+  i.e. not defined manually (previously assumed this was specified by SSMapX/
+  SSMapY, judging from RGAME.C)
+
+- Test if placing DEAD people works (would be interesting for mission design)
+  -> YES, simply set Person.State = PS_DEAD
+  -> It would seem Person.OldState and Person.NewState are sanitized/ignored
+     when loading game data
+  -> Certain states crash the game, e.g. Person.State = PS_FLY_BACK
+
+- Do IPA levels have any meaning for NPCs?
+  -> YES, to some degree; likely only the FIXED values have any effect
+  -> Police will attack from greater range and perceive drawn weapons over
+     greater distances when Intelligence/Perception is increased, although
+     there seems to be no fine-grain control, instead there seem to be certain
+     'stages', e.g. 50 vs. 80
+
+- Test if Person.Unique is a bitmask (e.g. what happens when setting flags
+  PU_AGENT and PU_GUARD?)
+  -> YES, works to some degree
+  -> Person.Unique = PU_AGENT | PU_POLICE results in a person that registers
+     as police (on minimap) but attacks fiercely when human player agents
+     come closer
+  -> Person.Unique = PU_AGENT | PU_CRIMINAL results in a person that registers
+     as agent (on minimap) but won't attack
+  -> Person.Unique = PU_POLICE | PU_CRIMINAL results in a person that registers
+     as police (on minimap) but won't attack
+  -> Person.Unique = PU_AGENT | PU_GUARD results in a person that registers
+     as guard (on minimap), attacks when human player agents come close, but
+     human player agents won't shoot this person when set to 'panic mode'
+-> Interesting, hacky/buggy side-effects; might be of some use for mission
+   design, as this allows to cause some confusion/chaos
 
 
 --------------------------------------------------------------------------------
@@ -204,5 +225,5 @@ Misc:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/19/25                                                    -
+- Date: 10/07/25 - 10/23/25                                                    -
 --------------------------------------------------------------------------------

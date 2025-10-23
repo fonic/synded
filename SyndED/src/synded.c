@@ -3,7 +3,7 @@
  *  Syndicate Editor - Main                                                   *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/19/25                                                 *
+ *  Date: 10/08/25 - 10/23/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -22,6 +22,24 @@
 #include "csvoutput.h"
 #include "mapwho.h"
 
+#define member_size(type, member) (sizeof(((type *)0)->member))          // https://stackoverflow.com/a/3553321
+
+const char* bytes_to_hex_str(const uint8_t *data, const size_t count) {  // https://stackoverflow.com/a/71426890
+	static char buffer[1024];
+	//memset(&buffer, '\0', sizeof(buffer));                 // not required due to terminating after loop
+	size_t i = 0;
+	for (i = 0; i < count && i < sizeof(buffer) / 3; i++) {  // 3 buffer bytes per data byte
+		buffer[i*3]   = "0123456789ABCDEF"[data[i] >> 4 ];   // high nibble to hex
+		buffer[i*3+1] = "0123456789ABCDEF"[data[i] & 0xF];   // low nibble to hex
+		buffer[i*3+2] = ' ';
+	}
+	if (i > 0)
+		buffer[(i-1)*3+2] = '\0';                            // replace trailing space
+	else
+		buffer[0] = '\0';                                    // empty string
+	return buffer;
+}
+
 
 int main(int argc, char *argv[]) {
 
@@ -35,7 +53,7 @@ int main(int argc, char *argv[]) {
 	// Process command line
 	if (argc != 3) {
 		fprintf(stderr, "Usage:   %s INFILE OUTFILE\n", argv[0]);
-		fprintf(stderr, "Example: %s GAMExx.DAT GAMExx.DAT_zmod\n", argv[0]);
+		fprintf(stderr, "Example: %s GAMExx.DAT_in GAMExx.DAT_out\n", argv[0]);
 		return 2;
 	}
 	const char *infile_name = argv[1];
@@ -60,7 +78,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Check input file size (to rule out incompatible input files, e.g. RNCed or Beta version)
-	// Should be the most portable approach (https://stackoverflow.com/a/238609/1976617)
+	// Should be the most portable approach (https://stackoverflow.com/a/238609)
 	printf("Checking size of file '%s'...\n", infile_name);
 	if (fseek(infile, 0, SEEK_END) != 0) {
 		fprintf(stderr, "Error: failed to seek to end of input file '%s': %s\n", infile_name, strerror(errno));
@@ -96,6 +114,33 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	printf("\n");
+
+
+	/******************************************************************************
+	 *                                                                            *
+	 *  Print game data hex signatures (debug builds only)                        *
+	 *                                                                            *
+	 ******************************************************************************/
+
+#ifdef DEBUG
+	// Print hex signatures of game data contents
+	printf("Game data hex signatures:\n");
+	printf("Seed, ..., Timer:            %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Seed),          6));
+	printf("MapWho:                      %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.MapWho),       20));
+	printf("RelOfsBase:                  %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.RelOfsBase),    2));
+	printf("People:                      %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.People),       20));
+	printf("Vehicles:                    %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Vehicles),     20));
+	printf("Objects:                     %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Objects),      20));
+	printf("Weapons:                     %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Weapons),      20));
+	printf("Effects:                     %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Effects),      20));
+	printf("Commands:                    %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Commands),     20));
+	printf("Worlds:                      %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Worlds),       20));
+	printf("MapNumber, ..., HiBoundaryy: %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.MapNumber),    10));
+	printf("Objectives:                  %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.Objectives),   20));
+	printf("CPCount, ..., CPWeapon:      %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.CPCount),       8));
+	printf("CPObjectives:                %s\n", bytes_to_hex_str((const uint8_t *)(&gamedata.CPObjectives), 20));
+	printf("\n");
+#endif
 
 
 	/******************************************************************************
@@ -170,12 +215,12 @@ int main(int argc, char *argv[]) {
 	 *                                                                            *
 	 ******************************************************************************/
 
-	if (strstr(infile_name, "GAME01.DAT") != NULL) {  // Western Europe
+	if (strstr(infile_name, "Synd/GAME01/GAME01.DAT_in") != NULL) {  // Western Europe
 
 		printf("Editing/modifying GAME01.DAT (see sources)...\n");
-		Vehicle vehicle = gamedata.Vehicles[0];       // Existing Vehicle
-		Person person = gamedata.People[9];           // Existing Guard
-		Weapon weapon = gamedata.Weapons[0];          // Existing Uzi (belongs to last guard at road)
+		Vehicle vehicle = gamedata.Vehicles[0];    // Existing Vehicle
+		Person person = gamedata.People[9];        // Existing Guard
+		Weapon weapon = gamedata.Weapons[0];       // Existing Uzi (belongs to last guard at road)
 
 		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;  // Lots of free space for new stuff
 
@@ -210,11 +255,11 @@ int main(int argc, char *argv[]) {
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
-	} else if (strstr(infile_name, "GAME10.DAT") != NULL) {  // Eastern Europe
+	} else if (strstr(infile_name, "Synd/GAME10/GAME10.DAT_in") != NULL) {  // Eastern Europe
 
 		printf("Editing/modifying GAME10.DAT (see sources)...\n");
-		Weapon weapon = gamedata.Weapons[1];                 // Existing Uzi
-		size_t weapon_slot = 30;                             // Lots of free space
+		Weapon weapon = gamedata.Weapons[1];    // Existing Uzi
+		size_t weapon_slot = 30;                // Lots of free space
 		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People!
 			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // Women get Uzis
 				gamedata.People[i].Unique = PU_GUARD;
@@ -236,16 +281,16 @@ int main(int argc, char *argv[]) {
 		// No MapWho rebuild required here
 		//rebuild_mapwho(&gamedata);
 
-	} else if (strstr(infile_name, "GAME20.DAT") != NULL) {  // Scandinavia
+	} else if (strstr(infile_name, "Synd/GAME20/GAME20.DAT_in") != NULL) {  // Scandinavia
 
 		printf("Editing/modifying GAME20.DAT (see sources)...\n");
-		size_t person_slot = 65;                             // Lots of free space
-		for (size_t i = 8; i < 60; i++) {                    // Twice the civilians == twice the fun
+		size_t person_slot = 65;                                     // Lots of free space
+		for (size_t i = 8; i < 60; i++) {                            // Twice the civilians == twice the fun
 			if (gamedata.People[i].Unique == PU_CIVILIAN) {
-				Person person = gamedata.People[i];          // Two tiles variation in positioning
+				Person person = gamedata.People[i];                  // Two tiles variation in positioning
 				person.Xpos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
 				person.Ypos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
-				person.Angle = rand() % 256;                 // Wander somewhere nice
+				person.Angle = rand() % 256;                         // Wander somewhere nice
 				person.NewState = PS_WANDER;
 				switch (rand() % 4) {
 					case 0:
@@ -268,14 +313,14 @@ int main(int argc, char *argv[]) {
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
-	} else if (strstr(infile_name, "GAME31.DAT") != NULL) {  // South Africa
+	} else if (strstr(infile_name, "Synd/GAME31/GAME31.DAT_in") != NULL) {  // South Africa
 
 		printf("Editing/modifying GAME31.DAT (see sources)...\n");
-		//gamedata.CPObjectives[1].Child = 3;  // Bypass execution flow fork -> ALL blue agents will walk to APC
-		gamedata.CPObjectives[4].Child = 7;    // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
+		//gamedata.CPObjectives[1].Child = 3;    // Bypass execution flow fork -> ALL blue agents will walk to APC
+		gamedata.CPObjectives[4].Child = 7;      // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
 
 	} else {
-		printf("Not editing/modifying game data (see sources).\n");
+		printf("NOT editing/modifying game data (see sources).\n");
 	}
 	printf("\n");
 
@@ -386,8 +431,8 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
 	printf("\n");
 
-	// Print struct sizes
-	printf("Struct sizes:\n");
+	// Print game data struct sizes
+	printf("Game data struct sizes:\n");
 	//printf("MapWho:      %zu\n", sizeof(MapWho));
 	printf("Thing:       %zu\n", sizeof(Thing));
 	printf("Person:      %zu\n", sizeof(Person));
@@ -403,8 +448,22 @@ int main(int argc, char *argv[]) {
 	printf("GameData:    %zu\n", sizeof(GameData));
 	printf("\n");
 
-	// Print offsets of GameData struct members
-	printf("GameData offsets:\n");
+	// Print sizes of GameData array members
+	printf("GameData array sizes:\n");
+	printf("MapWho:       %zu\n", member_size(GameData, MapWho));
+	printf("People:       %zu\n", member_size(GameData, People));
+	printf("Vehicles:     %zu\n", member_size(GameData, Vehicles));
+	printf("Objects:      %zu\n", member_size(GameData, Objects));
+	printf("Weapons:      %zu\n", member_size(GameData, Weapons));
+	printf("Effects:      %zu\n", member_size(GameData, Effects));
+	printf("Commands:     %zu\n", member_size(GameData, Commands));
+	printf("Worlds:       %zu\n", member_size(GameData, Worlds));
+	printf("Objectives:   %zu\n", member_size(GameData, Objectives));
+	printf("CPObjectives: %zu\n", member_size(GameData, CPObjectives));
+	printf("\n");
+
+	// Print offsets of GameData members
+	printf("GameData member offsets:\n");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Seed),         offsetof(GameData, Seed),         "uint16_t     Seed");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, PersonCount),  offsetof(GameData, PersonCount),  "uint16_t     PersonCount");
 	printf("/* %6zu 0x%05lx */  %s\n", offsetof(GameData, Timer),        offsetof(GameData, Timer),        "uint16_t     Timer");

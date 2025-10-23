@@ -3,7 +3,7 @@
  *  Syndicate Editor - CSV Output                                             *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/19/25                                                 *
+ *  Date: 10/08/25 - 10/23/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -225,7 +225,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Unknown\n");
+	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Connected\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", i);
 		fprintf(file, "%zu,", offset_global + sizeof(Object) * i);
@@ -251,7 +251,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 		fprintf(file, "%u,",  objects[i].Angle);
 		fprintf(file, "%s,",  thing_angle_to_str(objects[i].Angle));
 		fprintf(file, "%u,",  objects[i].ZAngle);
-		fprintf(file, "%u,",  objects[i].Unknown);
+		fprintf(file, "%u,",  objects[i].Connected);
 		fprintf(file, "\n");
 	}
 
@@ -335,7 +335,7 @@ int write_effects_to_csv(const char *file_name, const Effect effects[], const si
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Owner,OwnerType\n");
+	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,WhoShot,WhoShotType\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", i);
 		fprintf(file, "%zu,", offset_global + sizeof(Effect) * i);
@@ -361,8 +361,8 @@ int write_effects_to_csv(const char *file_name, const Effect effects[], const si
 		fprintf(file, "%u,",  effects[i].Angle);
 		fprintf(file, "%s,",  thing_angle_to_str(effects[i].Angle));
 		fprintf(file, "%u,",  effects[i].ZAngle);
-		fprintf(file, "%u,",  effects[i].Owner);
-		fprintf(file, "%s",   thing_type_to_str(effects[i].Owner));  // Not sure yet if translation makes sense here
+		fprintf(file, "%u,",  effects[i].WhoShot);
+		fprintf(file, "%s",   thing_type_to_str(effects[i].WhoShot));
 		fprintf(file, "\n");
 	}
 

@@ -21,7 +21,7 @@ done
 
 # All games or user-specified games?
 if (( $# == 0 )); then
-	readarray -t games < <(find games -type f -name 'GAME*.DAT' | sort)
+	readarray -t games < <(find games -type f -name '*.DAT_in' | sort)
 else
 	games=("$@")
 fi
@@ -31,11 +31,11 @@ for game in "${games[@]}"; do
 	if ${VERBOSE_OUTPUT}; then
 		echo -e "\e[1mRunning SyndED for '${game}':\e[0m"; echo
 		rm -f -- "${game}"_*
-		"${SYNDED_EXE}" "${game}" "${game}_zmod" |& tee -- "${game}_zmod_zlog.txt"
+		"${SYNDED_EXE}" "${game}" "${game%_*}_out" |& tee -- "${game%_*}_out_zlog.txt"
 	else
 		echo -n "Running SyndED for '${game}'... "
 		rm -f -- "${game}"_*
-		"${SYNDED_EXE}" "${game}" "${game}_zmod" &> "${game}_zmod_zlog.txt"
+		"${SYNDED_EXE}" "${game}" "${game%_*}_out" &> "${game%_*}_out_zlog.txt"
 		(( $? == 0 )) && echo -e "\e[1;32msuccess\e[0m" || echo -e "\e[1;31mfailed\e[0m"
 	fi
 done
