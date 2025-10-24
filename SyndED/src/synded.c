@@ -252,31 +252,6 @@ int main(int argc, char *argv[]) {
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}
 
-		// [TESTING] Objects
-		/*gamedata.People[0].Xpos = gamedata.People[12].Xpos + 1000;
-		gamedata.People[0].Ypos = gamedata.People[12].Ypos - 1250;
-		gamedata.People[0].Zpos = gamedata.People[12].Zpos;
-
-		int16_t xpos = gamedata.People[12].Xpos + 500;
-		int16_t ypos = gamedata.People[12].Ypos - 500;
-		int16_t zpos = gamedata.People[12].Zpos + 256;
-		memset(&gamedata.People[12], 0, sizeof(gamedata.People[12]));
-		size_t slot = 0;
-		for (size_t i = OB_NEONSIGN_MEDIUM_YELLOW; i <= OB_NEONSIGN_SMALL_WHITE; i+=2) {
-			memset(&gamedata.Objects[slot], 0, sizeof(gamedata.Objects[slot]));
-			gamedata.Objects[slot].Xpos = xpos;
-			gamedata.Objects[slot].Ypos = ypos;
-			gamedata.Objects[slot].Zpos = zpos;
-			gamedata.Objects[slot].Status = TS_MAPWHO;
-			gamedata.Objects[slot].Angle = TA_NORTHEAST;
-			gamedata.Objects[slot].Model = TM_OBJECT;
-			gamedata.Objects[slot].Life = 50; // almost always 40, 50 or 65534
-			gamedata.Objects[slot].State = OS_NEON_SIGN;
-			gamedata.Objects[slot].BaseFrame = i;
-			gamedata.Objects[slot].Frame = gamedata.Objects[slot].OldFrame = 0;
-			ypos -= 225; slot++;
-		}*/
-
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
@@ -309,13 +284,13 @@ int main(int argc, char *argv[]) {
 	} else if (strstr(infile_name, "Synd/GAME20/GAME20.DAT_in") != NULL) {  // Scandinavia
 
 		printf("Editing/modifying GAME20 (see sources)...\n");
-		size_t person_slot = 65;                                     // Lots of free space
-		for (size_t i = 8; i < 60; i++) {                            // Twice the civilians == twice the fun
+		size_t person_slot = 65;                                            // Lots of free space
+		for (size_t i = 8; i < 60; i++) {                                   // Twice the civilians == twice the fun
 			if (gamedata.People[i].Unique == PU_CIVILIAN) {
-				Person person = gamedata.People[i];                  // Two tiles variation in positioning
+				Person person = gamedata.People[i];                         // Two tiles variation in positioning
 				person.Xpos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
 				person.Ypos += (rand() % (POS_PER_TILE * 2)) - POS_PER_TILE;
-				person.Angle = rand() % 256;                         // Wander somewhere nice
+				person.Angle = rand() % 256;                                // Wander somewhere nice
 				person.NewState = PS_WANDER;
 				switch (rand() % 4) {
 					case 0:

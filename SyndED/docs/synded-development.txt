@@ -80,6 +80,11 @@
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
 
+- Update enum for CPObjective.Action based on Object.BaseFrame:
+  Both enums use categories and sub-types, thus they should use the same
+  layout, naming and handling (as set forth by enum for Object.BaseFrame)
+  -> These will serve as a template for future category-based enums
+
 - Update CSV output to translate Object.State and Object.BaseFrame based on new
   enums
 

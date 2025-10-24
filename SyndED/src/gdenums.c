@@ -81,7 +81,7 @@ const char* object_state_to_str(const ObjectState value) {
 	GENERATE_TOSTR_VALUES(OBJECT_STATE_VALUES)
 }
 
-const char* object_baseframe_to_str(const ObjectState objstate, const uint16_t value) {
+const char* object_baseframe_to_str(const ObjectState objstate, const int value) {
 	switch (objstate) {
 		case OS_NEON_SIGN:
 			GENERATE_TOSTR_VALUES(OBJECT_BASEFRAME_NEONSIGN_VALUES)
@@ -117,19 +117,12 @@ const char* cpobjective_actiontype_to_str(const CPObjectiveActionType value) {
 	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTIONTYPE_VALUES)
 }
 
-const char* cpobjective_atmove_action_to_str(const CPObjectiveATMoveAction value) {
-	GENERATE_TOSTR_VALUES(CPOBJECTIVE_ATMOVE_ACTION_VALUES)
-}
-
-const char* cpobjective_action_to_str(const CPObjectiveActionType actiontype, const int action) {
+const char* cpobjective_action_to_str(const CPObjectiveActionType actiontype, const int value) {
 	switch (actiontype) {
 		case CPOAT_MOVE:
-			return cpobjective_atmove_action_to_str(action);
+			GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTION_MOVE_VALUES)
 		default:
-			if (action == 0)
-				return "CPOA_NONE";
-			else
-				return "VALUE_UNDEFINED";
+			GENERATE_TOSTR_VALUES(CPOBJECTIVE_ACTION_DEFAULT_VALUES)
 	}
 }
 

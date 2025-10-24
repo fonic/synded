@@ -253,7 +253,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 		fprintf(file, "%u,",  objects[i].Angle);
 		fprintf(file, "%s,",  thing_angle_to_str(objects[i].Angle));
 		fprintf(file, "%u,",  objects[i].ZAngle);
-		fprintf(file, "%u,",  objects[i].Connected);
+		fprintf(file, "%u",   objects[i].Connected);
 		fprintf(file, "\n");
 	}
 

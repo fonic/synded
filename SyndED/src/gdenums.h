@@ -12,7 +12,7 @@
 
 #include "stpecpy.h"  // stpecpy; needs to be on top, modifies '#include <string.h>'
 
-#include <string.h>   // strlen, strlcat
+#include <string.h>   // strnlen
 #include <stdint.h>   // uint16_t
 
 
@@ -41,14 +41,18 @@
 
 #define GENERATE_ENUM_LINES(NAME, VALUE) NAME = VALUE,
 
+#define GENERATE_VALUES_LINES(NAME, VALUE)           \
+	case VALUE: return #NAME;
+
 #define GENERATE_TOSTR_VALUES(ENUM_MACRO)            \
 	switch (value) {                                 \
 		ENUM_MACRO(GENERATE_VALUES_LINES)            \
 		default: return "VALUE_UNDEFINED";           \
 	}
 
-#define GENERATE_VALUES_LINES(NAME, VALUE)           \
-	case VALUE: return #NAME;
+#define GENERATE_FLAGS_LINES(NAME, VALUE)            \
+	if (value & NAME)                                \
+		pcur = stpecpy(pcur, pend, #NAME " | ");
 
 #define GENERATE_TOSTR_FLAGS(ENUM_MACRO, NAME_NONE)  \
 	static char buffer[1024];                        \
@@ -63,17 +67,13 @@
 	ENUM_MACRO(GENERATE_FLAGS_LINES)                 \
 	                                                 \
 	if (pcur == NULL)                                \
-		return "STR_TOO_LONG";                       \
+		return "STRING_TOO_LONG";                    \
 	                                                 \
-	size_t len = strlen(buffer);                     \
+	size_t len = strnlen(buffer, sizeof(buffer));    \
 	if (len > 3)                                     \
 		buffer[len - 3] = '\0';                      \
 	                                                 \
 	return buffer;
-
-#define GENERATE_FLAGS_LINES(NAME, VALUE)            \
-	if (value & NAME)                                \
-		pcur = stpecpy(pcur, pend, #NAME " | ");
 
 
 /* ----------- For VALUE-based enum -----------
@@ -483,7 +483,7 @@ typedef enum {
 	OBJECT_BASEFRAME_BILLBOARD_VALUES(GENERATE_ENUM_LINES)
 } ObjectBaseFrameBillboard;
 
-const char* object_baseframe_to_str(const ObjectState objstate, const uint16_t value);
+const char* object_baseframe_to_str(const ObjectState objstate, const int value);
 
 
 /******************************************************************************
@@ -600,25 +600,25 @@ typedef enum {
 const char* cpobjective_actiontype_to_str(const CPObjectiveActionType value);
 
 
-// These are only valid for ActionType == CPOAT_MOVE
-// (since ActionType is acting as a category of sorts)
-#define CPOBJECTIVE_ATMOVE_ACTION_VALUES(GENERATOR_FUNC)  \
-    GENERATOR_FUNC(CPOA_NONE,          0x00)              \
-    GENERATOR_FUNC(CPOA_GOTO_POSITION, 0x03)              \
-    GENERATOR_FUNC(CPOA_GOTO_PERSON,   0x04)              \
-    GENERATOR_FUNC(CPOA_ENTER_VEHICLE, 0x09)              \
-    GENERATOR_FUNC(CPOA_UNKNOWN_0C,    0x0C)              \
+#define CPOBJECTIVE_ACTION_DEFAULT_VALUES(GENERATOR_FUNC)  \
+    GENERATOR_FUNC(CPOA_NONE,          0x00)
+
+typedef enum {
+	CPOBJECTIVE_ACTION_DEFAULT_VALUES(GENERATE_ENUM_LINES)
+} CPObjectiveActionDefault;
+
+#define CPOBJECTIVE_ACTION_MOVE_VALUES(GENERATOR_FUNC)     \
+    GENERATOR_FUNC(CPOA_GOTO_POSITION, 0x03)               \
+    GENERATOR_FUNC(CPOA_GOTO_PERSON,   0x04)               \
+    GENERATOR_FUNC(CPOA_ENTER_VEHICLE, 0x09)               \
+    GENERATOR_FUNC(CPOA_UNKNOWN_0C,    0x0C)               \
     GENERATOR_FUNC(CPOA_EXIT_VEHICLE,  0x19)
 
 typedef enum {
-	CPOBJECTIVE_ATMOVE_ACTION_VALUES(GENERATE_ENUM_LINES)
-} CPObjectiveATMoveAction;
+	CPOBJECTIVE_ACTION_MOVE_VALUES(GENERATE_ENUM_LINES)
+} CPObjectiveActionMove;
 
-const char* cpobjective_atmove_action_to_str(const CPObjectiveATMoveAction value);
-
-
-// Handles category-like nature of ActionType (see above)
-const char* cpobjective_action_to_str(const CPObjectiveActionType actiontype, const int action);
+const char* cpobjective_action_to_str(const CPObjectiveActionType actiontype, const int value);
 
 
 /******************************************************************************
