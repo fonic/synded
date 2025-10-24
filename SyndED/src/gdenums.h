@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/23/25                                                 *
+ *  Date: 10/08/25 - 10/24/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -229,9 +229,9 @@ const char* person_affect_to_str(const PersonAffect value);
 
 typedef enum {
 	PERSON_BASEFRAME_VALUES(GENERATE_ENUM_LINES)
-} PersonBaseframe;
+} PersonBaseFrame;
 
-const char* person_baseframe_to_str(const PersonBaseframe value);
+const char* person_baseframe_to_str(const PersonBaseFrame value);
 
 
 #define PERSON_STATE_VALUES(GENERATOR_FUNC)       \
@@ -362,6 +362,128 @@ typedef enum {
 } VehicleState;
 
 const char* vehicle_state_to_str(const VehicleState value);
+
+
+/******************************************************************************
+ *                                                                            *
+ *  Object                                                                    *
+ *                                                                            *
+ ******************************************************************************/
+
+#define OBJECT_STATE_VALUES(GENERATOR_FUNC)            \
+    GENERATOR_FUNC(OS_NONE,                     0x00)  \
+    GENERATOR_FUNC(OS_PHONE_BOOTH,              0x01)  \
+    GENERATOR_FUNC(OS_PHONE_BOOTH_BURNING,      0x02)  \
+    GENERATOR_FUNC(OS_PHONE_BOOTH_BURNED,       0x03)  \
+    GENERATOR_FUNC(OS_TRAFFIC_ORB_RED_YELLOW,   0x04)  \
+    GENERATOR_FUNC(OS_TRAFFIC_ORB_RED_YELLOW2,  0x05)  \
+    GENERATOR_FUNC(OS_TRAFFIC_ORB_RED_RED,      0x06)  \
+    GENERATOR_FUNC(OS_TRAFFIC_ORB_GREEN_RED,    0x07)  \
+    GENERATOR_FUNC(OS_TRAFFIC_ORB_YELLOW_GREEN, 0x08)  \
+    GENERATOR_FUNC(OS_TRAFFIC_ORB_DESTROYED,    0x09)  \
+    GENERATOR_FUNC(OS_NEON_SIGN,                0x0A)  \
+    GENERATOR_FUNC(OS_UNKNOWN_0B,               0x0B)  \
+    GENERATOR_FUNC(OS_DOOR,                     0x0C)  \
+    GENERATOR_FUNC(OS_DOOR2,                    0x0D)  \
+    GENERATOR_FUNC(OS_DOOR3,                    0x0E)  \
+    GENERATOR_FUNC(OS_DOOR4,                    0x0F)  \
+    GENERATOR_FUNC(OS_UNKNOWN_10,               0x10)  \
+    GENERATOR_FUNC(OS_UNKNOWN_11,               0x11)  \
+    GENERATOR_FUNC(OS_WINDOW_OPEN,              0x12)  \
+    GENERATOR_FUNC(OS_WINDOW_CLOSED,            0x13)  \
+    GENERATOR_FUNC(OS_WINDOW_DARK,              0x14)  \
+    GENERATOR_FUNC(OS_WINDOW_DARK2,             0x15)  \
+    GENERATOR_FUNC(OS_TREE,                     0x16)  \
+    GENERATOR_FUNC(OS_TREE_BURNING,             0x17)  \
+    GENERATOR_FUNC(OS_TREE_BURNED,              0x18)  \
+    GENERATOR_FUNC(OS_MAILBOX,                  0x19)  \
+    GENERATOR_FUNC(OS_TRASHCAN,                 0x1A)  \
+    GENERATOR_FUNC(OS_TRASHCAN_BURNING,         0x1B)  \
+    GENERATOR_FUNC(OS_UNKNOWN_1C,               0x1C)  \
+    GENERATOR_FUNC(OS_UNKNOWN_1D,               0x1D)  \
+    GENERATOR_FUNC(OS_UNKNOWN_1E,               0x1E)  \
+    GENERATOR_FUNC(OS_BILLBOARD,                0x1F)  \
+    GENERATOR_FUNC(OS_WINDOWS_TRANSPARENT,      0x20)  \
+    GENERATOR_FUNC(OS_WINDOWS_TRANSPARENT2,     0x21)  \
+    GENERATOR_FUNC(OS_WINDOW_SILHOUTTE,         0x22)  \
+    GENERATOR_FUNC(OS_WINDOW_SILHOUTTE2,        0x23)  \
+    GENERATOR_FUNC(OS_WINDOW_SILHOUTTE3,        0x24)  \
+    GENERATOR_FUNC(OS_WINDOWS_TRANSPARENT3,     0x25)  \
+    GENERATOR_FUNC(OS_ROAD_PORTAL,              0x26)  \
+    GENERATOR_FUNC(OS_ROAD_PORTAL2,             0x27)  \
+    GENERATOR_FUNC(OS_ROAD_PORTAL3,             0x28)  \
+    GENERATOR_FUNC(OS_ROAD_PORTAL4,             0x29)
+
+typedef enum {
+	OBJECT_STATE_VALUES(GENERATE_ENUM_LINES)
+} ObjectState;
+
+const char* object_state_to_str(const ObjectState value);
+
+
+#define OBJECT_BASEFRAME_DEFAULT_VALUES(GENERATOR_FUNC)    \
+    GENERATOR_FUNC(OB_NONE,                       0)
+
+typedef enum {
+	OBJECT_BASEFRAME_DEFAULT_VALUES(GENERATE_ENUM_LINES)
+} ObjectBaseFrameDefault;
+
+#define OBJECT_BASEFRAME_NEONSIGN_VALUES(GENERATOR_FUNC)   \
+    GENERATOR_FUNC(OB_NEONSIGN_MEDIUM_YELLOW,  1045)       \
+    GENERATOR_FUNC(OB_NEONSIGN_MEDIUM_YELLOW2, 1047)       \
+    GENERATOR_FUNC(OB_NEONSIGN_MEDIUM_BLUE,    1049)       \
+    GENERATOR_FUNC(OB_NEONSIGN_MEDIUM_BLUE2,   1051)       \
+    GENERATOR_FUNC(OB_NEONSIGN_MEDIUM_RED,     1053)       \
+    GENERATOR_FUNC(OB_NEONSIGN_MEDIUM_RED2,    1055)       \
+    GENERATOR_FUNC(OB_NEONSIGN_LARGE_BROWN,    1057)       \
+    GENERATOR_FUNC(OB_NEONSIGN_LARGE_YELLOW,   1059)       \
+    GENERATOR_FUNC(OB_NEONSIGN_LARGE_BLUE,     1061)       \
+    GENERATOR_FUNC(OB_NEONSIGN_LARGE_RED,      1063)       \
+    GENERATOR_FUNC(OB_NEONSIGN_LARGE_WHITE,    1065)       \
+    GENERATOR_FUNC(OB_NEONSIGN_SMALL_BROWN,    1067)       \
+    GENERATOR_FUNC(OB_NEONSIGN_SMALL_YELLOW,   1069)       \
+    GENERATOR_FUNC(OB_NEONSIGN_SMALL_BLUE,     1071)       \
+    GENERATOR_FUNC(OB_NEONSIGN_SMALL_RED,      1073)       \
+    GENERATOR_FUNC(OB_NEONSIGN_SMALL_WHITE,    1075)
+
+typedef enum {
+	OBJECT_BASEFRAME_NEONSIGN_VALUES(GENERATE_ENUM_LINES)
+} ObjectBaseFrameNeonSign;
+
+#define OBJECT_BASEFRAME_DOOR_VALUES(GENERATOR_FUNC)       \
+    GENERATOR_FUNC(OB_DOOR_LARGE_CIRCULAR,     1077)       \
+    GENERATOR_FUNC(OB_DOOR_SMALL_UPDOWN,       1085)       \
+    GENERATOR_FUNC(OB_DOOR_SMALL_SWING,        1093)       \
+    GENERATOR_FUNC(OB_DOOR_LARGE_LEFTRIGHT,    1101)       \
+    GENERATOR_FUNC(OB_DOOR_SMALL_UPDOWN2,      1109)
+
+typedef enum {
+	OBJECT_BASEFRAME_DOOR_VALUES(GENERATE_ENUM_LINES)
+} ObjectBaseFrameDoor;
+
+#define OBJECT_BASEFRAME_TREE_VALUES(GENERATOR_FUNC)       \
+    GENERATOR_FUNC(OB_TREE_IN_POT,                0)       \
+    GENERATOR_FUNC(OB_TREE_LARGE,                 1)       \
+    GENERATOR_FUNC(OB_TREE_MEDIUM,                2)       \
+    GENERATOR_FUNC(OB_TREE_SMALL,                 3)
+
+typedef enum {
+	OBJECT_BASEFRAME_TREE_VALUES(GENERATE_ENUM_LINES)
+} ObjectBaseFrameTree;
+
+#define OBJECT_BASEFRAME_BILLBOARD_VALUES(GENERATOR_FUNC)  \
+    GENERATOR_FUNC(OB_BILLBOARD_TRAVEL_SW,      570)       \
+    GENERATOR_FUNC(OB_BILLBOARD_DRINK_SW,       571)       \
+    GENERATOR_FUNC(OB_BILLBOARD_BULLFROG_SW,    572)       \
+    GENERATOR_FUNC(OB_BILLBOARD_BULLFROG_SE,    573)       \
+    GENERATOR_FUNC(OB_BILLBOARD_BROKEN_SW,      574)       \
+    GENERATOR_FUNC(OB_BILLBOARD_BROKEN_SE,      575)
+
+typedef enum {
+	OBJECT_BASEFRAME_BILLBOARD_VALUES(GENERATE_ENUM_LINES)
+} ObjectBaseFrameBillboard;
+
+const char* object_baseframe_to_str(const ObjectState objstate, const uint16_t value);
 
 
 /******************************************************************************

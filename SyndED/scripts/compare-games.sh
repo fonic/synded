@@ -3,7 +3,7 @@ SCRIPT_DIR="$(dirname -- "$(realpath -- "$0")")"
 cd -- "${SCRIPT_DIR}/.." || { echo "Error: failed to change directory" >&2; exit 1; }
 
 # Compare GAME??.DAT files of Syndicate vs. American Revolt
-readarray -t games < <(find games -type f -name 'GAME*.DAT' -printf "%f\n" | sort | uniq)
+readarray -t games < <(find games -type f -name 'GAME*.DAT_in' -printf "%f\n" | sort | uniq)
 only=0; differ=0; same=0
 for game in "${games[@]}"; do
 	echo -n "Comparing '${game}'... "

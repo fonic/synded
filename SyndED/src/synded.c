@@ -3,7 +3,7 @@
  *  Syndicate Editor - Main                                                   *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/23/25                                                 *
+ *  Date: 10/08/25 - 10/24/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
 
 	if (strstr(infile_name, "Synd/GAME01/GAME01.DAT_in") != NULL) {  // Western Europe
 
-		printf("Editing/modifying GAME01.DAT (see sources)...\n");
+		printf("Editing/modifying GAME01 (see sources)...\n");
 		Vehicle vehicle = gamedata.Vehicles[0];    // Existing Vehicle
 		Person person = gamedata.People[9];        // Existing Guard
 		Weapon weapon = gamedata.Weapons[0];       // Existing Uzi (belongs to last guard at road)
@@ -252,12 +252,37 @@ int main(int argc, char *argv[]) {
 			gamedata.Weapons[weapon_slot++] = weapon; gamedata.People[person_slot++] = person;
 		}
 
+		// [TESTING] Objects
+		/*gamedata.People[0].Xpos = gamedata.People[12].Xpos + 1000;
+		gamedata.People[0].Ypos = gamedata.People[12].Ypos - 1250;
+		gamedata.People[0].Zpos = gamedata.People[12].Zpos;
+
+		int16_t xpos = gamedata.People[12].Xpos + 500;
+		int16_t ypos = gamedata.People[12].Ypos - 500;
+		int16_t zpos = gamedata.People[12].Zpos + 256;
+		memset(&gamedata.People[12], 0, sizeof(gamedata.People[12]));
+		size_t slot = 0;
+		for (size_t i = OB_NEONSIGN_MEDIUM_YELLOW; i <= OB_NEONSIGN_SMALL_WHITE; i+=2) {
+			memset(&gamedata.Objects[slot], 0, sizeof(gamedata.Objects[slot]));
+			gamedata.Objects[slot].Xpos = xpos;
+			gamedata.Objects[slot].Ypos = ypos;
+			gamedata.Objects[slot].Zpos = zpos;
+			gamedata.Objects[slot].Status = TS_MAPWHO;
+			gamedata.Objects[slot].Angle = TA_NORTHEAST;
+			gamedata.Objects[slot].Model = TM_OBJECT;
+			gamedata.Objects[slot].Life = 50; // almost always 40, 50 or 65534
+			gamedata.Objects[slot].State = OS_NEON_SIGN;
+			gamedata.Objects[slot].BaseFrame = i;
+			gamedata.Objects[slot].Frame = gamedata.Objects[slot].OldFrame = 0;
+			ypos -= 225; slot++;
+		}*/
+
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
 	} else if (strstr(infile_name, "Synd/GAME10/GAME10.DAT_in") != NULL) {  // Eastern Europe
 
-		printf("Editing/modifying GAME10.DAT (see sources)...\n");
+		printf("Editing/modifying GAME10 (see sources)...\n");
 		Weapon weapon = gamedata.Weapons[1];    // Existing Uzi
 		size_t weapon_slot = 30;                // Lots of free space
 		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People!
@@ -283,7 +308,7 @@ int main(int argc, char *argv[]) {
 
 	} else if (strstr(infile_name, "Synd/GAME20/GAME20.DAT_in") != NULL) {  // Scandinavia
 
-		printf("Editing/modifying GAME20.DAT (see sources)...\n");
+		printf("Editing/modifying GAME20 (see sources)...\n");
 		size_t person_slot = 65;                                     // Lots of free space
 		for (size_t i = 8; i < 60; i++) {                            // Twice the civilians == twice the fun
 			if (gamedata.People[i].Unique == PU_CIVILIAN) {
@@ -315,9 +340,16 @@ int main(int argc, char *argv[]) {
 
 	} else if (strstr(infile_name, "Synd/GAME31/GAME31.DAT_in") != NULL) {  // South Africa
 
-		printf("Editing/modifying GAME31.DAT (see sources)...\n");
+		printf("Editing/modifying GAME31 (see sources)...\n");
 		//gamedata.CPObjectives[1].Child = 3;    // Bypass execution flow fork -> ALL blue agents will walk to APC
 		gamedata.CPObjectives[4].Child = 7;      // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
+
+	} else if (strstr(infile_name, "Synd/GAME36/GAME36.DAT_in") != NULL) {  // Venezuela
+
+		printf("Editing/modifying GAME36.DAT (see sources)...\n");
+		for (size_t i = 0; i < OBJECTS_COUNT; i++) {                        // Remove all objects
+			memset(&gamedata.Objects[i], 0, sizeof(gamedata.Objects[i]));
+		}
 
 	} else {
 		printf("NOT editing/modifying game data (see sources).\n");

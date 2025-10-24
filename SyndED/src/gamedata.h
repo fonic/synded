@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Structs, Defines, Macros                     *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/23/25                                                 *
+ *  Date: 10/08/25 - 10/24/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -111,10 +111,11 @@
 #define OFS_GLOBAL_TO_RELATIVE(offset_global) (offset_global - RELATIVE_OFFSET_BASE)                       // Offset global to relative conversion
 #define OFS_RELATIVE_TO_GLOBAL(offset_relative) (RELATIVE_OFFSET_BASE + offset_relative)                   // Offset relative to global conversion
 
-#define GET_THING_FOR_RELOFS(gamedata, relofs) (Thing*)((size_t)(gamedata) + offsetof(GameData, RelOfsBase) + relofs)               // Get Thing from GameData struct based on relative offset
-#define GET_RELOFS_FOR_THING(gamedata, thing)  (uint16_t)((size_t)(thing) - (size_t)(gamedata) - offsetof(GameData, RelOfsBase))    // Get relative offset of Thing in GameData struct (CAUTION:
-                                                                                                                                    // result is only valid for Things that are actually part of
-                                                                                                                                    // the specified GameData struct)
+#define GET_THING_FOR_RELOFS(gamedata, relofs) \
+    (Thing*)((size_t)(gamedata) + offsetof(GameData, RelOfsBase) + relofs)                                 // Get Thing from GameData struct based via relative offset
+#define GET_RELOFS_FOR_THING(gamedata, thing) \
+    (uint16_t)((size_t)(thing) - (size_t)(gamedata) - offsetof(GameData, RelOfsBase))                      // Get relative offset of Thing in GameData struct (CAUTION: result is
+                                                                                                           // only valid if Thing is actually part of specified GameData struct)
 
 
 /******************************************************************************
@@ -122,7 +123,7 @@
  *  MapWho Struct (32768 bytes)                                               *
  *  N x M tile map of references (relative offsets) to People, Vehicles,      *
  *  Objects, Weapons and Effects                                              *
- *  (currently not in use, integrated members into GameData struct instead)   *
+ *  (currently not in use, integrated member into GameData struct instead)    *
  *                                                                            *
  ******************************************************************************/
 
@@ -192,7 +193,7 @@ typedef struct {
 	uint16_t  HugDistance;      // Unknown (very random values that are NOT relofs references; naming/sizing might be wrong)
 	uint16_t  Persuaded;        // Reference to person that acted as persuader (usually human player agents)
 	uint16_t  ChildHeld;        // Reference to next person in linked list of vehicle passengers (0 == end of list)
-	uint16_t  ParentHeld;       // Reference to previous person in linked list of vehicle passengers (values >= 23554: reference to vehicle that people are passengers of, person is head of linked list)
+	uint16_t  ParentHeld;       // Reference to previous person in linked list of vehicle passengers (values >= 23554: reference to vehicle that person is passengers of, person is head of linked list)
 	uint16_t  Command;          // Reference to currently executed command of command chain
 	uint16_t  StartCommand;     // Reference to initial command of command chain to be executed
 	uint16_t  Target;           // Reference to current target that is hunted/attacked
@@ -262,7 +263,7 @@ typedef struct {
 	uint8_t   ZAngle;           // Until here same as Thing, attributes below are unique to Vehicle (see assignments following GVehicle in RGAME.C)
 
 	uint16_t  ChildHeld;        // Reference to next person in passengers linked list (0 == end of list / no passengers)
-	uint16_t  ParentHeld;       // Not sure if this can actually be anything but 0 for vehicles (TODO: check trains)
+	uint16_t  ParentHeld;       // Not sure if this can actually be anything but 0 for vehicles (TODO: check DUMP of game with trains -> games 03, 06, 14, 22, 35)
 	uint16_t  LinkTo;           // Reference to connected/linked vehicle (used to connect/link multiple vehicles, e.g. carriage to train head; connected/linked vehicles move as a group)
 	int16_t   LinkX;            // Position offset relative to connected/linked vehicle (see LinkTo), X axis
 	int16_t   LinkY;            // Position offset relative to connected/linked vehicle (see LinkTo), Y axis
@@ -289,14 +290,14 @@ typedef struct {
 	int16_t   Zpos;
 	uint16_t  Status;
 	uint16_t  Affect;
-	uint16_t  BaseFrame;        // Unknown (sometimes 0, sometimes not)
+	uint16_t  BaseFrame;        // Defines visual appearance, acts as sub-type for category set by State (e.g. for State == OS_TREE: OB_TREE_LARGE, OB_TREE_SMALL)
 	uint16_t  Frame;
 	uint16_t  OldFrame;
 	uint16_t  Life;             // Unknown (almost always non-zero)
 	uint16_t  WhoShotMe;
 	uint8_t   Model;            // Set to TM_OBJECT
-	uint8_t   State;            // Unknown (might be appearance + state like for vehicles?)
-	uint8_t   Angle;
+	uint8_t   State;            // Defines visual appearance, acts as type or category (e.g. types: OS_PHONE_BOOTH, OS_TRASHCAN; categories: OS_BILLBOARD, OS_NEON_SIGN -> BaseFrame defines sub-type)
+	uint8_t   Angle;            // Orientation on map (on X and Y axis; not valid of all object types, e.g. OS_BILLBOARD cannot be oriented)
 	uint8_t   ZAngle;           // Until here same as Thing, attributes below are unique to Object (see assignments following GObject in RGAME.C)
 
 	uint16_t  Connected;        // Unknown (always 0, likely unused or very rarely used; name from RGAME.C)
@@ -324,7 +325,7 @@ typedef struct {
 	uint16_t  BaseFrame;        // Set to 0
 	uint16_t  Frame;
 	uint16_t  OldFrame;
-	uint16_t  Life;             // Amount of ammunition left in weapon (TODO: also timer for time bombs?)
+	uint16_t  Life;             // Amount of ammunition left in weapon / timer for time bombs (initial timer value when time bomb is dropped: 199)
 	uint16_t  WhoShotMe;
 	uint8_t   Model;            // Set to TM_WEAPON (exploded time bombs get set to TM_NONE)
 	uint8_t   State;            // Type of weapon (e.g. WS_MINIGUN)
@@ -410,7 +411,7 @@ typedef struct {
 	uint8_t   WindAngle;
 	uint8_t   Industry;
 	uint8_t   Crime;
-	uint8_t   Gravity;          // TODO: test if settings this has any effect on people falling from platforms when being shot
+	uint8_t   Gravity;          // TODO: test if setting this has any effect on people falling from platforms when being shot
 	uint8_t   Density;
 	uint8_t   Unknown;          // Unknown (not sure about this, could simply be that one if the preceding members is 16 bit instead of 8 bit)
 } World;

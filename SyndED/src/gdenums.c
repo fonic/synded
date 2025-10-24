@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/19/25                                                 *
+ *  Date: 10/08/25 - 10/24/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -61,7 +61,7 @@ const char* person_affect_to_str(const PersonAffect value) {
 	GENERATE_TOSTR_FLAGS(PERSON_AFFECT_FLAGS, PA_NONE)
 }
 
-const char* person_baseframe_to_str(const PersonBaseframe value) {
+const char* person_baseframe_to_str(const PersonBaseFrame value) {
 	GENERATE_TOSTR_VALUES(PERSON_BASEFRAME_VALUES)
 }
 
@@ -75,6 +75,30 @@ const char* person_unique_to_str(const PersonUnique value) {
 
 const char* vehicle_state_to_str(const VehicleState value) {
 	GENERATE_TOSTR_VALUES(VEHICLE_STATE_VALUES)
+}
+
+const char* object_state_to_str(const ObjectState value) {
+	GENERATE_TOSTR_VALUES(OBJECT_STATE_VALUES)
+}
+
+const char* object_baseframe_to_str(const ObjectState objstate, const uint16_t value) {
+	switch (objstate) {
+		case OS_NEON_SIGN:
+			GENERATE_TOSTR_VALUES(OBJECT_BASEFRAME_NEONSIGN_VALUES)
+		case OS_DOOR:
+		case OS_DOOR2:
+		case OS_DOOR3:
+		case OS_DOOR4:
+			GENERATE_TOSTR_VALUES(OBJECT_BASEFRAME_DOOR_VALUES)
+		case OS_TREE:
+		case OS_TREE_BURNING:
+		case OS_TREE_BURNED:
+			GENERATE_TOSTR_VALUES(OBJECT_BASEFRAME_TREE_VALUES)
+		case OS_BILLBOARD:
+			GENERATE_TOSTR_VALUES(OBJECT_BASEFRAME_BILLBOARD_VALUES)
+		default:
+			GENERATE_TOSTR_VALUES(OBJECT_BASEFRAME_DEFAULT_VALUES)
+	}
 }
 
 const char* weapon_state_to_str(const WeaponState value) {

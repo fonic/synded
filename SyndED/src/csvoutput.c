@@ -3,7 +3,7 @@
  *  Syndicate Editor - CSV Output                                             *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/23/25                                                 *
+ *  Date: 10/08/25 - 10/24/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -225,7 +225,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,Angle,Angle_S,ZAngle,Connected\n");
+	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,BaseFrame_S,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,Connected\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", i);
 		fprintf(file, "%zu,", offset_global + sizeof(Object) * i);
@@ -241,6 +241,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 		fprintf(file, "%s,",  thing_status_to_str(objects[i].Status));
 		fprintf(file, "%u,",  objects[i].Affect);
 		fprintf(file, "%u,",  objects[i].BaseFrame);
+		fprintf(file, "%s,",  object_baseframe_to_str(objects[i].State, objects[i].BaseFrame));
 		fprintf(file, "%u,",  objects[i].Frame);
 		fprintf(file, "%u,",  objects[i].OldFrame);
 		fprintf(file, "%u,",  objects[i].Life);
@@ -248,6 +249,7 @@ int write_objects_to_csv(const char *file_name, const Object objects[], const si
 		fprintf(file, "%u,",  objects[i].Model);
 		fprintf(file, "%s,",  thing_model_to_str(objects[i].Model));
 		fprintf(file, "%u,",  objects[i].State);
+		fprintf(file, "%s,",  object_state_to_str(objects[i].State));
 		fprintf(file, "%u,",  objects[i].Angle);
 		fprintf(file, "%s,",  thing_angle_to_str(objects[i].Angle));
 		fprintf(file, "%u,",  objects[i].ZAngle);

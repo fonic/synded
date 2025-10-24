@@ -2,7 +2,7 @@
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
 
-- Add comments to all game data struct members (document everything we know
+- Add comments to all game data struct members (document everything known
   thus far regarding meaning, values, relations to other members, etc.)
 
 
@@ -79,6 +79,16 @@
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Update CSV output to translate Object.State and Object.BaseFrame based on new
+  enums
+
+- Add enums for Object.State and Object.BaseFrame:
+  Object.State can act as a type (e.g. OS_MAILBOX, OS_TRASHCAN) or as a category
+  (e.g. OS_DOOR, OS_TREE). For categories, Object.BaseFrame acts as a sub-type
+  (e.g. category OS_TREE -> OB_TREE_LARGE, OB_TREE_SMALL). The categories make
+  string translation a bit more involved than usual (see function 'object_base
+  frame_to_str')
 
 - For DEBUG builds, print n bytes of each member of struct GameData as hex
   values (useful for comparing .dat files to different versions, e.g. 3DO);
@@ -352,5 +362,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/23/25                                                    -
+- Date: 10/07/25 - 10/24/25                                                    -
 --------------------------------------------------------------------------------
