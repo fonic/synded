@@ -5,6 +5,9 @@
 - Add comments to all game data struct members (document everything known
   thus far regarding meaning, values, relations to other members, etc.)
 
+- Refine game data structs further (mostly done, World struct is the last
+  largely unknown struct, but likely unused in the final game anyway)
+
 
 --------------------------------------------------------------------------------
 - TODO (FURTHER DEVELOPMENT)                                                   -
@@ -57,17 +60,6 @@
   -> Shifts in 3DO data might be related to alignment (#pragma), e.g. Vehicles
      is 128 bytes longer (could be 64 vehicles * 2 bytes)
 
-- Beta version GAMExx.DAT files are currently incompatible (tested by Moburma);
-  investigate the differences and check if other versions have discrepancies
-  as well in that regard
-  -> At least partial reading/writing should be achievable by investigating
-     where tables start (e.g. People table always starts with human-player
-     agents -> compare to final via hex editor)
-
-- Further refine game data structs
-  -> ONGOING, will take some time + input from Mefistotelis as disassembly
-     progresses
-
 
 --------------------------------------------------------------------------------
 - TODO (CODE MAINTENANCE)                                                      -
@@ -79,6 +71,28 @@
 --------------------------------------------------------------------------------
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
+
+- Implement quick hack to support Beta version game data:
+  Beta version game data is SHORTER than final release version game data
+  (114.152 bytes -or- 114.150 bytes -or- 114.083 bytes vs. 116.010 bytes),
+  but seems otherwise identical to final release version game data. Thus,
+  support can be achieved by simply READING LESS data into game data struct
+  (and also WRITING LESS data to output file).
+
+  Beta version seems to lack CPObjectives functionality, which is why game
+  data is shorter (i.e. CPObjectives data is missing). Surprisingly, Beta
+  version GAMExx.DAT files come in three different sizes (see above)
+
+- Identified and renamed some Thing.Status enum values (enum THING_STATUS_
+  FLAGS) via editing: TS_DRAW_ON_TOP, TS_NOTARGET_NOMMAP, TS_WANDER_AFTER_HIT
+
+- Code maintenance:
+  - Apply some minor comment formatting to synded.c
+  - Replace uint16_t with int for enum parameter of _to_str function in
+    gdenums.h/.c
+  - Fix malformed CSV output for Objects table (removed trailing ',')
+  - Minor code maintenance in gdenums.h (order of generator macros, strlen ->
+    strnlen replacement)
 
 - Update enum for CPObjective.Action based on Object.BaseFrame:
   Both enums use categories and sub-types, thus they should use the same
@@ -367,5 +381,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/24/25                                                    -
+- Date: 10/07/25 - 10/26/25                                                    -
 --------------------------------------------------------------------------------

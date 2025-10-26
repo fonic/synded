@@ -9,8 +9,9 @@
 - OPEN (INVESTIGATE)                                                           -
 --------------------------------------------------------------------------------
 
-- Test what flag Thing.Status == TS_DEAD does (used quite often, name seems
-  wrong)
+- Test what flag Thing.Status == TS_DEAD does (used quite often, e.g. for
+  passengers of vehicles, name seems wrong; could this flag mean 'immobile',
+  i.e. to bypass collision detection, path finding, etc.?)
 -> Not sure yet, just setting Person.Status = TS_DEAD does not seem to do
    anything
 
@@ -177,7 +178,7 @@ Objectives:
 - Objective.Type == 6: same as above
 
 -> NOTE: "assassinate" might simply be a switch-case-default (i.e. fallback for
-         all unhandled values)
+         all unhandled values, would explain behavior described above)
 
 --------------------------------------------------------------------------------
 
@@ -202,7 +203,8 @@ Misc:
 
 - Test if Person.Unique is a bitmask (e.g. what happens when setting flags
   PU_AGENT and PU_GUARD?)
-  -> YES, works to some degree
+  -> YES, works to some degree AND also observed different in-mission values
+     (e.g. 1026 for human player agents, 2052 for police officers)
   -> Person.Unique = PU_AGENT | PU_POLICE results in a person that registers
      as police (on minimap) but attacks fiercely when human player agents
      come closer
@@ -214,7 +216,40 @@ Misc:
      as guard (on minimap), attacks when human player agents come close, but
      human player agents won't shoot this person when set to 'panic mode'
 -> Interesting, hacky/buggy side-effects; might be of some use for mission
-   design, as this allows to cause some confusion/chaos
+   design, as this allows to cause some confusion/chaos (e.g. police man that
+   suddenly attacks when walking close by)
+-> TODO: test what setting 2052 for police officers does
+
+- Thing.Status:
+  TS_NONE                  0x0
+  TS_DO_NOT_DRAW           0x1  -> Do not draw thing
+  TS_DRAW_ON_TOP           0x2  -> Draw thing on top of map tiles (set for
+                                   almost all objects, e.g. neon signs)
+  TS_MAPWHO                0x4  -> Thing is on MAPWHO
+  TS_DEAD                  0x8  -> People only, used A LOT
+  TS_UNKNOWN_10           0x10  -> Unused in games
+  TS_UNKNOWN_20           0x20  -> Unused in games
+  TS_UNKNOWN_40           0x40  -> Unused in games
+  TS_UNKNOWN_80           0x80  -> Unused in games
+  TS_NOTARGET_NOMAP      0x100  -> Set when thing died / got destroyed;
+                                   used in some games for vehicles that are
+                                   destroyed right from the start (e.g. GAME30)
+  TS_FLY_BACK            0x200  -> People only, used in some games
+  TS_UNKNOWN_400         0x400  -> Unused in games
+  TS_UNKNOWN_800         0x800  -> Vehicles only, see GAME04 (*)
+  TS_WANDER_AFTER_HIT   0x1000  -> People only, used A LOT
+  TS_UNKNOWN_2000       0x2000  -> Unused in games
+  TS_UNKNOWN_4000       0x4000  -> Unused in games
+  TS_UNKNOWN_8000       0x8000  -> Vehicles only, see GAME04 (*)
+
+  (*) GAME04 is Iran, that map was also used for the DEMO versions
+      -> flags might be leftovers
+
+  RGAME.C (mentioned, but no values available):
+  STATUS_MAPWHO
+  STATUS_DRAW
+  STATUS_CONTROL
+  STATUS_DEAD
 
 
 --------------------------------------------------------------------------------
@@ -225,5 +260,5 @@ Misc:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/23/25                                                    -
+- Date: 10/07/25 - 10/26/25                                                    -
 --------------------------------------------------------------------------------

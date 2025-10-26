@@ -32,6 +32,9 @@ Extend existing features:
 - Allow for mixing of multiple sounds (currently, only ONE sound can play at
   a time, using a priority system)
 
+- Allow fine map scrolling (currently, scrolling seems to be tile-based, with
+  keyboard scrolling being more coarse than mouse scrolling)
+
 - Allow map scrolling when game is paused (should be made toggable via Options
   menu)
 
@@ -80,5 +83,5 @@ Add new feature:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/19/25                                                    -
+- Date: 10/07/25 - 10/25/25                                                    -
 --------------------------------------------------------------------------------

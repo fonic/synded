@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/24/25                                                 *
+ *  Date: 10/08/25 - 10/26/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -26,8 +26,8 @@
  *  1) Determine if enum should be VALUE-based or FLAG-based (bitmask)        *
  *  2) Copy&paste code from corresponding commented block (see below)         *
  *  3) Replace 'STRUCT_MEMBER' with '<STRUCT-NAME>_<MEMBER-NAME>'             *
- *  4) Replace 'StructMember'  with '<Struct-Name><Member-Name>'              *
- *  5) Replace 'struct_member' with '<struct-name>_<member-name>'             *
+ *  4) Replace 'struct_member' with '<struct-name>_<member-name>'             *
+ *  5) Replace 'StructMember'  with '<Struct-Name><Member-Name>'              *
  *  6) Replace values/flags list below line                                   *
  *       '#define STRUCT_MEMBER_...(GENERATOR_FUNC)'                          *
  *     using format                                                           *
@@ -127,24 +127,24 @@ const char* struct_member_to_str(const StructMember value) {
  *                                                                            *
  ******************************************************************************/
 
-#define THING_STATUS_FLAGS(GENERATOR_FUNC)   \
-    GENERATOR_FUNC(TS_NONE,            0x0)  \
-    GENERATOR_FUNC(TS_NODRAW,          0x1)  \
-    GENERATOR_FUNC(TS_UNKNOWN_2,       0x2)  \
-    GENERATOR_FUNC(TS_MAPWHO,          0x4)  \
-    GENERATOR_FUNC(TS_DEAD,            0x8)  \
-    GENERATOR_FUNC(TS_UNKNOWN_10,     0x10)  \
-    GENERATOR_FUNC(TS_UNKNOWN_20,     0x20)  \
-    GENERATOR_FUNC(TS_UNKNOWN_40,     0x40)  \
-    GENERATOR_FUNC(TS_UNKNOWN_80,     0x80)  \
-    GENERATOR_FUNC(TS_UNKNOWN_100,   0x100)  \
-    GENERATOR_FUNC(TS_FLY_BACK,      0x200)  \
-    GENERATOR_FUNC(TS_UNKNOWN_400,   0x400)  \
-    GENERATOR_FUNC(TS_UNKNOWN_800,   0x800)  \
-    GENERATOR_FUNC(TS_UNKNOWN_1000, 0x1000)  \
-    GENERATOR_FUNC(TS_UNKNOWN_2000, 0x2000)  \
-    GENERATOR_FUNC(TS_UNKNOWN_4000, 0x4000)  \
-    GENERATOR_FUNC(TS_UNKNOWN_8000, 0x8000)
+#define THING_STATUS_FLAGS(GENERATOR_FUNC)       \
+    GENERATOR_FUNC(TS_NONE,                0x0)  \
+    GENERATOR_FUNC(TS_NODRAW,              0x1)  \
+    GENERATOR_FUNC(TS_DRAW_ON_TOP,         0x2)  \
+    GENERATOR_FUNC(TS_MAPWHO,              0x4)  \
+    GENERATOR_FUNC(TS_DEAD,                0x8)  \
+    GENERATOR_FUNC(TS_UNKNOWN_10,         0x10)  \
+    GENERATOR_FUNC(TS_UNKNOWN_20,         0x20)  \
+    GENERATOR_FUNC(TS_UNKNOWN_40,         0x40)  \
+    GENERATOR_FUNC(TS_UNKNOWN_80,         0x80)  \
+    GENERATOR_FUNC(TS_NOTARGET_NOMMAP,   0x100)  \
+    GENERATOR_FUNC(TS_FLY_BACK,          0x200)  \
+    GENERATOR_FUNC(TS_UNKNOWN_400,       0x400)  \
+    GENERATOR_FUNC(TS_UNKNOWN_800,       0x800)  \
+    GENERATOR_FUNC(TS_WANDER_AFTER_HIT, 0x1000)  \
+    GENERATOR_FUNC(TS_UNKNOWN_2000,     0x2000)  \
+    GENERATOR_FUNC(TS_UNKNOWN_4000,     0x4000)  \
+    GENERATOR_FUNC(TS_UNKNOWN_8000,     0x8000)
 
 typedef enum {
 	THING_STATUS_FLAGS(GENERATE_ENUM_LINES)
@@ -405,9 +405,9 @@ const char* vehicle_state_to_str(const VehicleState value);
     GENERATOR_FUNC(OS_BILLBOARD,                0x1F)  \
     GENERATOR_FUNC(OS_WINDOWS_TRANSPARENT,      0x20)  \
     GENERATOR_FUNC(OS_WINDOWS_TRANSPARENT2,     0x21)  \
-    GENERATOR_FUNC(OS_WINDOW_SILHOUTTE,         0x22)  \
-    GENERATOR_FUNC(OS_WINDOW_SILHOUTTE2,        0x23)  \
-    GENERATOR_FUNC(OS_WINDOW_SILHOUTTE3,        0x24)  \
+    GENERATOR_FUNC(OS_WINDOW_SILHOUETTE,        0x22)  \
+    GENERATOR_FUNC(OS_WINDOW_SILHOUETTE2,       0x23)  \
+    GENERATOR_FUNC(OS_WINDOW_SILHOUETTE3,       0x24)  \
     GENERATOR_FUNC(OS_WINDOWS_TRANSPARENT3,     0x25)  \
     GENERATOR_FUNC(OS_ROAD_PORTAL,              0x26)  \
     GENERATOR_FUNC(OS_ROAD_PORTAL2,             0x27)  \

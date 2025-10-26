@@ -193,7 +193,7 @@ typedef struct {
 	uint16_t  HugDistance;      // Unknown (very random values that are NOT relofs references; naming/sizing might be wrong)
 	uint16_t  Persuaded;        // Reference to person that acted as persuader (usually human player agents)
 	uint16_t  ChildHeld;        // Reference to next person in linked list of vehicle passengers (0 == end of list)
-	uint16_t  ParentHeld;       // Reference to previous person in linked list of vehicle passengers (values >= 23554: reference to vehicle that person is passengers of, person is head of linked list)
+	uint16_t  ParentHeld;       // Reference to previous person in linked list of vehicle passengers (value >= 23554: reference to vehicle that person is passenger of, person is head of linked list and acts as driver of vehicle)
 	uint16_t  Command;          // Reference to currently executed command of command chain
 	uint16_t  StartCommand;     // Reference to initial command of command chain to be executed
 	uint16_t  Target;           // Reference to current target that is hunted/attacked
@@ -262,7 +262,7 @@ typedef struct {
 	uint8_t   Angle;
 	uint8_t   ZAngle;           // Until here same as Thing, attributes below are unique to Vehicle (see assignments following GVehicle in RGAME.C)
 
-	uint16_t  ChildHeld;        // Reference to next person in passengers linked list (0 == end of list / no passengers)
+	uint16_t  ChildHeld;        // Reference to next person in passengers linked list, who is also driver of vehicle (0 == end of list / no passengers / no driver)
 	uint16_t  ParentHeld;       // Not sure if this can actually be anything but 0 for vehicles (TODO: check DUMP of game with trains -> games 03, 06, 14, 22, 35)
 	uint16_t  LinkTo;           // Reference to connected/linked vehicle (used to connect/link multiple vehicles, e.g. carriage to train head; connected/linked vehicles move as a group)
 	int16_t   LinkX;            // Position offset relative to connected/linked vehicle (see LinkTo), X axis

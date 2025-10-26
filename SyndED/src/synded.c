@@ -3,7 +3,7 @@
  *  Syndicate Editor - Main                                                   *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/24/25                                                 *
+ *  Date: 10/08/25 - 10/26/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -26,7 +26,7 @@
 
 const char* bytes_to_hex_str(const uint8_t *data, const size_t count) {  // https://stackoverflow.com/a/71426890
 	static char buffer[1024];
-	//memset(&buffer, '\0', sizeof(buffer));                 // not required due to terminating after loop
+	//memset(&buffer, '\0', sizeof(buffer));                 // not required due to termination after loop
 	size_t i = 0;
 	for (i = 0; i < count && i < sizeof(buffer) / 3; i++) {  // 3 buffer bytes per data byte
 		buffer[i*3]   = "0123456789ABCDEF"[data[i] >> 4 ];   // high nibble to hex
@@ -34,7 +34,7 @@ const char* bytes_to_hex_str(const uint8_t *data, const size_t count) {  // http
 		buffer[i*3+2] = ' ';
 	}
 	if (i > 0)
-		buffer[(i-1)*3+2] = '\0';                            // replace trailing space
+		buffer[(i-1)*3+2] = '\0';                            // replace trailing space with terminator
 	else
 		buffer[0] = '\0';                                    // empty string
 	return buffer;
@@ -66,8 +66,10 @@ int main(int argc, char *argv[]) {
 	 *                                                                            *
 	 ******************************************************************************/
 
-	// Game data struct
+	// Define game data struct and erase it (important for supporting Beta version
+	// game data, which is SHORTER than game data of final release version)
 	GameData gamedata;
+	memset(&gamedata, 0, sizeof(GameData));
 
 	// Open input file
 	printf("Opening input file '%s'...\n", infile_name);
@@ -89,7 +91,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: failed to determine size of input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
-	if (file_size != sizeof(GameData)) {
+	if (file_size != sizeof(GameData) && file_size != 114152 && file_size != 114150 && file_size != 114083) {  // Quick hack for Beta version support
 		fprintf(stderr, "Error: incorrect size of input file '%s': got %ld bytes, expected %zu bytes\n", infile_name, file_size, sizeof(GameData));
 		return 1;
 	}
@@ -101,7 +103,7 @@ int main(int argc, char *argv[]) {
 	// Read contents of input file into game data struct
 	printf("Reading input file '%s'...\n", infile_name);
 	size_t read_count = fread(&gamedata, 1, sizeof(GameData), infile);
-	if (read_count != sizeof(GameData)) {
+	if (read_count != sizeof(GameData) && read_count != 114152 && read_count != 114150 && read_count != 114083) {  // Quick hack for Beta version support
 		fprintf(stderr, "Error: failed to read input file '%s': read only %ld bytes out of %lu bytes\n", infile_name, read_count, sizeof(GameData));
 		fclose(infile);
 		return 1;
@@ -348,9 +350,15 @@ int main(int argc, char *argv[]) {
 
 	// Write contents of game data struct to output file
 	printf("Writing output file '%s'...\n", outfile_name);
-	size_t write_count = fwrite(&gamedata, 1, sizeof(GameData), outfile);
+	/*size_t write_count = fwrite(&gamedata, 1, sizeof(GameData), outfile);
 	if (write_count != sizeof(GameData)) {
 		fprintf(stderr, "Error: failed to write output file '%s': wrote only %ld bytes out of %lu bytes\n", infile_name, write_count, sizeof(GameData));
+		fclose(outfile);
+		return 1;
+	}*/
+	size_t write_count = fwrite(&gamedata, 1, read_count, outfile);  // Quick hack for Beta version support (write same amount of data that was previously read)
+	if (write_count != read_count) {
+		fprintf(stderr, "Error: failed to write output file '%s': wrote only %ld bytes out of %lu bytes\n", infile_name, write_count, read_count);
 		fclose(outfile);
 		return 1;
 	}
