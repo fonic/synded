@@ -3,14 +3,14 @@
  *  Syndicate Editor - CSV Output                                             *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/19/25                                                 *
+ *  Date: 10/08/25 - 10/30/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
 #ifndef CSVOUTPUT_H
 #define CSVOUTPUT_H
 
-#include <stdint.h>    // int16_t, uint16_t, ...
+#include <stdint.h>    // uint16_t
 #include <stddef.h>    // size_t
 
 #include "gamedata.h"  // GameData, Person, Vehicle, ...

@@ -1,2 +1,2 @@
-Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon
-15280,200,15108,0,32,2,18,202,218,0,0,0,0,0,0,CPF_NONE,0
+Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPFlags_S,CPWeapon,CPWeapon_S
+15280,200,15108,0,32,2,18,202,218,0,0,0,0,0,0,0,CPF_NONE,0,WS_NONE

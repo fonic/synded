@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/26/25                                                 *
+ *  Date: 10/08/25 - 10/30/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -309,6 +309,27 @@ const char* person_unique_to_str(const PersonUnique value);
  *  Vehicle                                                                   *
  *                                                                            *
  ******************************************************************************/
+
+#define VEHICLE_AFFECT_FLAGS(GENERATOR_FUNC)    \
+    GENERATOR_FUNC(VA_NONE,               0x0)  \
+    GENERATOR_FUNC(VA_UNKNOWN_1,          0x1)  \
+    GENERATOR_FUNC(VA_UNKNOWN_2,          0x2)  \
+    GENERATOR_FUNC(VA_UNKNOWN_4,          0x4)  \
+    GENERATOR_FUNC(VA_EXPLODE_WHEN_USED,  0x8)  \
+    GENERATOR_FUNC(VA_UNKNOWN_10,        0x10)  \
+    GENERATOR_FUNC(VA_UNKNOWN_20,        0x20)  \
+    GENERATOR_FUNC(VA_UNKNOWN_40,        0x40)  \
+    GENERATOR_FUNC(VA_UNKNOWN_80,        0x80)  \
+    GENERATOR_FUNC(VA_UNKNOWN_100,      0x100)  \
+    GENERATOR_FUNC(VA_UNKNOWN_200,      0x200)  \
+    GENERATOR_FUNC(VA_UNKNOWN_400,      0x400)
+
+typedef enum {
+	VEHICLE_AFFECT_FLAGS(GENERATE_ENUM_LINES)
+} VehicleAffect;
+
+const char* vehicle_affect_to_str(const VehicleAffect value);
+
 
 #define VEHICLE_STATE_VALUES(GENERATOR_FUNC)       \
     GENERATOR_FUNC(VS_NONE,                  0x0)  \

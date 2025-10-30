@@ -50,11 +50,10 @@ Computer Players (Structless CP* variables + CPObjectives):
   match `gamedata.CPCount` * `gamedata.CPTeamSize` -> no difference
 - `ActionType == WAIT_TIME` seems finicky, won't work correctly if there are
   more than 3 concurrent waits, the 4th wait will just be ignored / wait
-  endlessly (this was the hardest to figure out).
+  endlessly
 - Which agent wears which hat color seems to be determined by the location
   within the `People` array. Wearing a certain hat color does **not** mean that
-  an agent belongs to a certain computer player (this was even harder to figure
-  out).
+  an agent belongs to a certain computer player
 - `CPObjective.ActionType = CPOAT_USE_WEAPON` seems to mean "drop time bomb"
   specifically; it does not seem to matter what `CPObjective.Action` is set to
   in this context (works even when set to 0); also, if `CPIsBombTeam == 0` +
@@ -170,6 +169,43 @@ ActionType, Action, Description (from Moburma):
 
 --------------------------------------------------------------------------------
 
+People:
+
+- Agents MUST be put in the first 64 slots (i.e. 0-63), as the game engine
+  expects them to be there; these slots MUST be treated as groups of 8,
+  as the game engine will pick up 8 agents at a time to assign them to a
+  [computer] player; if there are LESS than 8 agents per player, slots must
+  be left EMPTY, e.g. 4 agents per team, 2 computer players + human player:
+  populate slots 0-3 for human player, 8-11 for CP 1, 16-19 for CP 2, leave
+  slots in between empty
+
+- Agents in slots 0-63 are automatically assigned a certain hat color:
+  Index 0, Slots 00-07: Dark Red / Maroon    (Human Player, default color)
+  Index 1, Slots 08-15: Dark Blue / Gray     (Computer Player 1)
+  Index 2, Slots 16-23: Bright Red           (Computer Player 2)
+  Index 3, Slots 24-31: Dark Green           (Computer Player 3)
+  Index 4, Slots 32-39: Yellow               (Computer Player 4)
+  Index 5, Slots 40-47: White                (Computer Player 5)
+  Index 6, Slots 48-55: Brown / Dark Orange  (Computer Player 6)
+  Index 7, Slots 56-63: Teal / Cyan          (Computer Player 7)
+
+  This can theoretically be used to produce enemy Syndicates of a certain color
+  (e.g. if there are 2 computer players that should be green and white, only
+  populate slots 24-31 and 40-47 with agents), but this is complicated by the
+  human player's color choice (see below)
+
+  CAUTION:
+  If the human player chooses a different color (via "Configure Company"), the
+  HP's current color is SWAPPED with the computer player that currently has the
+  color the HP chose. This effect is cumulative, i.e. each time the HP chooses
+  a new color, it gets swapped with the CURRENT OWNER of that color. Colors are
+  stored in save games, thus this effect is permanent for game sessions
+
+- NPCs, i.e. non-agents, should always be put in slots 64 and above (this is
+  more of a best pratice, as putting them in lower slots works fine)
+
+--------------------------------------------------------------------------------
+
 Objectives:
 
 - Objective.Type == 4: kill all (?), i.e. something is to be killed, but unclear
@@ -260,5 +296,5 @@ Misc:
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/26/25                                                    -
+- Date: 10/07/25 - 10/27/25                                                    -
 --------------------------------------------------------------------------------

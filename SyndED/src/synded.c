@@ -3,7 +3,7 @@
  *  Syndicate Editor - Main                                                   *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/26/25                                                 *
+ *  Date: 10/08/25 - 10/30/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -21,6 +21,7 @@
 #include "gdenums.h"
 #include "csvoutput.h"
 #include "mapwho.h"
+#include "csvinput.h"
 
 #define member_size(type, member) (sizeof(((type *)0)->member))          // https://stackoverflow.com/a/3553321
 
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	// Check input file size (to rule out incompatible input files, e.g. RNCed or Beta version)
+	// Check input file size (to rule out incompatible input files, e.g. RNCed)
 	// Should be the most portable approach (https://stackoverflow.com/a/238609)
 	printf("Checking size of file '%s'...\n", infile_name);
 	if (fseek(infile, 0, SEEK_END) != 0) {
@@ -91,11 +92,11 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: failed to determine size of input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
-	if (file_size != sizeof(GameData) && file_size != 114152 && file_size != 114150 && file_size != 114083) {  // Quick hack for Beta version support
+	if (file_size != sizeof(GameData) && file_size != 114152 && file_size != 114150 && file_size != 114083) {  // Quick hack for Beta version support: accept multiple file sizes
 		fprintf(stderr, "Error: incorrect size of input file '%s': got %ld bytes, expected %zu bytes\n", infile_name, file_size, sizeof(GameData));
 		return 1;
 	}
-	if (fseek(infile, 0, SEEK_SET) != 0) { // Important, need to seek back to start!
+	if (fseek(infile, 0, SEEK_SET) != 0) { // Important, need to seek back to start before reading!
 		fprintf(stderr, "Error: failed to seek to start of input file '%s': %s\n", infile_name, strerror(errno));
 		return 1;
 	}
@@ -103,7 +104,7 @@ int main(int argc, char *argv[]) {
 	// Read contents of input file into game data struct
 	printf("Reading input file '%s'...\n", infile_name);
 	size_t read_count = fread(&gamedata, 1, sizeof(GameData), infile);
-	if (read_count != sizeof(GameData) && read_count != 114152 && read_count != 114150 && read_count != 114083) {  // Quick hack for Beta version support
+	if (read_count != sizeof(GameData) && read_count != 114152 && read_count != 114150 && read_count != 114083) {  // Quick hack for Beta version support: accept multiple read counts
 		fprintf(stderr, "Error: failed to read input file '%s': read only %ld bytes out of %lu bytes\n", infile_name, read_count, sizeof(GameData));
 		fclose(infile);
 		return 1;
@@ -152,7 +153,7 @@ int main(int argc, char *argv[]) {
 	 ******************************************************************************/
 
 	// CSV file name
-	char *csvfile_name;
+	char *csvfile_name = NULL;
 
 	// Write MapWho array to CSV file
 	asprintf(&csvfile_name, "%s_mapwho.csv", infile_name);
@@ -217,12 +218,12 @@ int main(int argc, char *argv[]) {
 	 *                                                                            *
 	 ******************************************************************************/
 
-	if (strstr(infile_name, "Synd/GAME01/GAME01.DAT_in") != NULL) {  // Western Europe
+	if (strstr(infile_name, "Synd/GAME01/GAME01.DAT_in") != NULL) {         // Western Europe
 
 		printf("Editing/modifying GAME01 (see sources)...\n");
-		Vehicle vehicle = gamedata.Vehicles[0];    // Existing Vehicle
-		Person person = gamedata.People[9];        // Existing Guard
-		Weapon weapon = gamedata.Weapons[0];       // Existing Uzi (belongs to last guard at road)
+		Vehicle vehicle = gamedata.Vehicles[0];                             // Existing Vehicle
+		Person person = gamedata.People[9];                                 // Existing Guard
+		Weapon weapon = gamedata.Weapons[0];                                // Existing Uzi (belongs to last guard at road)
 
 		size_t vehicle_slot = 20; size_t weapon_slot = 20; size_t person_slot = 20;  // Lots of free space for new stuff
 
@@ -260,8 +261,8 @@ int main(int argc, char *argv[]) {
 	} else if (strstr(infile_name, "Synd/GAME10/GAME10.DAT_in") != NULL) {  // Eastern Europe
 
 		printf("Editing/modifying GAME10 (see sources)...\n");
-		Weapon weapon = gamedata.Weapons[1];    // Existing Uzi
-		size_t weapon_slot = 30;                // Lots of free space
+		Weapon weapon = gamedata.Weapons[1];                                // Existing Uzi
+		size_t weapon_slot = 30;                                            // Lots of free space
 		for (size_t i = 0; i < sizeof(gamedata.People) / sizeof(gamedata.People[0]); i++) {                             // Power to the People!
 			if (gamedata.People[i].BaseFrame == PB_WOMAN_REDHEAD || gamedata.People[i].BaseFrame == PB_WOMAN_BLONDE) {  // Women get Uzis
 				gamedata.People[i].Unique = PU_GUARD;
@@ -315,11 +316,65 @@ int main(int argc, char *argv[]) {
 		// Rebuild MapWho to account for added things (important!)
 		rebuild_mapwho(&gamedata);
 
+	} else if (strstr(infile_name, "Synd/GAME30/GAME30.DAT_in") != NULL) {  // Argentina
+
+		printf("Editing/modifying GAME30 (see sources)...\n");
+
+		// [TESTING] CSV input (verification: 'GAME30.DAT_out' must equal 'GAME30.DAT_in')
+		memset(&gamedata, 0, sizeof(GameData));
+
+		asprintf(&csvfile_name, "%s_mapwho.csv", outfile_name);
+		read_mapwho_from_csv(csvfile_name, gamedata.MapWho, TILES_COUNT_X, TILES_COUNT_Y);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_people.csv", outfile_name);
+		read_people_from_csv(csvfile_name, gamedata.People, PEOPLE_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_vehicles.csv", outfile_name);
+		read_vehicles_from_csv(csvfile_name, gamedata.Vehicles, VEHICLES_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_objects.csv", outfile_name);
+		read_objects_from_csv(csvfile_name, gamedata.Objects, OBJECTS_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_weapons.csv", outfile_name);
+		read_weapons_from_csv(csvfile_name, gamedata.Weapons, WEAPONS_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_effects.csv", outfile_name);
+		read_effects_from_csv(csvfile_name, gamedata.Effects, EFFECTS_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_commands.csv", outfile_name);
+		read_commands_from_csv(csvfile_name, gamedata.Commands, COMMANDS_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_worlds.csv", outfile_name);
+		read_worlds_from_csv(csvfile_name, gamedata.Worlds, WORLDS_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_objectives.csv", outfile_name);
+		read_objectives_from_csv(csvfile_name, gamedata.Objectives, OBJECTIVES_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_cpobjectives.csv", outfile_name);
+		read_cpobjectives_from_csv(csvfile_name, gamedata.CPObjectives, CPOBJECTIVES_COUNT);
+		free(csvfile_name);
+
+		asprintf(&csvfile_name, "%s_structless.csv", outfile_name);
+		read_structless_from_csv(csvfile_name, &gamedata);
+		free(csvfile_name);
+
+		// Rebuild MapWho (allows editing without caring about MapWho entries)
+		rebuild_mapwho(&gamedata);
+
 	} else if (strstr(infile_name, "Synd/GAME31/GAME31.DAT_in") != NULL) {  // South Africa
 
 		printf("Editing/modifying GAME31 (see sources)...\n");
-		//gamedata.CPObjectives[1].Child = 3;    // Bypass execution flow fork -> ALL blue agents will walk to APC
-		gamedata.CPObjectives[4].Child = 7;      // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will drive APC (due to go to position)
+		//gamedata.CPObjectives[1].Child = 3;                               // Bypass command execution flow fork -> ALL enemy agents will walk to APC
+		gamedata.CPObjectives[4].Child = 7;                                 // Bypass 1,25 + 2,25 -> Agent will NOT emerge from APC after entering it, will NOT drop time bomb, will instead drive APC (due to go to position)
 
 	} else if (strstr(infile_name, "Synd/GAME36/GAME36.DAT_in") != NULL) {  // Venezuela
 
@@ -356,7 +411,7 @@ int main(int argc, char *argv[]) {
 		fclose(outfile);
 		return 1;
 	}*/
-	size_t write_count = fwrite(&gamedata, 1, read_count, outfile);  // Quick hack for Beta version support (write same amount of data that was previously read)
+	size_t write_count = fwrite(&gamedata, 1, read_count, outfile);  // Quick hack for Beta version support: write same amount of data to output file that was previously read from input file
 	if (write_count != read_count) {
 		fprintf(stderr, "Error: failed to write output file '%s': wrote only %ld bytes out of %lu bytes\n", infile_name, write_count, read_count);
 		fclose(outfile);
@@ -379,7 +434,7 @@ int main(int argc, char *argv[]) {
 	 ******************************************************************************/
 
 	// CSV file name
-	//char *csvfile_name;
+	//char *csvfile_name = NULL;
 
 	// Write MapWho array to CSV file
 	asprintf(&csvfile_name, "%s_mapwho.csv", outfile_name);

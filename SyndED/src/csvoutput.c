@@ -3,7 +3,7 @@
  *  Syndicate Editor - CSV Output                                             *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/24/25                                                 *
+ *  Date: 10/08/25 - 10/30/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -163,7 +163,7 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkToType,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
+	fprintf(file, "Index,GloOfs,RelOfs,Child,Parent,Xpos,Ypos,Zpos,Xtile,Ytile,Status,Status_S,Affect,Affect_S,BaseFrame,Frame,OldFrame,Life,WhoShotMe,Model,Model_S,State,State_S,Angle,Angle_S,ZAngle,ChildHeld,ParentHeld,LinkTo,LinkX,LinkY,LinkZ,MaxSpeed,TravelAngle\n");
 	for (size_t i = 0; i < count; i++) {
 		fprintf(file, "%zu,", i);
 		fprintf(file, "%zu,", offset_global + sizeof(Vehicle) * i);
@@ -178,6 +178,7 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 		fprintf(file, "%u,",  vehicles[i].Status);
 		fprintf(file, "%s,",  thing_status_to_str(vehicles[i].Status));
 		fprintf(file, "%u,",  vehicles[i].Affect);
+		fprintf(file, "%s,",  vehicle_affect_to_str(vehicles[i].Affect));
 		fprintf(file, "%u,",  vehicles[i].BaseFrame);
 		fprintf(file, "%u,",  vehicles[i].Frame);
 		fprintf(file, "%u,",  vehicles[i].OldFrame);
@@ -193,7 +194,6 @@ int write_vehicles_to_csv(const char *file_name, const Vehicle vehicles[], const
 		fprintf(file, "%u,",  vehicles[i].ChildHeld);
 		fprintf(file, "%u,",  vehicles[i].ParentHeld);
 		fprintf(file, "%u,",  vehicles[i].LinkTo);
-		fprintf(file, "%s,",  thing_type_to_str(vehicles[i].LinkTo));  // Not sure yet if translation makes sense here
 		fprintf(file, "%i,",  vehicles[i].LinkX);
 		fprintf(file, "%i,",  vehicles[i].LinkY);
 		fprintf(file, "%i,",  vehicles[i].LinkZ);
@@ -522,7 +522,7 @@ int write_cpobjectives_to_csv(const char *file_name, const CPObjective cpobjecti
 		fprintf(file, "%zu,", i);  // Index moved here as Parent/Child use index references
 		//fprintf(file, "%u,",  cpobjectives[i].Child);
 		//fprintf(file, "%u,",  cpobjectives[i].Parent);
-		fprintf(file, "%u,",  cpobjectives[i].Parent);
+		fprintf(file, "%u,",  cpobjectives[i].Parent);  // CSV is way easier to read using this order
 		fprintf(file, "%u,",  cpobjectives[i].Child);
 		fprintf(file, "%u,",  cpobjectives[i].UseCount);
 		fprintf(file, "%u,",  cpobjectives[i].Player);
@@ -560,7 +560,7 @@ int write_structless_to_csv(const char *file_name, const GameData *gamedata) {
 
 	// Write contents to CSV file
 	printf("Writing contents to CSV file '%s'...\n", file_name);
-	fprintf(file, "Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPWeapon\n");
+	fprintf(file, "Seed,PersonCount,Timer,RelOfsBase,MapNumber,LoBoundaryx,LoBoundaryy,HiBoundaryx,HiBoundaryy,CPCount,CPTeamSize,CPProcInt,CPLvlInit,CPIsBombTeam,CPIsPersTeam,CPFlags,CPFlags_S,CPWeapon,CPWeapon_S\n");
 	fprintf(file, "%u,",  gamedata->Seed);
 	fprintf(file, "%u,",  gamedata->PersonCount);
 	fprintf(file, "%u,",  gamedata->Timer);
@@ -576,8 +576,10 @@ int write_structless_to_csv(const char *file_name, const GameData *gamedata) {
 	fprintf(file, "%u,",  gamedata->CPLvlInit);
 	fprintf(file, "%u,",  gamedata->CPIsBombTeam);
 	fprintf(file, "%u,",  gamedata->CPIsPersTeam);
+	fprintf(file, "%u,",  gamedata->CPFlags);
 	fprintf(file, "%s,",  structless_cpflags_to_str(gamedata->CPFlags));
-	fprintf(file, "%u",   gamedata->CPWeapon);
+	fprintf(file, "%u,",  gamedata->CPWeapon);
+	fprintf(file, "%s",   weapon_state_to_str(gamedata->CPWeapon));
 	fprintf(file, "\n");
 
 	// Close CSV file

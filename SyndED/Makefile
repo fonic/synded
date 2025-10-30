@@ -3,7 +3,7 @@
 #  Syndicate Editor - Makefile                                                 -
 #                                                                              -
 #  Created by Fonic <https://github.com/fonic>                                 -
-#  Date: 10/08/25 - 10/19/25                                                   -
+#  Date: 10/08/25 - 10/30/25                                                   -
 #                                                                              -
 # ------------------------------------------------------------------------------
 
@@ -52,6 +52,7 @@ OBJFIL_ASANDYN_DEBUG     :=  $(SOURCE_FILES:$(SOURCE_DIR)/%.c=$(OBJDIR_ASANDYN_D
 
 CC                       :=  gcc
 
+#CFLAGS_COMMON            :=  -std=c23 -g -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -O2 -I.
 CFLAGS_COMMON            :=  -std=c23 -g -Wall -Wextra -O2 -I.
 CFLAGS_STATIC_RELEASE    :=  $(CFLAGS_COMMON) -DRELEASE
 CFLAGS_STATIC_DEBUG      :=  $(CFLAGS_COMMON) -DDEBUG

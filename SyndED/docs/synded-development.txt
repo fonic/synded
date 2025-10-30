@@ -2,16 +2,33 @@
 - WORK IN PROGRESS                                                             -
 --------------------------------------------------------------------------------
 
+- Implement CSV importer:
+  - Seems to work thus far (currently implemented for testing with GAME30)
+  - Test edge cases for each function (especially  'read_mapwho_from_csv' and
+    'read_structless_from_csv', which are different than the rest) to make sure
+    implementation is solid
+  - Integrate CSV import by introducing new command line options (see item in
+    TODO below)
+
+- Refine game data structs further (mostly done; World struct is the last
+  largely unknown struct, but likely unused in the final game anyway)
+  -> will be ONGOING for a while
+
 - Add comments to all game data struct members (document everything known
   thus far regarding meaning, values, relations to other members, etc.)
-
-- Refine game data structs further (mostly done, World struct is the last
-  largely unknown struct, but likely unused in the final game anyway)
+  -> will be ONGOING for a while
 
 
 --------------------------------------------------------------------------------
 - TODO (FURTHER DEVELOPMENT)                                                   -
 --------------------------------------------------------------------------------
+
+- Split SyndED's functionality to CSV export + CSV import + editing via code:
+  synded --export-csv GAMExx.DAT
+  synded --import-csv GAMExx.DAT_in GAMExx.DAT_out
+  synded --code-edit  GAMExx.DAT_in GAMExx.DAT_out
+  -> Think HARD about how to name and structure this, as this will result in
+     major changes for synded.c (and the overall usability of SyndED)
 
 - Add convenient functions for managing things:
   Person*  add_person(...)
@@ -55,10 +72,13 @@
 - 3DO version AGAMExx.DAT files are currently incompatible (size 117.920 bytes)
   -> Check RGAME.C to determine differences (+ 1.910 bytes, assuming RGAME.C
      was actually intended to read PC version GAMExx.DAT files)
-  -> 3DO has different ENDIANESS (obious when comparing beginning of GAME01.DAT
+  -> 3DO has different ENDIANESS (obvious when comparing beginning of GAME01.DAT
      to AGAME01.DAT)
-  -> Shifts in 3DO data might be related to alignment (#pragma), e.g. Vehicles
-     is 128 bytes longer (could be 64 vehicles * 2 bytes)
+  -> Shifts in 3DO data might be related to alignment (#pragma) -or- different
+     data types (e.g. 3DO might work better with 16-bit values compared to 8-bit
+     values, thus 16-bit data type were chosen); E.g. Vehicles is 128 bytes
+     longer (could be 64 vehicles * 2 bytes -or- 2 additional vehicles in array,
+     which is rather unlikely)
 
 
 --------------------------------------------------------------------------------
@@ -72,10 +92,34 @@
 - DONE (CHANGELOG)                                                             -
 --------------------------------------------------------------------------------
 
-- Implement quick hack to support Beta version game data:
+- Add commented-out CFLAGS to Makefile (was used during implementation of CSV
+  importer):
+  Suppresses unused functions and unused parameters; can be activated on-
+  demand, useful to lower compiler output noise to focus an more important
+  issues when implementing/developing larger, completely new features/modules
+  (like CSV import)
+
+- Update CSV output/exporter (mostly done WHILE implementing CSV importer):
+  - Add translation of Vehicle.Affect based on newly added enum
+  - Remove translation for Vehicle.LinkTo (will ALWAYS be 0 -or- point to some
+    other VEHICLE, thus there is no real benefit in translating this)
+  - Add translation of structless CPWeapon (which is the same as Weapon.State)
+
+- Add new enum and translation function for Vehicle.Affect (only value
+  VA_EXPLODE_WHEN_USED is known thus far, tripped over this by accident while
+  trying to make the destroyed APC in GAME30.DAT usable via editing)
+
+- Implement CSV importer:
+  - Files 'csvinput.h'/'csvinput.c'
+  - Functions: read_mapwho_from_csv, read_people_from_csv, ...
+    (same as for CSV output, but inverted)
+  - Implement functions and perform basic testing/verification
+    (i.e. input must equal output)
+
+- Implement a quick hack to support Beta version game data:
   Beta version game data is SHORTER than final release version game data
   (114.152 bytes -or- 114.150 bytes -or- 114.083 bytes vs. 116.010 bytes),
-  but seems otherwise identical to final release version game data. Thus,
+  but seems otherwise IDENTICAL to final release version game data. Thus,
   support can be achieved by simply READING LESS data into game data struct
   (and also WRITING LESS data to output file).
 
@@ -362,6 +406,30 @@
 - PLANNED BUT LATER CANCELED                                                   -
 --------------------------------------------------------------------------------
 
+- Alternative CSV importer implementation (1):
+  For each CSV file:
+  - Read first line, tokenize and create a dict/map of column names to column
+    indices (use array of struct with members char *colname, size_t colindex
+    to store dict/map)
+  - For subsequent lines, implement a fetcher function:
+    const char* get_csv_col(const char *csvline, const char *colname)
+    -> Function uses dict/map to determine which column (by index) to get
+    -> Function allows for arbitrary CSV column organization (e.g. reordered
+       or additional columns for notes), while still being able to extract
+       the required data
+  - Implement converter functions for string to uint8_t, uint16_t, int16_t,
+    etc.
+  - Implement macro(s) to automatically choose correct converter function
+    based on struct member type the value is meant for (e.g. for Person.Model
+    converter for string to uint8_t is needed)
+    -> https://en.cppreference.com/w/c/language/generic.html
+  - Find a way (likely using preprocessor macros) to generate values from
+    enum strings (e.g. 'TS_NODRAW | TS_MAPWHO' -> 5)
+
+- Alternative CSV importer implementation (2):
+  Lightweight CSV library (either use as-is or extract relevant parts):
+  https://github.com/jandoczy/csv-fast-reader
+
 - Fix compiler warnings reported by Windows CL (differ from GCC)
 - Test compiling on Windows regularly (alternative: use GitHub CI)
 -> Building on Windows is out-of-scope for now (quite time-consuming to keep
@@ -381,5 +449,5 @@
 
 
 --------------------------------------------------------------------------------
-- Date: 10/07/25 - 10/26/25                                                    -
+- Date: 10/07/25 - 10/30/25                                                    -
 --------------------------------------------------------------------------------

@@ -3,7 +3,7 @@
  *  Syndicate Editor - Game Data Enums                                        *
  *                                                                            *
  *  Created by Fonic <https://github.com/fonic>                               *
- *  Date: 10/08/25 - 10/24/25                                                 *
+ *  Date: 10/08/25 - 10/30/25                                                 *
  *                                                                            *
  ******************************************************************************/
 
@@ -71,6 +71,10 @@ const char* person_state_to_str(const PersonState value) {
 
 const char* person_unique_to_str(const PersonUnique value) {
 	GENERATE_TOSTR_FLAGS(PERSON_UNIQUE_FLAGS, PU_NONE)
+}
+
+const char* vehicle_affect_to_str(const VehicleAffect value) {
+	GENERATE_TOSTR_FLAGS(VEHICLE_AFFECT_FLAGS, VA_NONE)
 }
 
 const char* vehicle_state_to_str(const VehicleState value) {
